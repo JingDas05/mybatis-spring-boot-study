@@ -267,6 +267,9 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <testCompilerArgument>${maven.compiler.testCompilerArgument}</testCompilerArgument>
+                    <!--org.apache.ibatis.submitted.usesjava8.default_method  下面的mapper类用了default java8的特性，故在此添加1.8-->
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
