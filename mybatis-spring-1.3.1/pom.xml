@@ -118,13 +118,18 @@
     </properties>
 
     <dependencies>
-        <!-- Compile dependencies -->
+        <!--为了写注释，所以用自己的模块mybatis-3.4.4-->
         <dependency>
-            <groupId>org.mybatis</groupId>
+            <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis</artifactId>
-            <version>3.4.1</version>
-            <scope>provided</scope>
         </dependency>
+        <!-- Compile dependencies -->
+        <!--<dependency>-->
+            <!--<groupId>org.mybatis</groupId>-->
+            <!--<artifactId>mybatis</artifactId>-->
+            <!--<version>3.4.1</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.springframework</groupId>
