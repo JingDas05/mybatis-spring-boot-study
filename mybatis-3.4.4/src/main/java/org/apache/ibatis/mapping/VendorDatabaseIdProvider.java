@@ -58,23 +58,27 @@ public class VendorDatabaseIdProvider implements DatabaseIdProvider {
 
   @Override
   public void setProperties(Properties p) {
+    //注入Properties的引用
     this.properties = p;
   }
 
   private String getDatabaseName(DataSource dataSource) throws SQLException {
     String productName = getDatabaseProductName(dataSource);
+
     if (this.properties != null) {
       for (Map.Entry<Object, Object> property : properties.entrySet()) {
+        //如果productName包含全局的properties里面已存在的key,那么就用全局properties里面的名字
         if (productName.contains((String) property.getKey())) {
           return (String) property.getValue();
         }
       }
-      // no match, return null
+      // 没有符合，返回null
       return null;
     }
     return productName;
   }
 
+  //获取dataSource名字，新建Connection，从连接中获取MetaData
   private String getDatabaseProductName(DataSource dataSource) throws SQLException {
     Connection con = null;
     try {

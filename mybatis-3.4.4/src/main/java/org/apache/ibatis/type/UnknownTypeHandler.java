@@ -28,6 +28,7 @@ import org.apache.ibatis.io.Resources;
 /**
  * @author Clinton Begin
  */
+//这个泛型的Object,应该就是获取的result类型
 public class UnknownTypeHandler extends BaseTypeHandler<Object> {
 
   private static final ObjectTypeHandler OBJECT_TYPE_HANDLER = new ObjectTypeHandler();

@@ -832,6 +832,7 @@ public class Configuration {
         }
     }
 
+    //封装的map,key为value
     protected static class StrictMap<V> extends HashMap<String, V> {
 
         private static final long serialVersionUID = -4950446264854982944L;
@@ -878,6 +879,7 @@ public class Configuration {
             if (value == null) {
                 throw new IllegalArgumentException(name + " does not contain value for " + key);
             }
+            //key要求使用全限定名
             if (value instanceof Ambiguity) {
                 throw new IllegalArgumentException(((Ambiguity) value).getSubject() + " is ambiguous in " + name
                         + " (try using the full name including the namespace, or rename one of the entries)");
@@ -887,6 +889,7 @@ public class Configuration {
 
         private String getShortName(String key) {
             final String[] keyParts = key.split("\\.");
+            //返回逗号分隔的最后一个名字
             return keyParts[keyParts.length - 1];
         }
 

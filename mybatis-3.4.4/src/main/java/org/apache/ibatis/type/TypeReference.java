@@ -30,6 +30,7 @@ public abstract class TypeReference<T> {
   private final Type rawType;
 
   protected TypeReference() {
+    //构造时获取原生类型
     rawType = getSuperclassTypeParameter(getClass());
   }
 

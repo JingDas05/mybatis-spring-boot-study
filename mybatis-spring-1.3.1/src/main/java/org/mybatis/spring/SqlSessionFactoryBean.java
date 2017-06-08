@@ -576,6 +576,9 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
     }
 
     /**
+     *
+     * 所有SqlSessionFactory都是单例的
+     *
      * {@inheritDoc}
      */
     @Override
