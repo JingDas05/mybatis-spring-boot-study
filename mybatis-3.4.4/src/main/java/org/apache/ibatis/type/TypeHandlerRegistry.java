@@ -40,9 +40,12 @@ import org.apache.ibatis.io.Resources;
  */
 public final class TypeHandlerRegistry {
 
+  //key为JdbcType, value为TypeHandler
   private final Map<JdbcType, TypeHandler<?>> JDBC_TYPE_HANDLER_MAP = new EnumMap<JdbcType, TypeHandler<?>>(JdbcType.class);
+  //key为Type, value为TypeHandler
   private final Map<Type, Map<JdbcType, TypeHandler<?>>> TYPE_HANDLER_MAP = new ConcurrentHashMap<Type, Map<JdbcType, TypeHandler<?>>>();
   private final TypeHandler<Object> UNKNOWN_TYPE_HANDLER = new UnknownTypeHandler(this);
+  //key为Class, value为TypeHandler
   private final Map<Class<?>, TypeHandler<?>> ALL_TYPE_HANDLERS_MAP = new HashMap<Class<?>, TypeHandler<?>>();
 
   private static final Map<JdbcType, TypeHandler<?>> NULL_TYPE_HANDLER_MAP = new HashMap<JdbcType, TypeHandler<?>>();
@@ -313,14 +316,14 @@ public final class TypeHandlerRegistry {
     }
   }
 
-  // java type + handler
-
+  //注册javaType TypeHandler,class类型向上转型到Type,同样register()方法也是重载方法
   public <T> void register(Class<T> javaType, TypeHandler<? extends T> typeHandler) {
     register((Type) javaType, typeHandler);
   }
 
   private <T> void register(Type javaType, TypeHandler<? extends T> typeHandler) {
     MappedJdbcTypes mappedJdbcTypes = typeHandler.getClass().getAnnotation(MappedJdbcTypes.class);
+    //获取@MappedJdbcTypes下的值并进行注册
     if (mappedJdbcTypes != null) {
       for (JdbcType handledJdbcType : mappedJdbcTypes.value()) {
         register(javaType, handledJdbcType, typeHandler);
@@ -343,7 +346,10 @@ public final class TypeHandlerRegistry {
     register((Type) type, jdbcType, handler);
   }
 
+  //注册核心方法，其他方法最后都调用此方法，因为一个javaType有可能对应一系列的jdbcType
+  //所以数据结构为Map<JdbcType, TypeHandler<?>> 和 Map<Type, Map<JdbcType, TypeHandler<?>>>
   private void register(Type javaType, JdbcType jdbcType, TypeHandler<?> handler) {
+    //key为
     if (javaType != null) {
       Map<JdbcType, TypeHandler<?>> map = TYPE_HANDLER_MAP.get(javaType);
       if (map == null) {
@@ -352,6 +358,7 @@ public final class TypeHandlerRegistry {
       }
       map.put(jdbcType, handler);
     }
+    //如果javaType为空，就添加到 ALL_TYPE_HANDLERS_MAP 集合中，key为handlerClass, value为TypeHandler
     ALL_TYPE_HANDLERS_MAP.put(handler.getClass(), handler);
   }
 
@@ -386,13 +393,11 @@ public final class TypeHandlerRegistry {
   }
 
   // java type + jdbc type + handler type
-
   public void register(Class<?> javaTypeClass, JdbcType jdbcType, Class<?> typeHandlerClass) {
     register(javaTypeClass, jdbcType, getInstance(javaTypeClass, typeHandlerClass));
   }
 
   // Construct a handler (used also from Builders)
-
   @SuppressWarnings("unchecked")
   public <T> TypeHandler<T> getInstance(Class<?> javaTypeClass, Class<?> typeHandlerClass) {
     if (javaTypeClass != null) {
@@ -413,8 +418,6 @@ public final class TypeHandlerRegistry {
     }
   }
 
-  // scan
-
   public void register(String packageName) {
     ResolverUtil<Class<?>> resolverUtil = new ResolverUtil<Class<?>>();
     resolverUtil.find(new ResolverUtil.IsA(TypeHandler.class), packageName);
@@ -426,10 +429,9 @@ public final class TypeHandlerRegistry {
       }
     }
   }
-  
-  // get information
-  
+
   /**
+   * 返回不可改变的TypeHandler集合
    * @since 3.2.2
    */
   public Collection<TypeHandler<?>> getTypeHandlers() {

@@ -35,8 +35,8 @@ public abstract class BaseTypeHandler<T> extends TypeReference<T> implements Typ
     this.configuration = c;
   }
 
-  //设置参数，如果一个方法中的逻辑别的也需要用，那么就把这部分逻辑如下似的，抽象到超类
-  //字方法不同的逻辑变成抽象方法写在超类
+  //设置参数，如果一个方法中的逻辑别的也需要用，那么就把这部分逻辑提取到抽象类
+  //不同的逻辑变成抽象方法写在抽象类，子类去实现各自的逻辑
   @Override
   public void setParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType) throws SQLException {
     //设置参数是先判断 parameter， jdbcType是否为空，jdbcType不能为空，parameter 可以为空，如果parameter为空
@@ -68,6 +68,7 @@ public abstract class BaseTypeHandler<T> extends TypeReference<T> implements Typ
   public T getResult(ResultSet rs, String columnName) throws SQLException {
     T result;
     try {
+      //根据列名获取结果，getNullableResult()是抽象方法，需要子类具体实现
       result = getNullableResult(rs, columnName);
     } catch (Exception e) {
       throw new ResultMapException("Error attempting to get column '" + columnName + "' from result set.  Cause: " + e, e);
@@ -83,6 +84,7 @@ public abstract class BaseTypeHandler<T> extends TypeReference<T> implements Typ
   public T getResult(ResultSet rs, int columnIndex) throws SQLException {
     T result;
     try {
+      //根据列编号获取结果，getNullableResult()是抽象方法，需要子类具体实现
       result = getNullableResult(rs, columnIndex);
     } catch (Exception e) {
       throw new ResultMapException("Error attempting to get column #" + columnIndex+ " from result set.  Cause: " + e, e);
@@ -98,6 +100,7 @@ public abstract class BaseTypeHandler<T> extends TypeReference<T> implements Typ
   public T getResult(CallableStatement cs, int columnIndex) throws SQLException {
     T result;
     try {
+      //根据列名获取结果，getNullableResult()是抽象方法，需要子类具体实现
       result = getNullableResult(cs, columnIndex);
     } catch (Exception e) {
       throw new ResultMapException("Error attempting to get column #" + columnIndex+ " from callable statement.  Cause: " + e, e);
@@ -111,6 +114,7 @@ public abstract class BaseTypeHandler<T> extends TypeReference<T> implements Typ
 
   public abstract void setNonNullParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType) throws SQLException;
 
+  //以下方法为重载方法，方法签名不同
   public abstract T getNullableResult(ResultSet rs, String columnName) throws SQLException;
 
   public abstract T getNullableResult(ResultSet rs, int columnIndex) throws SQLException;
