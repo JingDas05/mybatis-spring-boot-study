@@ -35,8 +35,12 @@ public abstract class BaseTypeHandler<T> extends TypeReference<T> implements Typ
     this.configuration = c;
   }
 
+  //设置参数，如果一个方法中的逻辑别的也需要用，那么就把这部分逻辑如下似的，抽象到超类
+  //字方法不同的逻辑变成抽象方法写在超类
   @Override
   public void setParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType) throws SQLException {
+    //设置参数是先判断 parameter， jdbcType是否为空，jdbcType不能为空，parameter 可以为空，如果parameter为空
+    // 调用PreparedStatement #setNull()方法，这个逻辑大家谁都用，所以在超类定义
     if (parameter == null) {
       if (jdbcType == null) {
         throw new TypeException("JDBC requires that the JdbcType must be specified for all nullable parameters.");
@@ -50,6 +54,7 @@ public abstract class BaseTypeHandler<T> extends TypeReference<T> implements Typ
       }
     } else {
       try {
+        //这个地方是关键，setNonNullParameter()方法是抽象方法，由具体的实现类去指定
         setNonNullParameter(ps, i, parameter, jdbcType);
       } catch (Exception e) {
         throw new TypeException("Error setting non null for parameter #" + i + " with JdbcType " + jdbcType + " . " +

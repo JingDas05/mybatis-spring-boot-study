@@ -24,10 +24,14 @@ import java.util.List;
  */
 public class InterceptorChain {
 
+  //这个是通过set注入进来拦截器的
   private final List<Interceptor> interceptors = new ArrayList<Interceptor>();
 
+  //target可以是Executor，这个可以理解为target执行一遍拦截链里的拦截器
+  //参数传入什么就返回什么
   public Object pluginAll(Object target) {
     for (Interceptor interceptor : interceptors) {
+      //target执行拦截器的plugin方法
       target = interceptor.plugin(target);
     }
     return target;

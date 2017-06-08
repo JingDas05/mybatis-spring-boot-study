@@ -21,6 +21,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
+ * 这个是处理各种类型的处理器，抽象实现类是BaseTypeHandler，有很多子类
+ *
  * @author Clinton Begin
  */
 public interface TypeHandler<T> {
@@ -31,6 +33,7 @@ public interface TypeHandler<T> {
 
   T getResult(ResultSet rs, int columnIndex) throws SQLException;
 
+  //这个应该是存储过程用的
   T getResult(CallableStatement cs, int columnIndex) throws SQLException;
 
 }

@@ -462,6 +462,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
             }
         }
 
+        //注册插件
         if (!isEmpty(this.plugins)) {
             for (Interceptor plugin : this.plugins) {
                 configuration.addInterceptor(plugin);
@@ -482,6 +483,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
             }
         }
 
+        //注册类型处理器
         if (!isEmpty(this.typeHandlers)) {
             for (TypeHandler<?> typeHandler : this.typeHandlers) {
                 configuration.getTypeHandlerRegistry().register(typeHandler);
@@ -521,6 +523,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
             this.transactionFactory = new SpringManagedTransactionFactory();
         }
 
+        //环境的构造器需要参数为id, transactionFactory, dataSource
         configuration.setEnvironment(new Environment(this.environment, this.transactionFactory, this.dataSource));
 
         if (!isEmpty(this.mapperLocations)) {
