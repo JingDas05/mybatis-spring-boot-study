@@ -349,16 +349,20 @@ public final class TypeHandlerRegistry {
   }
 
   //注册核心方法，其他方法最后都调用此方法，因为一个javaType有可能对应一系列的jdbcType
+  //所以数据结构为Map<JdbcType, TypeHandler<?>> (一个JdbcType 对应TypeHandler<?>)和
+  // Map<Type, Map<JdbcType, TypeHandler<?>>> （一个JavaType 对应Map<JdbcType, TypeHandler<?>>）
   //所以数据结构为Map<JdbcType, TypeHandler<?>> 和 Map<Type, Map<JdbcType, TypeHandler<?>>>
   //参数jdbcType有可能有null，所以构建的map有可能key为null
   private void register(Type javaType, JdbcType jdbcType, TypeHandler<?> handler) {
-    //key为
+    // TYPE_HANDLER_MAP 中寻找key为javaType的map, 找到了直接放置JdbcType jdbcType, TypeHandler<?> handler到map
+    // 否则新建map
     if (javaType != null) {
       Map<JdbcType, TypeHandler<?>> map = TYPE_HANDLER_MAP.get(javaType);
       if (map == null) {
         map = new HashMap<JdbcType, TypeHandler<?>>();
         TYPE_HANDLER_MAP.put(javaType, map);
       }
+      //此处写的好，前面保证map一定存在，这一步无论前面怎样都要注册到map中
       map.put(jdbcType, handler);
     }
     //如果javaType为空，就添加到 ALL_TYPE_HANDLERS_MAP 集合中，key为handlerClass, value为TypeHandler
