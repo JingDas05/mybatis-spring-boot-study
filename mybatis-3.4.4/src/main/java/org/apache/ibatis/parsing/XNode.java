@@ -27,6 +27,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
+ * org.w3c.dom Node节点的封装对象
+ *
  * @author Clinton Begin
  */
 public class XNode {
@@ -214,6 +216,7 @@ public class XNode {
   }
 
   public String getStringAttribute(String name, String def) {
+    //attributes变量在构造函数中解析赋值的
     String value = attributes.getProperty(name);
     if (value == null) {
       return def;
@@ -287,6 +290,7 @@ public class XNode {
     }
   }
 
+  // 获取当前节点的所有子节点，封装成List<XNode>
   public List<XNode> getChildren() {
     List<XNode> children = new ArrayList<XNode>();
     NodeList nodeList = node.getChildNodes();
@@ -294,6 +298,7 @@ public class XNode {
       for (int i = 0, n = nodeList.getLength(); i < n; i++) {
         Node node = nodeList.item(i);
         if (node.getNodeType() == Node.ELEMENT_NODE) {
+          // 封装对象，构造器参数是xpathParser， 当前节点node, variables
           children.add(new XNode(xpathParser, node, variables));
         }
       }
@@ -301,6 +306,7 @@ public class XNode {
     return children;
   }
 
+  //获取子节点，封装成Properties
   public Properties getChildrenAsProperties() {
     Properties properties = new Properties();
     for (XNode child : getChildren()) {
@@ -347,12 +353,14 @@ public class XNode {
     return builder.toString();
   }
 
+  //初始化调用方法，解析封装的节点node, 封装城Properties
   private Properties parseAttributes(Node n) {
     Properties attributes = new Properties();
     NamedNodeMap attributeNodes = n.getAttributes();
     if (attributeNodes != null) {
       for (int i = 0; i < attributeNodes.getLength(); i++) {
         Node attribute = attributeNodes.item(i);
+        //调用PropertyParser.parse()静态方法，从variables中解析获取值
         String value = PropertyParser.parse(attribute.getNodeValue(), variables);
         attributes.put(attribute.getNodeName(), value);
       }

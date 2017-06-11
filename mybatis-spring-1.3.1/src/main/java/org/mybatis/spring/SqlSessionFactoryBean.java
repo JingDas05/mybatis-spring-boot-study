@@ -57,7 +57,7 @@ import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
 /**
  *
- * 如果是springBoot的话，会实例化MybatisAutoConfiguration
+ * 如果是springBoot的话，会实例化MybatisAutoConfiguration，这是一个通用的类，springBoot和xml配置都支持
  *
  * {@code FactoryBean} that creates an MyBatis {@code SqlSessionFactory}.
  * This is the usual way to set up a shared MyBatis {@code SqlSessionFactory} in a Spring application context;
@@ -389,7 +389,8 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
     }
 
     /**
-     *构建组件SqlSessionFactory
+     *构建组件SqlSessionFactory，关键方法，首先解析springBoot配置的,之后如果定义了configLocation那么才会去调用
+     * xmlConfigBuilder parse()方法
      *
      * Build a {@code SqlSessionFactory} instance.
      *
@@ -405,9 +406,10 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
         Configuration configuration;
 
         XMLConfigBuilder xmlConfigBuilder = null;
-        //configurationProperties 放到 configuration.variables 变量里
+        //首先读取springBoot的配置，其次xml配置，如果都没有就采取默认配置
         if (this.configuration != null) {
             configuration = this.configuration;
+            //configurationProperties 放到 configuration.variables 变量里
             if (configuration.getVariables() == null) {
                 configuration.setVariables(this.configurationProperties);
             } else if (this.configurationProperties != null) {
@@ -416,6 +418,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
         } else if (this.configLocation != null) {
             //如果配置了configLocation那么就用xmlConfigBuilder去解析configuration
             xmlConfigBuilder = new XMLConfigBuilder(this.configLocation.getInputStream(), null, this.configurationProperties);
+            //这个地方只是基本的configuration，并没有调用XMLConfigBuilder parse()方法进行解析
             configuration = xmlConfigBuilder.getConfiguration();
         } else {
             if (LOGGER.isDebugEnabled()) {
@@ -428,6 +431,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
             }
         }
 
+        //以下都是读取的springBoot的配置
         if (this.objectFactory != null) {
             configuration.setObjectFactory(this.objectFactory);
         }
@@ -436,6 +440,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
             configuration.setObjectWrapperFactory(this.objectWrapperFactory);
         }
 
+        //设置vfs实现
         if (this.vfs != null) {
             configuration.setVfsImpl(this.vfs);
         }
@@ -452,7 +457,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
                 }
             }
         }
-
+        // 注册别名
         if (!isEmpty(this.typeAliases)) {
             for (Class<?> typeAlias : this.typeAliases) {
                 configuration.getTypeAliasRegistry().registerAlias(typeAlias);
@@ -471,7 +476,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
                 }
             }
         }
-
+        //注册类型处理器
         if (hasLength(this.typeHandlersPackage)) {
             String[] typeHandlersPackageArray = tokenizeToStringArray(this.typeHandlersPackage,
                     ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
@@ -505,8 +510,10 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
             configuration.addCache(this.cache);
         }
 
+        //以上都是解析的springBoot的配置，如果在springBoot里配置了configLocation,那么这里开始解析 xml配置文件
         if (xmlConfigBuilder != null) {
             try {
+                //这个方法很重要，这样才会解析配置文件，并且将解析内容置入configuration对象
                 xmlConfigBuilder.parse();
 
                 if (LOGGER.isDebugEnabled()) {
@@ -555,11 +562,10 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
         return this.sqlSessionFactoryBuilder.build(configuration);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    //实现了factoryBean接口，获取实例时调用此方法
     @Override
     public SqlSessionFactory getObject() throws Exception {
+        //如果没有构建，先构建再返回，已经构建直接返回
         if (this.sqlSessionFactory == null) {
             afterPropertiesSet();
         }

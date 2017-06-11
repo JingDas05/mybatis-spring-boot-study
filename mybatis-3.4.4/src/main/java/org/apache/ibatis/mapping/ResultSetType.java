@@ -18,11 +18,17 @@ package org.apache.ibatis.mapping;
 import java.sql.ResultSet;
 
 /**
+ *
+ * resultSet处理方式，详细介绍见 http://treegrowth.top/#/pages/detail/409815c996664e63a0e9b30428470171
+ *
  * @author Clinton Begin
  */
 public enum ResultSetType {
+  //默认的cursor 类型，仅仅支持结果集forward ，不支持back， forward ，random ，last ，first 等操作。
   FORWARD_ONLY(ResultSet.TYPE_FORWARD_ONLY),
+  //支持结果集backforward ，random ，last ，first 等操作，对其它session 对数据库中数据做出的更改是不敏感的。
   SCROLL_INSENSITIVE(ResultSet.TYPE_SCROLL_INSENSITIVE),
+  //支持结果集backforward ，random ，last ，first 等操作，对其它session 对数据库中数据做出的更改是不敏感的。
   SCROLL_SENSITIVE(ResultSet.TYPE_SCROLL_SENSITIVE);
 
   private int value;

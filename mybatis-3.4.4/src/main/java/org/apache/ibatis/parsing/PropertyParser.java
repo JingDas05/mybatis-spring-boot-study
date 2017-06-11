@@ -51,7 +51,9 @@ public class PropertyParser {
   }
 
   public static String parse(String string, Properties variables) {
+    //构建 默认值处理器
     VariableTokenHandler handler = new VariableTokenHandler(variables);
+    //构建 公用值解析器，传入上一步的具体的默认值处理器，会调用 VariableTokenHandler 的 handleToken()
     GenericTokenParser parser = new GenericTokenParser("${", "}", handler);
     return parser.parse(string);
   }
@@ -63,18 +65,24 @@ public class PropertyParser {
 
     private VariableTokenHandler(Properties variables) {
       this.variables = variables;
+      //初始化的时候赋值，是否开启默认值，设置默认值()
       this.enableDefaultValue = Boolean.parseBoolean(getPropertyValue(KEY_ENABLE_DEFAULT_VALUE, ENABLE_DEFAULT_VALUE));
       this.defaultValueSeparator = getPropertyValue(KEY_DEFAULT_VALUE_SEPARATOR, DEFAULT_VALUE_SEPARATOR);
     }
 
+    // 通用方法，根据key取值，如果properties没有设置，就用默认值,之后从properties根据key取值
+    // 存在就用取得的值，否则用默认值
     private String getPropertyValue(String key, String defaultValue) {
       return (variables == null) ? defaultValue : variables.getProperty(key, defaultValue);
     }
 
+    // 这个入参是去除了 openToken, closeToken 的值，比如 db:username?:ut_user，取值返回
     @Override
     public String handleToken(String content) {
       if (variables != null) {
         String key = content;
+        // 如果允许默认值，解析content,把分割符前面的key取到，以及分隔符后面的默认值
+        // 之后调用properties 的 getProperty()方法取值
         if (enableDefaultValue) {
           final int separatorIndex = content.indexOf(defaultValueSeparator);
           String defaultValue = null;
@@ -86,10 +94,12 @@ public class PropertyParser {
             return variables.getProperty(key, defaultValue);
           }
         }
+        //不开启默认值的话，直接取值
         if (variables.containsKey(key)) {
           return variables.getProperty(key);
         }
       }
+      //如果 variables 为空，那么直接返回 前缀 + 传入值 + 后缀
       return "${" + content + "}";
     }
   }

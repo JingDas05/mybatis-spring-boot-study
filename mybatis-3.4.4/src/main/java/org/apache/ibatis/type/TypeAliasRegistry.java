@@ -33,7 +33,8 @@ import org.apache.ibatis.io.ResolverUtil;
 import org.apache.ibatis.io.Resources;
 
 /**
- * 类型别名注册器
+ * 类型别名注册器，别名不仅包含基本类型，还包含TypeHandler
+ * 见BaseBuilder.java resolveTypeHandler()
  *
  * @author Clinton Begin
  */
@@ -154,7 +155,7 @@ public class TypeAliasRegistry {
         //默认simpleName
         String alias = type.getSimpleName();
         Alias aliasAnnotation = type.getAnnotation(Alias.class);
-        //如果注解有value，就用value
+        //如果有注解@Alias，且注解有value，就用value
         if (aliasAnnotation != null) {
             alias = aliasAnnotation.value();
         }

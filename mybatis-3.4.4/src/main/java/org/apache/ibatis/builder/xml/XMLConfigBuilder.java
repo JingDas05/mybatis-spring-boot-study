@@ -101,7 +101,7 @@ public class XMLConfigBuilder extends BaseBuilder {
 
   private void parseConfiguration(XNode root) {
     try {
-      //issue #117 read properties first
+      //issue #117 先读取properties
       propertiesElement(root.evalNode("properties"));
       Properties settings = settingsAsProperties(root.evalNode("settings"));
       loadCustomVfs(settings);
@@ -144,6 +144,7 @@ public class XMLConfigBuilder extends BaseBuilder {
         if (!clazz.isEmpty()) {
           @SuppressWarnings("unchecked")
           Class<? extends VFS> vfsImpl = (Class<? extends VFS>)Resources.classForName(clazz);
+          // 全局配置中添加自定义VFS实现
           configuration.setVfsImpl(vfsImpl);
         }
       }
@@ -213,8 +214,10 @@ public class XMLConfigBuilder extends BaseBuilder {
   }
 
   private void propertiesElement(XNode context) throws Exception {
+    // context 就是root节点
     if (context != null) {
       Properties defaults = context.getChildrenAsProperties();
+      //如果url 和 resource存在那么就引入url 或者 resource指向的properties，url和resource只能存在一个
       String resource = context.getStringAttribute("resource");
       String url = context.getStringAttribute("url");
       if (resource != null && url != null) {
@@ -229,6 +232,7 @@ public class XMLConfigBuilder extends BaseBuilder {
       if (vars != null) {
         defaults.putAll(vars);
       }
+      //全局变量和读取配置文件的变量汇总，放回到全局变量，并且更新 XPathParser的variables
       parser.setVariables(defaults);
       configuration.setVariables(defaults);
     }

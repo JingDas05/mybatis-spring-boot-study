@@ -88,6 +88,7 @@ public class MybatisAutoConfiguration {
 
   private final DatabaseIdProvider databaseIdProvider;
 
+  //项目启动的时候先读取yml等项目配置文件，封装成properties
   public MybatisAutoConfiguration(MybatisProperties properties,
                                   ObjectProvider<Interceptor[]> interceptorsProvider,
                                   ResourceLoader resourceLoader,
@@ -110,9 +111,11 @@ public class MybatisAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean
   public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
+    // 项目启动的时候初始化 SqlSessionFactoryBean，设置成员变量，这个成员变量是从yml等配置文件读来的，也就是spring boot
     SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
     factory.setDataSource(dataSource);
     factory.setVfs(SpringBootVFS.class);
+    //设置springBoot解析的配置,可以设置configLocation,也可以设置configuration,只能设置其一
     if (StringUtils.hasText(this.properties.getConfigLocation())) {
       factory.setConfigLocation(this.resourceLoader.getResource(this.properties.getConfigLocation()));
     }
@@ -135,7 +138,7 @@ public class MybatisAutoConfiguration {
     if (!ObjectUtils.isEmpty(this.properties.resolveMapperLocations())) {
       factory.setMapperLocations(this.properties.resolveMapperLocations());
     }
-
+    // springBoot配置完成后解析config.xml
     return factory.getObject();
   }
 

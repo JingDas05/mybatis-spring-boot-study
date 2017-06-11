@@ -50,6 +50,7 @@ public abstract class BaseBuilder {
     return Pattern.compile(regex == null ? defaultValue : regex);
   }
 
+  //根据输入的字符串类型，返回指定的类型值
   protected Boolean booleanValueOf(String value, Boolean defaultValue) {
     return value == null ? defaultValue : Boolean.valueOf(value);
   }
@@ -122,8 +123,9 @@ public abstract class BaseBuilder {
   protected TypeHandler<?> resolveTypeHandler(Class<?> javaType, String typeHandlerAlias) {
     if (typeHandlerAlias == null) {
       return null;
-    }
+    }  
     Class<?> type = resolveClass(typeHandlerAlias);
+    //如果typeHandlerAlias不为空，但是它没有实现TypeHandler接口，抛出异常BuilderException
     if (type != null && !TypeHandler.class.isAssignableFrom(type)) {
       throw new BuilderException("Type " + type.getName() + " is not a valid TypeHandler because it does not implement TypeHandler interface");
     }
@@ -139,7 +141,7 @@ public abstract class BaseBuilder {
     // javaType ignored for injected handlers see issue #746 for full detail
     TypeHandler<?> handler = typeHandlerRegistry.getMappingTypeHandler(typeHandlerType);
     if (handler == null) {
-      // not in registry, create a new one
+      // 如果没有注册，就创建一个对象
       handler = typeHandlerRegistry.getInstance(javaType, typeHandlerType);
     }
     return handler;
