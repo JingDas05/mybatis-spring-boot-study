@@ -109,7 +109,7 @@ public class TypeAliasRegistry {
     }
 
     @SuppressWarnings("unchecked")
-    // 抛出异常 if types cannot be assigned
+    // 抛出异常 if types cannot be assigned，如果没有注册，根据名字调用Resources 的 classForm()去寻找
     public <T> Class<T> resolveAlias(String string) {
         try {
             if (string == null) {
@@ -130,6 +130,7 @@ public class TypeAliasRegistry {
         }
     }
 
+    // config文件<typeAliases>节点 package节点会传入包名
     public void registerAliases(String packageName) {
         //注册为Object类型
         registerAliases(packageName, Object.class);

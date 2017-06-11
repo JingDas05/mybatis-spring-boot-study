@@ -103,15 +103,17 @@ public class MapperAnnotationBuilder {
 
   public MapperAnnotationBuilder(Configuration configuration, Class<?> type) {
     String resource = type.getName().replace('.', '/') + ".java (best guess)";
+    // 每一个接口级别的Mapper 都有各自的MapperBuilderAssistant
     this.assistant = new MapperBuilderAssistant(configuration, resource);
     this.configuration = configuration;
     this.type = type;
 
+    //初始化注解集合
     sqlAnnotationTypes.add(Select.class);
     sqlAnnotationTypes.add(Insert.class);
     sqlAnnotationTypes.add(Update.class);
     sqlAnnotationTypes.add(Delete.class);
-
+    //初始化注解集合
     sqlProviderAnnotationTypes.add(SelectProvider.class);
     sqlProviderAnnotationTypes.add(InsertProvider.class);
     sqlProviderAnnotationTypes.add(UpdateProvider.class);
@@ -120,6 +122,7 @@ public class MapperAnnotationBuilder {
 
   public void parse() {
     String resource = type.toString();
+    // configuration 里面的loadedResources是一个Set<String>集合
     if (!configuration.isResourceLoaded(resource)) {
       loadXmlResource();
       configuration.addLoadedResource(resource);
@@ -156,17 +159,21 @@ public class MapperAnnotationBuilder {
     }
   }
 
+  //type.getName()的值类似于 sample.mybatis.mapper.CityMapper
   private void loadXmlResource() {
     // Spring may not know the real resource name so we check a flag
     // to prevent loading again a resource twice
     // this flag is set at XMLMapperBuilder#bindMapperForNamespace
+    // 如果没有解析过，开始loadXml，默认是在和接口相同的路径下，名字相同，后缀为.xml
     if (!configuration.isResourceLoaded("namespace:" + type.getName())) {
+      // 加载资源，需要把逗号换成正斜线
       String xmlResource = type.getName().replace('.', '/') + ".xml";
       InputStream inputStream = null;
       try {
         inputStream = Resources.getResourceAsStream(type.getClassLoader(), xmlResource);
       } catch (IOException e) {
         // ignore, resource is not required
+        // 这个地方有可能读取不到，因为配置文件有可能不在当前同目录下，所以忽略异常
       }
       if (inputStream != null) {
         XMLMapperBuilder xmlParser = new XMLMapperBuilder(inputStream, assistant.getConfiguration(), xmlResource, configuration.getSqlFragments(), type.getName());
@@ -198,8 +205,10 @@ public class MapperAnnotationBuilder {
   }
 
   private void parseCacheRef() {
+    // 获取Mapper上的@CacheNamespaceRef
     CacheNamespaceRef cacheDomainRef = type.getAnnotation(CacheNamespaceRef.class);
     if (cacheDomainRef != null) {
+      // 下面两项不同同时配置
       Class<?> refType = cacheDomainRef.value();
       String refName = cacheDomainRef.name();
       if (refType == void.class && refName.isEmpty()) {

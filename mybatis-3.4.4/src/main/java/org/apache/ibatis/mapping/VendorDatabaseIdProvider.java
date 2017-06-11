@@ -58,16 +58,16 @@ public class VendorDatabaseIdProvider implements DatabaseIdProvider {
 
   @Override
   public void setProperties(Properties p) {
-    //注入Properties的引用
+    //注入Properties的引用，这个是配置文件里配置的数据库类型
     this.properties = p;
   }
 
   private String getDatabaseName(DataSource dataSource) throws SQLException {
+    // 从dataBase MetaData中获取product名字
     String productName = getDatabaseProductName(dataSource);
-
     if (this.properties != null) {
       for (Map.Entry<Object, Object> property : properties.entrySet()) {
-        //如果productName包含全局的properties里面已存在的key,那么就用全局properties里面的名字
+        //如果productName包含全局的properties里面已存在的key,那么就用全局properties里面的名字，否则返回null
         if (productName.contains((String) property.getKey())) {
           return (String) property.getValue();
         }

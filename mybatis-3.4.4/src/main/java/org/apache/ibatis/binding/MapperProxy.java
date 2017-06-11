@@ -28,6 +28,9 @@ import org.apache.ibatis.reflection.ExceptionUtil;
 import org.apache.ibatis.session.SqlSession;
 
 /**
+ *
+ *  接口级别mapper，执行处理器InvocationHandler
+ *
  * @author Clinton Begin
  * @author Eduardo Macarron
  */

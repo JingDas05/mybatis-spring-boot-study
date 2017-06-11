@@ -20,7 +20,7 @@ import java.net.URL;
 
 /**
  * A class to wrap access to multiple class loaders making them work as one
- *
+ * 封装classLoader使他们看起来像一个
  * @author Clinton Begin
  */
 public class ClassLoaderWrapper {
@@ -167,7 +167,7 @@ public class ClassLoaderWrapper {
 
   }
 
-  /*
+  /**
    * Attempt to load a class from a group of classloaders
    *
    * @param name        - the class to load
@@ -176,27 +176,19 @@ public class ClassLoaderWrapper {
    * @throws ClassNotFoundException - Remember the wisdom of Judge Smails: Well, the world needs ditch diggers, too.
    */
   Class<?> classForName(String name, ClassLoader[] classLoader) throws ClassNotFoundException {
-
+    //遍历classLoader数组找到第一个不为空的Class
     for (ClassLoader cl : classLoader) {
-
       if (null != cl) {
-
         try {
-
           Class<?> c = Class.forName(name, true, cl);
-
           if (null != c) {
             return c;
           }
-
         } catch (ClassNotFoundException e) {
-          // we'll ignore this until all classloaders fail to locate the class
+          //忽略ClassNotFoundException，直到所有的classLoader都没找到，就抛出下面的异常(这个设计的很不错)
         }
-
       }
-
     }
-
     throw new ClassNotFoundException("Cannot find class: " + name);
 
   }

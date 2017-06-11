@@ -27,6 +27,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ *
+ * 核心类，mapper注册类
+ *
  * @author Clinton Begin
  * @author Eduardo Macarron
  * @author Lasse Voss
@@ -34,6 +37,7 @@ import java.util.Set;
 public class MapperRegistry {
 
   private final Configuration config;
+  // 这个数据结构很重要，一个接口级别的mapper 对应一个MapperProxyFactory
   private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<Class<?>, MapperProxyFactory<?>>();
 
   public MapperRegistry(Configuration config) {
@@ -57,6 +61,7 @@ public class MapperRegistry {
     return knownMappers.containsKey(type);
   }
 
+  //参数type为接口级别的mapper类
   public <T> void addMapper(Class<T> type) {
     if (type.isInterface()) {
       if (hasMapper(type)) {
@@ -68,8 +73,10 @@ public class MapperRegistry {
         // It's important that the type is added before the parser is run
         // otherwise the binding may automatically be attempted by the
         // mapper parser. If the type is already known, it won't try.
+        // 每一个接口级别的Mapper 都有各自的 MapperAnnotationBuilder
         MapperAnnotationBuilder parser = new MapperAnnotationBuilder(config, type);
         parser.parse();
+        //如果上面的parse()失败了，那么loadCompleted不会置位，在finally中就会从knownMappers中移除掉class为type的mapper
         loadCompleted = true;
       } finally {
         if (!loadCompleted) {

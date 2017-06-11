@@ -26,6 +26,7 @@ public interface Interceptor {
 
   Object plugin(Object target);
 
+  //这个设置属性的方法，在扫描配置文件plugin节点XNode 的getChildrenAsProperties()会读取出来，之后传参
   void setProperties(Properties properties);
 
 }

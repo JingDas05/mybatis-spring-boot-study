@@ -23,11 +23,14 @@ import org.apache.ibatis.transaction.TransactionFactory;
  * @author Clinton Begin
  */
 public final class Environment {
+  // id配置时自己定义的，例如：development, production等
   private final String id;
+  // 环境包含策略工厂和数据源
   private final TransactionFactory transactionFactory;
   private final DataSource dataSource;
 
   public Environment(String id, TransactionFactory transactionFactory, DataSource dataSource) {
+    // id, transactionFactory, dataSource这三个是必须的
     if (id == null) {
       throw new IllegalArgumentException("Parameter 'id' must not be null");
     }
@@ -42,6 +45,7 @@ public final class Environment {
     this.dataSource = dataSource;
   }
 
+  // 工厂模式
   public static class Builder {
       private String id;
       private TransactionFactory transactionFactory;
@@ -71,6 +75,7 @@ public final class Environment {
 
   }
 
+  // 只提供了getter方法， setter方法就是创建时的builder
   public String getId() {
     return this.id;
   }

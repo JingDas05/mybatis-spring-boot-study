@@ -106,10 +106,12 @@ public class CacheBuilder {
     return cache;
   }
 
+  // 默认是 PerpetualCache
   private void setDefaultImplementations() {
     if (implementation == null) {
       implementation = PerpetualCache.class;
       if (decorators.isEmpty()) {
+        //默认cache策略
         decorators.add(LruCache.class);
       }
     }

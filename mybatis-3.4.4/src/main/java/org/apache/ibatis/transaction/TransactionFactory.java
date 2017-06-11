@@ -30,6 +30,8 @@ import org.apache.ibatis.session.TransactionIsolationLevel;
 public interface TransactionFactory {
 
   /**
+   * 这个方法很重要，读取配置文件实例化的时候需要通过这个方法注入Properties参数
+   *
    * Sets transaction factory custom properties.
    * @param props
    */

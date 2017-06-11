@@ -29,6 +29,9 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 
 /**
+ *
+ * MappedStatement维护了一条<select|update|delete|insert>节点的封装；
+ *
  * @author Clinton Begin
  */
 public final class MappedStatement {

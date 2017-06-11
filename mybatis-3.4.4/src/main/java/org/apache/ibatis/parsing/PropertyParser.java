@@ -50,6 +50,7 @@ public class PropertyParser {
     // Prevent Instantiation
   }
 
+  //参数
   public static String parse(String string, Properties variables) {
     //构建 默认值处理器
     VariableTokenHandler handler = new VariableTokenHandler(variables);
@@ -82,7 +83,7 @@ public class PropertyParser {
       if (variables != null) {
         String key = content;
         // 如果允许默认值，解析content,把分割符前面的key取到，以及分隔符后面的默认值
-        // 之后调用properties 的 getProperty()方法取值
+        // 之后用key 调用properties 的 getProperty()方法取值
         if (enableDefaultValue) {
           final int separatorIndex = content.indexOf(defaultValueSeparator);
           String defaultValue = null;

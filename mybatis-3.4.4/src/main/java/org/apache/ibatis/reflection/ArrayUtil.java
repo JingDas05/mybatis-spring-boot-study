@@ -26,8 +26,7 @@ public class ArrayUtil {
   /**
    * Returns a hash code for {@code obj}.
    * 
-   * @param obj
-   *          The object to get a hash code for. May be an array or <code>null</code>.
+   * @param obj The object to get a hash code for. May be an array or <code>null</code>.
    * @return A hash code of {@code obj} or 0 if {@code obj} is <code>null</code>
    */
   public static int hashCode(Object obj) {
@@ -39,6 +38,8 @@ public class ArrayUtil {
     if (!clazz.isArray()) {
       return obj.hashCode();
     }
+
+    // 返回数组元素的类型，如果不是数组返回null
     final Class<?> componentType = clazz.getComponentType();
     if (long.class.equals(componentType)) {
       return Arrays.hashCode((long[]) obj);
