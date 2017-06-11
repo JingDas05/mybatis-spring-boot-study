@@ -69,11 +69,12 @@ public class MapperRegistry {
       }
       boolean loadCompleted = false;
       try {
+        // mapper存储的实际是代理工厂MapperProxyFactory，MapperProxyFactory的构造函数是要代理的接口
         knownMappers.put(type, new MapperProxyFactory<T>(type));
         // It's important that the type is added before the parser is run
         // otherwise the binding may automatically be attempted by the
         // mapper parser. If the type is already known, it won't try.
-        // 每一个接口级别的Mapper 都有各自的 MapperAnnotationBuilder
+        // 此方法的作用是处理接口级别的Mapper上面的注解，每一个接口级别的Mapper 都有各自的 MapperAnnotationBuilder
         MapperAnnotationBuilder parser = new MapperAnnotationBuilder(config, type);
         parser.parse();
         //如果上面的parse()失败了，那么loadCompleted不会置位，在finally中就会从knownMappers中移除掉class为type的mapper

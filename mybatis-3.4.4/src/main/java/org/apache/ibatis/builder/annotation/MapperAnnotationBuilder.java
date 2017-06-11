@@ -103,7 +103,8 @@ public class MapperAnnotationBuilder {
 
   public MapperAnnotationBuilder(Configuration configuration, Class<?> type) {
     String resource = type.getName().replace('.', '/') + ".java (best guess)";
-    // 每一个接口级别的Mapper 都有各自的MapperBuilderAssistant
+    // 每一个接口级别的 MapperAnnotationBuilder 都有各自的 MapperBuilderAssistant， MapperBuilderAssistant 和 MapperAnnotationBuilder 是组合关系
+    // XMLMapperBuilder消亡了BuilderAssistant也没了，contain-a的关系
     this.assistant = new MapperBuilderAssistant(configuration, resource);
     this.configuration = configuration;
     this.type = type;
@@ -121,13 +122,18 @@ public class MapperAnnotationBuilder {
   }
 
   public void parse() {
+    // 这里的resource 入参 eg: sample.mybatis.mapper.CityMapper
     String resource = type.toString();
     // configuration 里面的loadedResources是一个Set<String>集合
     if (!configuration.isResourceLoaded(resource)) {
+      // 开始loadXml，默认是在和接口相同的路径下，名字相同，后缀为.xml
       loadXmlResource();
       configuration.addLoadedResource(resource);
+      // 设置MapperBuilderAssistant当前的命名空间
       assistant.setCurrentNamespace(type.getName());
+      // 处理 @CacheNamespace 注解
       parseCache();
+      // 处理 @CacheNamespaceRef 注解
       parseCacheRef();
       Method[] methods = type.getMethods();
       for (Method method : methods) {
@@ -159,14 +165,14 @@ public class MapperAnnotationBuilder {
     }
   }
 
-  //type.getName()的值类似于 sample.mybatis.mapper.CityMapper
+  // 开始loadXml，默认是在和接口相同的路径下，名字相同，后缀为.xml
   private void loadXmlResource() {
     // Spring may not know the real resource name so we check a flag
     // to prevent loading again a resource twice
     // this flag is set at XMLMapperBuilder#bindMapperForNamespace
     // 如果没有解析过，开始loadXml，默认是在和接口相同的路径下，名字相同，后缀为.xml
     if (!configuration.isResourceLoaded("namespace:" + type.getName())) {
-      // 加载资源，需要把逗号换成正斜线
+      // 加载资源，需要把逗号换成正斜线， type.getName()的值类似于 sample.mybatis.mapper.CityMapper
       String xmlResource = type.getName().replace('.', '/') + ".xml";
       InputStream inputStream = null;
       try {
@@ -181,13 +187,14 @@ public class MapperAnnotationBuilder {
       }
     }
   }
-
+  //处理mapper 接口上有@CacheNamespace注解的逻辑
   private void parseCache() {
     CacheNamespace cacheDomain = type.getAnnotation(CacheNamespace.class);
     if (cacheDomain != null) {
       Integer size = cacheDomain.size() == 0 ? null : cacheDomain.size();
       Long flushInterval = cacheDomain.flushInterval() == 0 ? null : cacheDomain.flushInterval();
       Properties props = convertToProperties(cacheDomain.properties());
+      // // 调用 MapperBuilderAssistant useNewCache() 创建当前命名空间缓存
       assistant.useNewCache(cacheDomain.implementation(), cacheDomain.eviction(), flushInterval, size, cacheDomain.readWrite(), cacheDomain.blocking(), props);
     }
   }
@@ -204,6 +211,7 @@ public class MapperAnnotationBuilder {
     return props;
   }
 
+  //处理mapper 接口上有 @CacheNamespaceRef 注解的逻辑
   private void parseCacheRef() {
     // 获取Mapper上的@CacheNamespaceRef
     CacheNamespaceRef cacheDomainRef = type.getAnnotation(CacheNamespaceRef.class);
@@ -218,6 +226,7 @@ public class MapperAnnotationBuilder {
         throw new BuilderException("Cannot use both value() and name() attribute in the @CacheNamespaceRef");
       }
       String namespace = (refType != void.class) ? refType.getName() : refName;
+      // 调用 MapperBuilderAssistant useCacheRef() 创建当前命名空间缓存
       assistant.useCacheRef(namespace);
     }
   }

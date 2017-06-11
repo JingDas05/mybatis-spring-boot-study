@@ -50,6 +50,8 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
 /**
+ * mapperBuilder 辅助类
+ *
  * @author Clinton Begin
  */
 public class MapperBuilderAssistant extends BaseBuilder {
@@ -105,11 +107,13 @@ public class MapperBuilderAssistant extends BaseBuilder {
     return currentNamespace + "." + base;
   }
 
+  // 这个是引用别的命名空间的缓存，所以需要从configuration中取出
   public Cache useCacheRef(String namespace) {
     if (namespace == null) {
       throw new BuilderException("cache-ref element requires a namespace attribute.");
     }
     try {
+      // 标志位置位，如果下面的方法抛出异常，那么不能复位，线程不安全
       unresolvedCacheRef = true;
       Cache cache = configuration.getCache(namespace);
       if (cache == null) {
@@ -123,7 +127,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
     }
   }
 
-  // 实例化cache对象
+  // 实例化cache对象，入参分别为缓存实现类， 缓存失效策略，刷新周期， 缓存大小， 读写权限， 是否阻塞， 配置属性
   public Cache useNewCache(Class<? extends Cache> typeClass,
       Class<? extends Cache> evictionClass,
       Long flushInterval,
