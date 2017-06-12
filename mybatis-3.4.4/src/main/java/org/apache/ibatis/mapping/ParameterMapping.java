@@ -23,6 +23,8 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
+ * 参数映射
+ *
  * @author Clinton Begin
  */
 public class ParameterMapping {
@@ -106,6 +108,7 @@ public class ParameterMapping {
     }
 
     private void validate() {
+      //  如果参数是ResultSet，那么变量resultMapId不能为null
       if (ResultSet.class.equals(parameterMapping.javaType)) {
         if (parameterMapping.resultMapId == null) { 
           throw new IllegalStateException("Missing resultmap in property '"  
@@ -113,6 +116,7 @@ public class ParameterMapping {
               + "Parameters of type java.sql.ResultSet require a resultmap.");
         }            
       } else {
+        // 类型处理器不能为空
         if (parameterMapping.typeHandler == null) { 
           throw new IllegalStateException("Type handler was null on parameter mapping for property '"
             + parameterMapping.property + "'. It was either not specified and/or could not be found for the javaType ("

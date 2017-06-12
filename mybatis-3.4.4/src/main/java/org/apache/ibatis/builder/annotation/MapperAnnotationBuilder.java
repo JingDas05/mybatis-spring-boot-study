@@ -301,6 +301,7 @@ public class MapperAnnotationBuilder {
     return null;
   }
 
+  // 解析mapper接口的方法
   void parseStatement(Method method) {
     // parameterTypeClass这个变量为ParamMap.class
     Class<?> parameterTypeClass = getParameterType(method);
@@ -477,13 +478,17 @@ public class MapperAnnotationBuilder {
 
   private SqlSource getSqlSourceFromAnnotations(Method method, Class<?> parameterType, LanguageDriver languageDriver) {
     try {
+      //  @Select, @Insert, @Update, @Delete 获取前面四种注解中的一种
       Class<? extends Annotation> sqlAnnotationType = getSqlAnnotationType(method);
+      // @SelectProvider, @InsertProvider, @UpdateProvider, @DeleteProvider 获取前面四种注解中的一种
       Class<? extends Annotation> sqlProviderAnnotationType = getSqlProviderAnnotationType(method);
       if (sqlAnnotationType != null) {
         if (sqlProviderAnnotationType != null) {
+          // sqlAnnotationType 和 sqlProviderAnnotationType不能同时设定
           throw new BindingException("You cannot supply both a static SQL and SqlProvider to method named " + method.getName());
         }
         Annotation sqlAnnotation = method.getAnnotation(sqlAnnotationType);
+        // 获取value的值
         final String[] strings = (String[]) sqlAnnotation.getClass().getMethod("value").invoke(sqlAnnotation);
         return buildSqlSourceFromStrings(strings, parameterType, languageDriver);
       } else if (sqlProviderAnnotationType != null) {
@@ -535,10 +540,11 @@ public class MapperAnnotationBuilder {
   }
 
   private Class<? extends Annotation> getSqlProviderAnnotationType(Method method) {
+    // sqlProviderAnnotationTypes @SelectProvider, @InsertProvider, @UpdateProvider, @DeleteProvider
     return chooseAnnotationType(method, sqlProviderAnnotationTypes);
   }
 
-  // 获取method注解的注解 @Select, @Insert, @Update, @Delete中的一个
+  // 获取method注解的注解 types中的一个
   private Class<? extends Annotation> chooseAnnotationType(Method method, Set<Class<? extends Annotation>> types) {
     for (Class<? extends Annotation> type : types) {
       Annotation annotation = method.getAnnotation(type);

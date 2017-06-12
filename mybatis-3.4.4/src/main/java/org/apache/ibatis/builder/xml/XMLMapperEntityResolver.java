@@ -26,6 +26,7 @@ import org.xml.sax.SAXException;
 
 /**
  * Offline entity resolver for the MyBatis DTDs
+ * 离线的 xml约束解决器
  * 
  * @author Clinton Begin
  * @author Eduardo Macarron
@@ -49,6 +50,8 @@ public class XMLMapperEntityResolver implements EntityResolver {
    * 
    * @throws org.xml.sax.SAXException If anything goes wrong
    */
+  // 参数systemId: http://mybatis.org/dtd/mybatis-3-config.dtd
+  // 参数publicId: -//mybatis.org//DTD Config 3.0//EN
   @Override
   public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
     try {

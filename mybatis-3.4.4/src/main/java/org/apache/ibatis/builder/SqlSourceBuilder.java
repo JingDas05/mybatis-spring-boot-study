@@ -29,6 +29,9 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
 
 /**
+ *
+ * 主要是定义了一个ParameterMappingTokenHandler，解析 #{}的实际值
+ *
  * @author Clinton Begin
  */
 public class SqlSourceBuilder extends BaseBuilder {
@@ -39,6 +42,7 @@ public class SqlSourceBuilder extends BaseBuilder {
     super(configuration);
   }
 
+  // 将#{} 解析成？ 例如select * from city where id = ?
   public SqlSource parse(String originalSql, Class<?> parameterType, Map<String, Object> additionalParameters) {
     ParameterMappingTokenHandler handler = new ParameterMappingTokenHandler(configuration, parameterType, additionalParameters);
     GenericTokenParser parser = new GenericTokenParser("#{", "}", handler);
