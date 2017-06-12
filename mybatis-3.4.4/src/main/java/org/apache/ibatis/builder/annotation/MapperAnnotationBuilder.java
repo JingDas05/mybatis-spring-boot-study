@@ -131,14 +131,14 @@ public class MapperAnnotationBuilder {
       configuration.addLoadedResource(resource);
       // 设置MapperBuilderAssistant当前的命名空间
       assistant.setCurrentNamespace(type.getName());
-      // 处理 @CacheNamespace 注解
+      // 处理mapper接口上 @CacheNamespace 注解
       parseCache();
-      // 处理 @CacheNamespaceRef 注解
+      // 处理mapper接口上 @CacheNamespaceRef 注解
       parseCacheRef();
       Method[] methods = type.getMethods();
       for (Method method : methods) {
         try {
-          // issue #237
+          // issue #237 判断是否是桥接方法
           if (!method.isBridge()) {
             parseStatement(method);
           }
@@ -302,7 +302,9 @@ public class MapperAnnotationBuilder {
   }
 
   void parseStatement(Method method) {
+    // parameterTypeClass这个变量为ParamMap.class
     Class<?> parameterTypeClass = getParameterType(method);
+    // LanguageDriver 可以通过注解和java配置实现Dynamic SQL(不通过配置文件)，动态sql处理者
     LanguageDriver languageDriver = getLanguageDriver(method);
     SqlSource sqlSource = getSqlSourceFromAnnotations(method, parameterTypeClass, languageDriver);
     if (sqlSource != null) {
@@ -393,13 +395,15 @@ public class MapperAnnotationBuilder {
           options != null ? nullOrEmpty(options.resultSets()) : null);
     }
   }
-  
+
+  // 处理mapper接口中方法上的@Lang注解，自定义动态sql语句
   private LanguageDriver getLanguageDriver(Method method) {
     Lang lang = method.getAnnotation(Lang.class);
     Class<?> langClass = null;
     if (lang != null) {
       langClass = lang.value();
     }
+    // 具体的逻辑实现由MapperBuilderAssistant完成
     return assistant.getLanguageDriver(langClass);
   }
 
@@ -407,11 +411,12 @@ public class MapperAnnotationBuilder {
     Class<?> parameterType = null;
     Class<?>[] parameterTypes = method.getParameterTypes();
     for (Class<?> currentParameterType : parameterTypes) {
+      // 如果currentParameterType 的父类不是RowBounds 且 不是ResultHandler
       if (!RowBounds.class.isAssignableFrom(currentParameterType) && !ResultHandler.class.isAssignableFrom(currentParameterType)) {
         if (parameterType == null) {
           parameterType = currentParameterType;
         } else {
-          // issue #135
+          // issue #135 这个地方循环之后 肯定为ParamMap了
           parameterType = ParamMap.class;
         }
       }
@@ -525,6 +530,7 @@ public class MapperAnnotationBuilder {
   }
 
   private Class<? extends Annotation> getSqlAnnotationType(Method method) {
+    // sqlAnnotationTypes @Select, @Insert, @Update, @Delete
     return chooseAnnotationType(method, sqlAnnotationTypes);
   }
 
@@ -532,6 +538,7 @@ public class MapperAnnotationBuilder {
     return chooseAnnotationType(method, sqlProviderAnnotationTypes);
   }
 
+  // 获取method注解的注解 @Select, @Insert, @Update, @Delete中的一个
   private Class<? extends Annotation> chooseAnnotationType(Method method, Set<Class<? extends Annotation>> types) {
     for (Class<? extends Annotation> type : types) {
       Annotation annotation = method.getAnnotation(type);

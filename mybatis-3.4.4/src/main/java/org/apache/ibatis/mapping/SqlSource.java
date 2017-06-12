@@ -19,6 +19,9 @@ package org.apache.ibatis.mapping;
  * Represents the content of a mapped statement read from an XML file or an annotation. 
  * It creates the SQL that will be passed to the database out of the input parameter received from the user.
  *
+ * SqlSource Sql源接口，代表从xml文件或注解映射的sql内容，主要就是用于创建BoundSql，
+ * 有实现类DynamicSqlSource(动态Sql源)，StaticSqlSource(静态Sql源)等
+ *
  * @author Clinton Begin
  */
 public interface SqlSource {

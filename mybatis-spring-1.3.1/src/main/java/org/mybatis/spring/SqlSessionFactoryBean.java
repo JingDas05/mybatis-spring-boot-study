@@ -124,32 +124,16 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
 
     private ObjectWrapperFactory objectWrapperFactory;
 
-    /**
-     * Sets the ObjectFactory.
-     *
-     * @since 1.1.2
-     * @param objectFactory
-     */
+    //@since 1.1.2
     public void setObjectFactory(ObjectFactory objectFactory) {
         this.objectFactory = objectFactory;
     }
 
-    /**
-     * Sets the ObjectWrapperFactory.
-     *
-     * @since 1.1.2
-     * @param objectWrapperFactory
-     */
+    //@since 1.1.2
     public void setObjectWrapperFactory(ObjectWrapperFactory objectWrapperFactory) {
         this.objectWrapperFactory = objectWrapperFactory;
     }
-
-    /**
-     * Gets the DatabaseIdProvider
-     *
-     * @since 1.1.0
-     * @return
-     */
+    //@since 1.1.0
     public DatabaseIdProvider getDatabaseIdProvider() {
         return databaseIdProvider;
     }
@@ -157,9 +141,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
     /**
      * Sets the DatabaseIdProvider.
      * As of version 1.2.2 this variable is not initialized by default.
-     *
      * @since 1.1.0
-     * @param databaseIdProvider
      */
     public void setDatabaseIdProvider(DatabaseIdProvider databaseIdProvider) {
         this.databaseIdProvider = databaseIdProvider;
@@ -181,26 +163,11 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
         this.cache = cache;
     }
 
-    /**
-     * Mybatis plugin list.
-     *
-     * @since 1.0.1
-     *
-     * @param plugins list of plugins
-     *
-     */
+    //@since 1.0.1
     public void setPlugins(Interceptor[] plugins) {
         this.plugins = plugins;
     }
-
-    /**
-     * Packages to search for type aliases.
-     *
-     * @since 1.0.1
-     *
-     * @param typeAliasesPackage package to scan for domain objects
-     *
-     */
+    //@since 1.0.1
     public void setTypeAliasesPackage(String typeAliasesPackage) {
         this.typeAliasesPackage = typeAliasesPackage;
     }
@@ -218,36 +185,17 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
         this.typeAliasesSuperType = typeAliasesSuperType;
     }
 
-    /**
-     * Packages to search for type handlers.
-     *
-     * @since 1.0.1
-     *
-     * @param typeHandlersPackage package to scan for type handlers
-     *
-     */
+    //@since 1.0.1
     public void setTypeHandlersPackage(String typeHandlersPackage) {
         this.typeHandlersPackage = typeHandlersPackage;
     }
 
-    /**
-     * Set type handlers. They must be annotated with {@code MappedTypes} and optionally with {@code MappedJdbcTypes}
-     *
-     * @since 1.0.1
-     *
-     * @param typeHandlers Type handler list
-     */
+    //设置类型处理器，@MappedTypes是必须的，@MappedJdbcTypes是可选的，@since 1.0.1
     public void setTypeHandlers(TypeHandler<?>[] typeHandlers) {
         this.typeHandlers = typeHandlers;
     }
 
-    /**
-     * List of type aliases to register. They can be annotated with {@code Alias}
-     *
-     * @since 1.0.1
-     *
-     * @param typeAliases Type aliases list
-     */
+    //@since 1.0.1 别名列表，可被@Alias 注解注释的类
     public void setTypeAliases(Class<?>[] typeAliases) {
         this.typeAliases = typeAliases;
     }
@@ -256,9 +204,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
      * If true, a final check is done on Configuration to assure that all mapped
      * statements are fully loaded and there is no one still pending to resolve
      * includes. Defaults to false.
-     *
      * @since 1.0.1
-     *
      * @param failFast enable failFast
      */
     public void setFailFast(boolean failFast) {
@@ -406,7 +352,8 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
         Configuration configuration;
 
         XMLConfigBuilder xmlConfigBuilder = null;
-        //首先读取springBoot的配置，其次xml配置，如果都没有就采取默认配置
+        //configurationProperties 放到 configuration.variables 变量里,这个地方支持直接用java config配置
+        //这样就不会执行if (this.configLocation != null)这个判断
         if (this.configuration != null) {
             configuration = this.configuration;
             //configurationProperties 放到 configuration.variables 变量里

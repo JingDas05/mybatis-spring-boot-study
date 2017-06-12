@@ -81,6 +81,9 @@ public class XMLConfigBuilder extends BaseBuilder {
     this(new XPathParser(inputStream, true, props, new XMLMapperEntityResolver()), environment, props);
   }
 
+  // 私有方法，实际调用的方法
+  // 这个地方实际需要的是XPathParser对象，XPathParser的初始化需要
+  // InputStream inputStream, boolean validation, Properties variables, EntityResolver entityResolver
   private XMLConfigBuilder(XPathParser parser, String environment, Properties props) {
     super(new Configuration());
     ErrorContext.instance().resource("SQL Mapper Configuration");

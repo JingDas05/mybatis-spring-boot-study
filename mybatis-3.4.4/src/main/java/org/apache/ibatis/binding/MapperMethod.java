@@ -198,6 +198,7 @@ public class MapperMethod {
 
     @Override
     public V get(Object key) {
+      // 重写override HashMap 的 get()方法，如果不包含key就抛出BindingException
       if (!super.containsKey(key)) {
         throw new BindingException("Parameter '" + key + "' not found. Available parameters are " + keySet());
       }

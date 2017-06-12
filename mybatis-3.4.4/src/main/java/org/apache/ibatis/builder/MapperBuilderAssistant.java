@@ -480,7 +480,9 @@ public class MapperBuilderAssistant extends BaseBuilder {
         nestedResultMap, notNullColumn, columnPrefix, typeHandler, flags, null, null, configuration.isLazyLoadingEnabled());
   }
 
+  // 通过@Lang注解的类 获取LanguageDriver实例
   public LanguageDriver getLanguageDriver(Class<?> langClass) {
+    //先注册后返回，如果为入参为空，使用默认XMLLanguageDriver，在configuration中设置的
     if (langClass != null) {
       configuration.getLanguageRegistry().register(langClass);
     } else {

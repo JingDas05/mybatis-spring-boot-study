@@ -16,6 +16,9 @@
 package org.apache.ibatis.session;
 
 /**
+ *
+ * 行边界，自带的查询分页
+ *
  * @author Clinton Begin
  */
 public class RowBounds {
@@ -27,11 +30,12 @@ public class RowBounds {
   private int offset;
   private int limit;
 
+  // 默认构造函数采用默认值
   public RowBounds() {
     this.offset = NO_ROW_OFFSET;
     this.limit = NO_ROW_LIMIT;
   }
-
+  // 有参构造函数，初始化查询偏移和数量
   public RowBounds(int offset, int limit) {
     this.offset = offset;
     this.limit = limit;
