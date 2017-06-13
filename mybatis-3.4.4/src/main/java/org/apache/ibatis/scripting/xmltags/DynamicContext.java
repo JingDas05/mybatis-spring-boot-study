@@ -43,12 +43,17 @@ public class DynamicContext {
   private int uniqueNumber = 0;
 
   public DynamicContext(Configuration configuration, Object parameterObject) {
+    // 构建contextMap 参数是parameterObject的metaData
+    // 判断parameterObject是否为空，不为空的话通过configuration取出MetaObject,构建ContextMap赋值给bindings，
+    // 否则直接构建null参数的ContextMap赋值给binds
     if (parameterObject != null && !(parameterObject instanceof Map)) {
+      //构建工作交给了configuration
       MetaObject metaObject = configuration.newMetaObject(parameterObject);
       bindings = new ContextMap(metaObject);
     } else {
       bindings = new ContextMap(null);
     }
+    // bindings赋值，_parameter的值为parameterObject， _databaseId的值为configuration.getDatabaseId()
     bindings.put(PARAMETER_OBJECT_KEY, parameterObject);
     bindings.put(DATABASE_ID_KEY, configuration.getDatabaseId());
   }
@@ -74,6 +79,7 @@ public class DynamicContext {
     return uniqueNumber++;
   }
 
+
   static class ContextMap extends HashMap<String, Object> {
     private static final long serialVersionUID = 2977601501966151582L;
 
@@ -89,6 +95,7 @@ public class DynamicContext {
         return super.get(strKey);
       }
 
+      // 如果没有的，从MetaObject寻找
       if (parameterMetaObject != null) {
         // issue #61 do not modify the context when reading
         return parameterMetaObject.getValue(strKey);
