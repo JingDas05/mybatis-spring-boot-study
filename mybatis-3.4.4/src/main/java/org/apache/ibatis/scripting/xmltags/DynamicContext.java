@@ -27,6 +27,9 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
 
 /**
+ *
+ * 构建sqlSource时需要的动态上下文
+ *
  * @author Clinton Begin
  */
 public class DynamicContext {
@@ -54,6 +57,7 @@ public class DynamicContext {
       bindings = new ContextMap(null);
     }
     // bindings赋值，_parameter的值为parameterObject， _databaseId的值为configuration.getDatabaseId()
+    // 这里的parameterObject是map类型的，因为上面已经确认了
     bindings.put(PARAMETER_OBJECT_KEY, parameterObject);
     bindings.put(DATABASE_ID_KEY, configuration.getDatabaseId());
   }
@@ -71,10 +75,12 @@ public class DynamicContext {
     sqlBuilder.append(" ");
   }
 
+  //获取sql语句，去掉前后空格
   public String getSql() {
     return sqlBuilder.toString().trim();
   }
 
+  // 获取自增number
   public int getUniqueNumber() {
     return uniqueNumber++;
   }
@@ -83,6 +89,7 @@ public class DynamicContext {
   static class ContextMap extends HashMap<String, Object> {
     private static final long serialVersionUID = 2977601501966151582L;
 
+    // 成员变量的作用，如果contextMap找不到，那么从这个变量里找
     private MetaObject parameterMetaObject;
     public ContextMap(MetaObject parameterMetaObject) {
       this.parameterMetaObject = parameterMetaObject;
@@ -105,6 +112,7 @@ public class DynamicContext {
     }
   }
 
+  // OgnlRuntime需要
   static class ContextAccessor implements PropertyAccessor {
 
     @Override
@@ -112,22 +120,24 @@ public class DynamicContext {
         throws OgnlException {
       Map map = (Map) target;
 
+      // 从target map 中获取key为name的值
       Object result = map.get(name);
       if (map.containsKey(name) || result != null) {
         return result;
       }
-
+      // 如果没获取到， 从target map 中获取 key 为_parameter的值，强转map, 再根据name获取
       Object parameterObject = map.get(PARAMETER_OBJECT_KEY);
       if (parameterObject instanceof Map) {
         return ((Map)parameterObject).get(name);
       }
-
+      // 没找到返回空
       return null;
     }
 
     @Override
     public void setProperty(Map context, Object target, Object name, Object value)
         throws OgnlException {
+      // 设置属性，key:name value:value to target
       Map<Object, Object> map = (Map<Object, Object>) target;
       map.put(name, value);
     }

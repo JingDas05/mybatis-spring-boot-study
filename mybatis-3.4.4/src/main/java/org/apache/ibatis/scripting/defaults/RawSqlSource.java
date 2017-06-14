@@ -47,6 +47,7 @@ public class RawSqlSource implements SqlSource {
   }
 
   private static String getSql(Configuration configuration, SqlNode rootSqlNode) {
+    // 初始化DynamicContext
     DynamicContext context = new DynamicContext(configuration, null);
     rootSqlNode.apply(context);
     return context.getSql();
