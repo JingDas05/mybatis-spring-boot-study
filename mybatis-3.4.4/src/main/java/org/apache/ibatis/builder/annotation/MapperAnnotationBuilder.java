@@ -140,6 +140,7 @@ public class MapperAnnotationBuilder {
         try {
           // issue #237 判断是否是桥接方法
           if (!method.isBridge()) {
+            // 解析mapper接口里面的方法
             parseStatement(method);
           }
         } catch (IncompleteElementException e) {
@@ -307,6 +308,7 @@ public class MapperAnnotationBuilder {
     Class<?> parameterTypeClass = getParameterType(method);
     // LanguageDriver 可以通过注解和java配置实现Dynamic SQL(不通过配置文件)，动态sql处理者
     LanguageDriver languageDriver = getLanguageDriver(method);
+    // get sqlSource from Annotations
     SqlSource sqlSource = getSqlSourceFromAnnotations(method, parameterTypeClass, languageDriver);
     if (sqlSource != null) {
       Options options = method.getAnnotation(Options.class);
@@ -488,7 +490,7 @@ public class MapperAnnotationBuilder {
           throw new BindingException("You cannot supply both a static SQL and SqlProvider to method named " + method.getName());
         }
         Annotation sqlAnnotation = method.getAnnotation(sqlAnnotationType);
-        // 获取value的值
+        // 获取value的值,即sql语句
         final String[] strings = (String[]) sqlAnnotation.getClass().getMethod("value").invoke(sqlAnnotation);
         return buildSqlSourceFromStrings(strings, parameterType, languageDriver);
       } else if (sqlProviderAnnotationType != null) {

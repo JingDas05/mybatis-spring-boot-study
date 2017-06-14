@@ -19,5 +19,7 @@ package org.apache.ibatis.scripting.xmltags;
  * @author Clinton Begin
  */
 public interface SqlNode {
+
+  // 这个作用是根据传入的name, expression解析，解析之后进行绑定，context.bind(name, value)
   boolean apply(DynamicContext context);
 }

@@ -28,6 +28,7 @@ public class VarDeclSqlNode implements SqlNode {
     expression = exp;
   }
 
+  // 这个作用是根据传入的name, expression解析，解析之后进行绑定，context.bind(name, value)
   @Override
   public boolean apply(DynamicContext context) {
     final Object value = OgnlCache.getValue(expression, context.getBindings());

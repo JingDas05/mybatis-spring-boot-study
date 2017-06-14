@@ -48,9 +48,11 @@ public class XMLScriptBuilder extends BaseBuilder {
     this.parameterType = parameterType;
   }
 
+  // 解析script节点
   public SqlSource parseScriptNode() {
     List<SqlNode> contents = parseDynamicTags(context);
     MixedSqlNode rootSqlNode = new MixedSqlNode(contents);
+    // 初始化sqlSource，需要sqlNode, sqlNode是接口，实现类包括TextSqlNode和MixedSqlNode等
     SqlSource sqlSource = null;
     if (isDynamic) {
       sqlSource = new DynamicSqlSource(configuration, rootSqlNode);
@@ -67,14 +69,18 @@ public class XMLScriptBuilder extends BaseBuilder {
       XNode child = node.newXNode(children.item(i));
       if (child.getNode().getNodeType() == Node.CDATA_SECTION_NODE || child.getNode().getNodeType() == Node.TEXT_NODE) {
         String data = child.getStringBody("");
+        // 建立文本sqlNode
         TextSqlNode textSqlNode = new TextSqlNode(data);
+        // 添加动态sqlNode
         if (textSqlNode.isDynamic()) {
           contents.add(textSqlNode);
           isDynamic = true;
         } else {
+          // 添加静态sqlNode
           contents.add(new StaticTextSqlNode(data));
         }
-      } else if (child.getNode().getNodeType() == Node.ELEMENT_NODE) { // issue #628
+      } else if (child.getNode().getNodeType() == Node.ELEMENT_NODE) {
+        // issue #628
         String nodeName = child.getNode().getNodeName();
         NodeHandler handler = nodeHandlers(nodeName);
         if (handler == null) {
@@ -105,6 +111,7 @@ public class XMLScriptBuilder extends BaseBuilder {
     void handleNode(XNode nodeToHandle, List<SqlNode> targetContents);
   }
 
+  // 绑定处理器
   private class BindHandler implements NodeHandler {
     public BindHandler() {
       // Prevent Synthetic Access
@@ -114,10 +121,12 @@ public class XMLScriptBuilder extends BaseBuilder {
     public void handleNode(XNode nodeToHandle, List<SqlNode> targetContents) {
       final String name = nodeToHandle.getStringAttribute("name");
       final String expression = nodeToHandle.getStringAttribute("value");
+      // 创建VarDeclSqlNode
       final VarDeclSqlNode node = new VarDeclSqlNode(name, expression);
       targetContents.add(node);
     }
   }
+
 
   private class TrimHandler implements NodeHandler {
     public TrimHandler() {
