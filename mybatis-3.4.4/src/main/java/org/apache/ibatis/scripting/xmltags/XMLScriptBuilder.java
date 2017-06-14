@@ -80,7 +80,7 @@ public class XMLScriptBuilder extends BaseBuilder {
           contents.add(new StaticTextSqlNode(data));
         }
       } else if (child.getNode().getNodeType() == Node.ELEMENT_NODE) {
-        // issue #628
+        // issue #628 解析动态sql标签 if， choose (when, otherwise)， trim (where, set) ， foreach等
         String nodeName = child.getNode().getNodeName();
         NodeHandler handler = nodeHandlers(nodeName);
         if (handler == null) {
