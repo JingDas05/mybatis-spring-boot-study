@@ -462,7 +462,6 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
             try {
                 //这个方法很重要，这样才会解析配置文件，并且将解析内容置入configuration对象
                 xmlConfigBuilder.parse();
-
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Parsed configuration file: '" + this.configLocation + "'");
                 }

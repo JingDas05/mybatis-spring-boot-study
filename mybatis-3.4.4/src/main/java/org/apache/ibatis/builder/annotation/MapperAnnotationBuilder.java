@@ -308,7 +308,7 @@ public class MapperAnnotationBuilder {
     Class<?> parameterTypeClass = getParameterType(method);
     // LanguageDriver 可以通过注解和java配置实现Dynamic SQL(不通过配置文件)，动态sql处理者
     LanguageDriver languageDriver = getLanguageDriver(method);
-    // get sqlSource from Annotations
+    // get sqlSource from Annotations, 从注解中构建sqlSource
     SqlSource sqlSource = getSqlSourceFromAnnotations(method, parameterTypeClass, languageDriver);
     if (sqlSource != null) {
       Options options = method.getAnnotation(Options.class);
