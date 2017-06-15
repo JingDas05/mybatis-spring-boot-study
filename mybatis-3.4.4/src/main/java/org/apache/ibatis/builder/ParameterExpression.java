@@ -18,6 +18,9 @@ package org.apache.ibatis.builder;
 import java.util.HashMap;
 
 /**
+ *
+ *  本类的作用是 #{property,javaType=int,jdbcType=NUMERIC} 这样的内容转换成一个 map:
+ *
  * Inline parameter expression parser. Supported grammar (simplified):
  * 
  * <pre>
@@ -71,6 +74,7 @@ public class ParameterExpression extends HashMap<String, String> {
     }
   }
 
+  // 跳过空白符
   private int skipWS(String expression, int p) {
     for (int i = p; i < expression.length(); i++) {
       if (expression.charAt(i) > 0x20) {

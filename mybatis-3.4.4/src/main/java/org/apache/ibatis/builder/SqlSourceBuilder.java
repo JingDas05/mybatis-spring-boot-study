@@ -45,13 +45,16 @@ public class SqlSourceBuilder extends BaseBuilder {
   // 将#{} 解析成？ 例如select * from city where id = ?
   public SqlSource parse(String originalSql, Class<?> parameterType, Map<String, Object> additionalParameters) {
     ParameterMappingTokenHandler handler = new ParameterMappingTokenHandler(configuration, parameterType, additionalParameters);
+    // 解析入参 #{}，解析之后的 parameterMappings 在 ParameterMappingTokenHandler中
     GenericTokenParser parser = new GenericTokenParser("#{", "}", handler);
+    // parse后将 #{} 换成 ？
     String sql = parser.parse(originalSql);
     return new StaticSqlSource(configuration, sql, handler.getParameterMappings());
   }
 
   private static class ParameterMappingTokenHandler extends BaseBuilder implements TokenHandler {
 
+    // 参数映射列表
     private List<ParameterMapping> parameterMappings = new ArrayList<ParameterMapping>();
     private Class<?> parameterType;
     private MetaObject metaParameters;
@@ -68,7 +71,9 @@ public class SqlSourceBuilder extends BaseBuilder {
 
     @Override
     public String handleToken(String content) {
+      // 构建参数映射
       parameterMappings.add(buildParameterMapping(content));
+      // parse后将 #{} 换成 ？
       return "?";
     }
 
@@ -137,5 +142,4 @@ public class SqlSourceBuilder extends BaseBuilder {
       }
     }
   }
-
 }

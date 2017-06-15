@@ -129,7 +129,7 @@ public class MapperAnnotationBuilder {
       // 开始loadXml，默认是在和接口相同的路径下，名字相同，后缀为.xml
       loadXmlResource();
       configuration.addLoadedResource(resource);
-      // 设置MapperBuilderAssistant当前的命名空间
+      // 设置MapperBuilderAssistant当前的命名空间 sample.mybatis.mapper.CityMapper
       assistant.setCurrentNamespace(type.getName());
       // 处理mapper接口上 @CacheNamespace 注解
       parseCache();
@@ -312,7 +312,9 @@ public class MapperAnnotationBuilder {
     SqlSource sqlSource = getSqlSourceFromAnnotations(method, parameterTypeClass, languageDriver);
     if (sqlSource != null) {
       Options options = method.getAnnotation(Options.class);
+      // 每个方法的id 为接口名（命名空间）. 方法名,不可修改
       final String mappedStatementId = type.getName() + "." + method.getName();
+      // 设置默认值
       Integer fetchSize = null;
       Integer timeout = null;
       StatementType statementType = StatementType.PREPARED;
@@ -325,6 +327,8 @@ public class MapperAnnotationBuilder {
       KeyGenerator keyGenerator;
       String keyProperty = "id";
       String keyColumn = null;
+      // 开始读取自定义配置
+      // 指定 keyGenerator
       if (SqlCommandType.INSERT.equals(sqlCommandType) || SqlCommandType.UPDATE.equals(sqlCommandType)) {
         // first check for SelectKey annotation - that overrides everything else
         SelectKey selectKey = method.getAnnotation(SelectKey.class);
@@ -341,7 +345,7 @@ public class MapperAnnotationBuilder {
       } else {
         keyGenerator = NoKeyGenerator.INSTANCE;
       }
-
+      // 设置是否flushCache
       if (options != null) {
         if (FlushCachePolicy.TRUE.equals(options.flushCache())) {
           flushCache = true;
@@ -361,6 +365,7 @@ public class MapperAnnotationBuilder {
         String[] resultMaps = resultMapAnnotation.value();
         StringBuilder sb = new StringBuilder();
         for (String resultMap : resultMaps) {
+          // 防止句首防止逗号
           if (sb.length() > 0) {
             sb.append(",");
           }
@@ -414,7 +419,8 @@ public class MapperAnnotationBuilder {
     Class<?> parameterType = null;
     Class<?>[] parameterTypes = method.getParameterTypes();
     for (Class<?> currentParameterType : parameterTypes) {
-      // 如果currentParameterType 的父类不是RowBounds 且 不是ResultHandler
+      // 如果currentParameterType 的父类不是RowBounds 且 不是ResultHandler，
+      // 如果有一个参数，就将当前的参数类型置为那个参数的类型，如果有多个参数，参数类型就是ParamMap
       if (!RowBounds.class.isAssignableFrom(currentParameterType) && !ResultHandler.class.isAssignableFrom(currentParameterType)) {
         if (parameterType == null) {
           parameterType = currentParameterType;
@@ -515,6 +521,7 @@ public class MapperAnnotationBuilder {
   private SqlCommandType getSqlCommandType(Method method) {
     Class<? extends Annotation> type = getSqlAnnotationType(method);
 
+    //如果注解type为空，就取sqlProviderAnnotationType
     if (type == null) {
       type = getSqlProviderAnnotationType(method);
 

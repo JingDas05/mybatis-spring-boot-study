@@ -210,6 +210,7 @@ public class MapperMethod {
   public static class SqlCommand {
 
     private final String name;
+    // UNKNOWN, INSERT, UPDATE, DELETE, SELECT, FLUSH;
     private final SqlCommandType type;
 
     public SqlCommand(Configuration configuration, Class<?> mapperInterface, Method method) {

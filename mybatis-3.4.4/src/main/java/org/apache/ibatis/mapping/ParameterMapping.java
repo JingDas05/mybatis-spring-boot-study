@@ -103,6 +103,7 @@ public class ParameterMapping {
 
     public ParameterMapping build() {
       resolveTypeHandler();
+      // 验证， javaType为ResultSet，那么resultMapId不能为空，typeHandler不能为空
       validate();
       return parameterMapping;
     }
@@ -125,6 +126,7 @@ public class ParameterMapping {
       }
     }
 
+    // 处理typeHandler为空，但是javaType的情况
     private void resolveTypeHandler() {
       if (parameterMapping.typeHandler == null && parameterMapping.javaType != null) {
         Configuration configuration = parameterMapping.configuration;
