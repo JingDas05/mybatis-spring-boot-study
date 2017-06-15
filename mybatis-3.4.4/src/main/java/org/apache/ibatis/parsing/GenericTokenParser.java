@@ -17,6 +17,7 @@ package org.apache.ibatis.parsing;
 
 /**
  * 公共token解析器，构造函数是openToken 和 closeToken token处理器
+ * 这个公共解析器抽象的很好
  *
  * @author Clinton Begin
  */
@@ -32,7 +33,7 @@ public class GenericTokenParser {
     this.handler = handler;
   }
 
-  // 解析，参数在调用方法的时候传入
+  // 解析，参数在调用方法的时候传入,精华是这个类不与参数耦合，参数通过调用方法时传递进来
   public String parse(String text) {
     if (text == null || text.isEmpty()) {
       return "";

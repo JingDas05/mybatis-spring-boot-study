@@ -32,7 +32,8 @@ public class TextSqlNode implements SqlNode {
   public TextSqlNode(String text) {
     this(text, null);
   }
-  
+
+  // 可以传入过滤器，根据正则
   public TextSqlNode(String text, Pattern injectionFilter) {
     this.text = text;
     this.injectionFilter = injectionFilter;
