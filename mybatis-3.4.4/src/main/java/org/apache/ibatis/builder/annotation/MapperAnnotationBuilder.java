@@ -321,9 +321,10 @@ public class MapperAnnotationBuilder {
       ResultSetType resultSetType = ResultSetType.FORWARD_ONLY;
       SqlCommandType sqlCommandType = getSqlCommandType(method);
       boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
+      // 如果不是select，刷新缓存置位
       boolean flushCache = !isSelect;
+      // 如果是select, 用缓存
       boolean useCache = isSelect;
-
       KeyGenerator keyGenerator;
       String keyProperty = "id";
       String keyColumn = null;
@@ -331,6 +332,7 @@ public class MapperAnnotationBuilder {
       // 指定 keyGenerator
       if (SqlCommandType.INSERT.equals(sqlCommandType) || SqlCommandType.UPDATE.equals(sqlCommandType)) {
         // first check for SelectKey annotation - that overrides everything else
+        // SelectKey在Mybatis中是为了解决Insert数据时不支持主键自动生成的问题
         SelectKey selectKey = method.getAnnotation(SelectKey.class);
         if (selectKey != null) {
           keyGenerator = handleSelectKeyAnnotation(selectKey, mappedStatementId, getParameterType(method), languageDriver);
@@ -342,7 +344,8 @@ public class MapperAnnotationBuilder {
           keyProperty = options.keyProperty();
           keyColumn = options.keyColumn();
         }
-      } else {
+      } //如果不是 INSERT 或者 UPDATE方法
+      else {
         keyGenerator = NoKeyGenerator.INSTANCE;
       }
       // 设置是否flushCache
@@ -353,7 +356,8 @@ public class MapperAnnotationBuilder {
           flushCache = false;
         }
         useCache = options.useCache();
-        fetchSize = options.fetchSize() > -1 || options.fetchSize() == Integer.MIN_VALUE ? options.fetchSize() : null; //issue #348
+        //issue #348
+        fetchSize = options.fetchSize() > -1 || options.fetchSize() == Integer.MIN_VALUE ? options.fetchSize() : null;
         timeout = options.timeout() > -1 ? options.timeout() : null;
         statementType = options.statementType();
         resultSetType = options.resultSetType();
@@ -373,9 +377,11 @@ public class MapperAnnotationBuilder {
         }
         resultMapId = sb.toString();
       } else if (isSelect) {
+        // 如果是select方法，设置resultMapId
         resultMapId = parseResultMap(method);
       }
 
+      // 核心方法， MapperBuilderAssistant 添加MappedStatement
       assistant.addMappedStatement(
           mappedStatementId,
           sqlSource,
@@ -521,7 +527,7 @@ public class MapperAnnotationBuilder {
   private SqlCommandType getSqlCommandType(Method method) {
     Class<? extends Annotation> type = getSqlAnnotationType(method);
 
-    //如果注解type为空，就取sqlProviderAnnotationType
+    //如果注解sqlAnnotationType为空，就取sqlProviderAnnotationType
     if (type == null) {
       type = getSqlProviderAnnotationType(method);
 

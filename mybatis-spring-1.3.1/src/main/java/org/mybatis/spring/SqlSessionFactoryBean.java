@@ -472,6 +472,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
             }
         }
 
+        // 设置策略工厂
         if (this.transactionFactory == null) {
             this.transactionFactory = new SpringManagedTransactionFactory();
         }
