@@ -132,11 +132,12 @@ public class SqlSessionTemplate implements SqlSession, DisposableBean {
     this.sqlSessionFactory = sqlSessionFactory;
     this.executorType = executorType;
     this.exceptionTranslator = exceptionTranslator;
+    // 创建代理，加入spring事务管理器
     this.sqlSessionProxy = (SqlSession) newProxyInstance(
         SqlSessionFactory.class.getClassLoader(),
         new Class[] { SqlSession.class },
         new SqlSessionInterceptor());
-  }
+}
 
   public SqlSessionFactory getSqlSessionFactory() {
     return this.sqlSessionFactory;

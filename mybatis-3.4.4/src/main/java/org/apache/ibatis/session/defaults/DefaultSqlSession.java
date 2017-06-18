@@ -41,6 +41,8 @@ import org.apache.ibatis.session.SqlSession;
 
 /**
  *
+ * 处理会话的核心类
+ *
  * The default implementation for {@link SqlSession}.
  * Note that this class is not Thread-Safe.
  *
@@ -317,6 +319,7 @@ public class DefaultSqlSession implements SqlSession {
     return (!autoCommit && dirty) || force;
   }
 
+  // 如果是容器，封装成object
   private Object wrapCollection(final Object object) {
     if (object instanceof Collection) {
       StrictMap<Object> map = new StrictMap<Object>();

@@ -51,6 +51,7 @@ public class BatchExecutor extends BaseExecutor {
     super(configuration, transaction);
   }
 
+  //核心方法，update
   @Override
   public int doUpdate(MappedStatement ms, Object parameterObject) throws SQLException {
     final Configuration configuration = ms.getConfiguration();

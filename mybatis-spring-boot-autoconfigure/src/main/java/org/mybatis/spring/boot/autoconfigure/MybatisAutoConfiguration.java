@@ -108,6 +108,8 @@ public class MybatisAutoConfiguration {
     }
   }
 
+  // 很重要的方法，读取yml初始化SqlSessionFactory, 采用的是默认实现类 DefaultSqlSessionFactory，
+  // 在SqlSessionFactoryBuilder 中的 build(Configuration)
   @Bean
   @ConditionalOnMissingBean
   public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
@@ -142,6 +144,7 @@ public class MybatisAutoConfiguration {
     return factory.getObject();
   }
 
+  // 初始化 sqlSessionTemplate,自动注入sqlSessionFactory
   @Bean
   @ConditionalOnMissingBean
   public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {

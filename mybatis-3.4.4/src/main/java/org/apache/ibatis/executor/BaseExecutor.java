@@ -117,6 +117,7 @@ public abstract class BaseExecutor implements Executor {
     return doUpdate(ms, parameter);
   }
 
+  // 默认不回滚
   @Override
   public List<BatchResult> flushStatements() throws SQLException {
     return flushStatements(false);

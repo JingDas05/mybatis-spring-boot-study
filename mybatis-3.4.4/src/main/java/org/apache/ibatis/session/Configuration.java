@@ -552,6 +552,7 @@ public class Configuration {
         return newExecutor(transaction, defaultExecutorType);
     }
 
+    // 构建执行器核心方法
     public Executor newExecutor(Transaction transaction, ExecutorType executorType) {
         //这个写的很有意思，如果executorType为空就用默认的，如果默认的为空就用ExecutorType.SIMPLE
         executorType = executorType == null ? defaultExecutorType : executorType;
@@ -566,6 +567,7 @@ public class Configuration {
             executor = new SimpleExecutor(this, transaction);
         }
         if (cacheEnabled) {
+            //装饰者模式，生成缓存执行器
             executor = new CachingExecutor(executor);
         }
         //拦截链，传入当前的执行器

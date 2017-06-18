@@ -58,6 +58,7 @@ import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 /**
  *
  * 如果是springBoot的话，会实例化MybatisAutoConfiguration，这是一个通用的类，springBoot和xml配置都支持
+ * 会首先读取springBoot yml配置信息，可以设定configLocation读取配置文件
  *
  * {@code FactoryBean} that creates an MyBatis {@code SqlSessionFactory}.
  * This is the usual way to set up a shared MyBatis {@code SqlSessionFactory} in a Spring application context;
@@ -472,12 +473,12 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
             }
         }
 
-        // 设置策略工厂
+        // 设置策略工厂,如果没有指定策略工厂，就用SpringManagedTransactionFactory
         if (this.transactionFactory == null) {
             this.transactionFactory = new SpringManagedTransactionFactory();
         }
 
-        //环境的构造器需要参数为id, transactionFactory, dataSource
+        //环境的构造器需要参数为id, transactionFactory, dataSource，environment的为SqlSessionFactoryBean
         configuration.setEnvironment(new Environment(this.environment, this.transactionFactory, this.dataSource));
 
         if (!isEmpty(this.mapperLocations)) {
@@ -485,7 +486,6 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
                 if (mapperLocation == null) {
                     continue;
                 }
-
                 try {
                     XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(mapperLocation.getInputStream(),
                             configuration, mapperLocation.toString(), configuration.getSqlFragments());

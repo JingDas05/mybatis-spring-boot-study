@@ -397,7 +397,7 @@ public class XMLMapperBuilder extends BaseBuilder {
   }
 
   private void bindMapperForNamespace() {
-    // 每一个
+    // nameSpace 是接口的全限定名
     String namespace = builderAssistant.getCurrentNamespace();
     if (namespace != null) {
       Class<?> boundType = null;
@@ -411,7 +411,9 @@ public class XMLMapperBuilder extends BaseBuilder {
           // Spring may not know the real resource name so we set a flag
           // to prevent loading again this resource from the mapper interface
           // look at MapperAnnotationBuilder#loadXmlResource
+          // 添加到已加载资源列表
           configuration.addLoadedResource("namespace:" + namespace);
+          // 添加接口mapper映射
           configuration.addMapper(boundType);
         }
       }

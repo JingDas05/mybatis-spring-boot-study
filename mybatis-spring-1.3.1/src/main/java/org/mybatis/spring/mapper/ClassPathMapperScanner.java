@@ -55,6 +55,7 @@ import org.springframework.util.StringUtils;
  */
 public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
 
+  // 大部分成员变量都是通过@MapperScan的属性注入的
   private boolean addToConfig = true;
 
   private SqlSessionFactory sqlSessionFactory;
@@ -109,9 +110,9 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
 
 
   /**
-   * Configures parent scanner to search for the right interfaces. It can search
-   * for all interfaces or just for those that extends a markerInterface or/and
-   * those annotated with the annotationClass
+   * 配置父类扫描器寻找正确的接口，扫描所有接口，
+   * 或者继承了markerInterface的接口
+   * 或者注解了annotationClass的接口（可以与或者继承了markerInterface的接口共存）
    */
   public void registerFilters() {
     boolean acceptAllInterfaces = true;
@@ -143,7 +144,7 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
       });
     }
 
-    // exclude package-info.java
+    // 排除 package-info.java的文件
     addExcludeFilter(new TypeFilter() {
       @Override
       public boolean match(MetadataReader metadataReader, MetadataReaderFactory metadataReaderFactory) throws IOException {
@@ -174,6 +175,7 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
   private void processBeanDefinitions(Set<BeanDefinitionHolder> beanDefinitions) {
     GenericBeanDefinition definition;
     for (BeanDefinitionHolder holder : beanDefinitions) {
+      // 这个地方一直操作的是 beanDefinitions里面的引用
       definition = (GenericBeanDefinition) holder.getBeanDefinition();
 
       if (logger.isDebugEnabled()) {
@@ -181,13 +183,11 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
           + "' and '" + definition.getBeanClassName() + "' mapperInterface");
       }
 
-      // the mapper interface is the original class of the bean
-      // but, the actual class of the bean is MapperFactoryBean
-      definition.getConstructorArgumentValues().addGenericArgumentValue(definition.getBeanClassName()); // issue #59
+      // mapper接口实际封装的bean是 MapperFactoryBean，之后调用MapperFactoryBean getObject()获取mapper接口的代理
+      // issue #59
+      definition.getConstructorArgumentValues().addGenericArgumentValue(definition.getBeanClassName());
       definition.setBeanClass(this.mapperFactoryBean.getClass());
-
       definition.getPropertyValues().add("addToConfig", this.addToConfig);
-
       boolean explicitFactoryUsed = false;
       if (StringUtils.hasText(this.sqlSessionFactoryBeanName)) {
         definition.getPropertyValues().add("sqlSessionFactory", new RuntimeBeanReference(this.sqlSessionFactoryBeanName));

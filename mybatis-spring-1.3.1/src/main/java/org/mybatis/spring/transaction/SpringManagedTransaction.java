@@ -34,7 +34,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  * It retrieves a connection from Spring's transaction manager and returns it back to it
  * when it is no longer needed.
  * <p>
- * If Spring's transaction handling is active it will no-op all commit/rollback/close calls
+ * If Spring's transaction handling is active it will no-op（无操作） all commit/rollback/close calls
  * assuming that the Spring transaction manager will do the job.
  * <p>
  * If it is not it will behave like {@code JdbcTransaction}.
@@ -59,9 +59,6 @@ public class SpringManagedTransaction implements Transaction {
     this.dataSource = dataSource;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public Connection getConnection() throws SQLException {
     if (this.connection == null) {
@@ -93,11 +90,9 @@ public class SpringManagedTransaction implements Transaction {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public void commit() throws SQLException {
+    // connection不为空， 连接不是事务操作，不是自动提交的的话
     if (this.connection != null && !this.isConnectionTransactional && !this.autoCommit) {
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Committing JDBC Connection [" + this.connection + "]");
@@ -106,11 +101,9 @@ public class SpringManagedTransaction implements Transaction {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public void rollback() throws SQLException {
+    // connection不为空， 连接不是事务操作，不是自动提交的的话
     if (this.connection != null && !this.isConnectionTransactional && !this.autoCommit) {
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Rolling back JDBC Connection [" + this.connection + "]");
@@ -119,17 +112,11 @@ public class SpringManagedTransaction implements Transaction {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public void close() throws SQLException {
     DataSourceUtils.releaseConnection(this.connection, this.dataSource);
   }
-    
-  /**
-   * {@inheritDoc}
-   */
+
   @Override
   public Integer getTimeout() throws SQLException {
     ConnectionHolder holder = (ConnectionHolder) TransactionSynchronizationManager.getResource(dataSource);
@@ -138,5 +125,4 @@ public class SpringManagedTransaction implements Transaction {
     } 
     return null;
   }
-
 }

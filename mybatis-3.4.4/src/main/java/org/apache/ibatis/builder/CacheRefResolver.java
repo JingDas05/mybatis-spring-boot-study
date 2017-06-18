@@ -18,6 +18,9 @@ package org.apache.ibatis.builder;
 import org.apache.ibatis.cache.Cache;
 
 /**
+ *
+ * 添加缓存的处理类
+ *
  * @author Clinton Begin
  */
 public class CacheRefResolver {

@@ -87,6 +87,7 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
     return configuration;
   }
 
+  //核心方法， 开启新的对话sqlSession
   private SqlSession openSessionFromDataSource(ExecutorType execType, TransactionIsolationLevel level, boolean autoCommit) {
     Transaction tx = null;
     try {
@@ -115,7 +116,9 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
       }      
       final Environment environment = configuration.getEnvironment();
       final TransactionFactory transactionFactory = getTransactionFactoryFromEnvironment(environment);
+      // 配置文件配置的策略工厂，如果么有，就用SpringManagedTransactionFactory
       final Transaction tx = transactionFactory.newTransaction(connection);
+      // 根据执行器类型，和事务创建执行器
       final Executor executor = configuration.newExecutor(tx, execType);
       return new DefaultSqlSession(configuration, executor, autoCommit);
     } catch (Exception e) {
@@ -126,6 +129,7 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
   }
 
   private TransactionFactory getTransactionFactoryFromEnvironment(Environment environment) {
+    // 如果环境为空，或者环境里没有事务控制工厂那么返回ManagedTransactionFactory
     if (environment == null || environment.getTransactionFactory() == null) {
       return new ManagedTransactionFactory();
     }

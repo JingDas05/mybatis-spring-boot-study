@@ -100,7 +100,9 @@ public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, Re
     for (Class<?> clazz : annoAttrs.getClassArray("basePackageClasses")) {
       basePackages.add(ClassUtils.getPackageName(clazz));
     }
+    // 过滤mapper接口，并且注册
     scanner.registerFilters();
+    // 扫描并且注册
     scanner.doScan(StringUtils.toStringArray(basePackages));
   }
 

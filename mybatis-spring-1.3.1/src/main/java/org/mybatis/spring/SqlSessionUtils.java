@@ -66,7 +66,7 @@ public final class SqlSessionUtils {
   public static SqlSession getSqlSession(SqlSessionFactory sessionFactory) {
     ExecutorType executorType = sessionFactory.getConfiguration().getDefaultExecutorType();
     return getSqlSession(sessionFactory, executorType, null);
-  }
+}
 
   /**
    * Gets an SqlSession from Spring Transaction Manager or creates a new one if needed.
@@ -81,26 +81,25 @@ public final class SqlSessionUtils {
    *             {@code SqlSessionFactory} is not using a {@code SpringManagedTransactionFactory}
    * @see SpringManagedTransactionFactory
    */
+  // sessionFactory 是事务处理器存储的key
   public static SqlSession getSqlSession(SqlSessionFactory sessionFactory, ExecutorType executorType, PersistenceExceptionTranslator exceptionTranslator) {
 
     notNull(sessionFactory, NO_SQL_SESSION_FACTORY_SPECIFIED);
     notNull(executorType, NO_EXECUTOR_TYPE_SPECIFIED);
-
     SqlSessionHolder holder = (SqlSessionHolder) TransactionSynchronizationManager.getResource(sessionFactory);
-
+    // 从sqlSessionHolder中取出sqlSession
     SqlSession session = sessionHolder(executorType, holder);
+    // 从事务中读取sqlSession
     if (session != null) {
       return session;
     }
-
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("Creating a new SqlSession");
     }
-
+    // 如果spring管理的事务中取不到那么就新开启一个, 这个地方用的应该是 DefaultSqlSessionFactory openSession(ExecutorType type)
     session = sessionFactory.openSession(executorType);
-
+    // 注册新开启的sqlSession到事务管理器
     registerSessionHolder(sessionFactory, executorType, exceptionTranslator, session);
-
     return session;
   }
 
@@ -127,9 +126,11 @@ public final class SqlSessionUtils {
         if (LOGGER.isDebugEnabled()) {
           LOGGER.debug("Registering transaction synchronization for SqlSession [" + session + "]");
         }
-
         holder = new SqlSessionHolder(session, executorType, exceptionTranslator);
+        // bindResource(),key是sqlSessionFactory, value是SqlSessionHolder
         TransactionSynchronizationManager.bindResource(sessionFactory, holder);
+        // 注册事务，SqlSessionSynchronization 继承了 TransactionSynchronizationAdapter，提供
+        // beforeCommit(), beforeCompletion(), afterCompletion()方法
         TransactionSynchronizationManager.registerSynchronization(new SqlSessionSynchronization(holder, sessionFactory));
         holder.setSynchronizedWithTransaction(true);
         holder.requested();
@@ -153,16 +154,15 @@ public final class SqlSessionUtils {
   private static SqlSession sessionHolder(ExecutorType executorType, SqlSessionHolder holder) {
     SqlSession session = null;
     if (holder != null && holder.isSynchronizedWithTransaction()) {
+      // 不能修改executorType
       if (holder.getExecutorType() != executorType) {
         throw new TransientDataAccessResourceException("Cannot change the ExecutorType when there is an existing transaction");
       }
-
+      // referenceCount++
       holder.requested();
-
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Fetched SqlSession [" + holder.getSqlSession() + "] from current transaction");
       }
-
       session = holder.getSqlSession();
     }
     return session;
