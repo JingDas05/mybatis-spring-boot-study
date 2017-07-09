@@ -31,6 +31,7 @@ public abstract class AbstractSQL<T> {
   private static final String AND = ") \nAND (";
   private static final String OR = ") \nOR (";
 
+  // sql语句封装对象
   private SQLStatement sql = new SQLStatement();
 
   public abstract T getSelf();
@@ -278,6 +279,7 @@ public abstract class AbstractSQL<T> {
     return sb.toString();
   }
 
+  // 拼接sql的中间变量，它包含了一个字符串的引用，安全连接，此处应该是有判空
   private static class SafeAppendable {
     private final Appendable a;
     private boolean empty = true;
@@ -289,6 +291,7 @@ public abstract class AbstractSQL<T> {
 
     public SafeAppendable append(CharSequence s) {
       try {
+        // 如果为空且传进来的字符串长度大于0
         if (empty && s.length() > 0) {
           empty = false;
         }
@@ -305,6 +308,7 @@ public abstract class AbstractSQL<T> {
 
   }
 
+  // sql语句封装对象
   private static class SQLStatement {
 
     public enum StatementType {
@@ -312,6 +316,7 @@ public abstract class AbstractSQL<T> {
     }
 
     StatementType statementType;
+    // 这些变量存放的是 关键词sets， select等后面的变量
     List<String> sets = new ArrayList<String>();
     List<String> select = new ArrayList<String>();
     List<String> tables = new ArrayList<String>();
@@ -333,6 +338,9 @@ public abstract class AbstractSQL<T> {
         // Prevent Synthetic Access
     }
 
+    // conjunction 连接词, 最终结果 eg: SELECT id, privilege_name, privilege_url，其中 keyword是SELECT,
+    // parts 是id, privilege_name, privilege_url等
+    // 这个方法的逻辑就是，根据传入的parts 和 keyword等参数进行拼接
     private void sqlClause(SafeAppendable builder, String keyword, List<String> parts, String open, String close,
                            String conjunction) {
       if (!parts.isEmpty()) {
@@ -355,6 +363,7 @@ public abstract class AbstractSQL<T> {
       }
     }
 
+    // 调用sqlClause方法，拼接 keyword是SELECT的语句
     private String selectSQL(SafeAppendable builder) {
       if (distinct) {
         sqlClause(builder, "SELECT DISTINCT", select, "", "", ", ");
