@@ -116,7 +116,9 @@ public class XPathParser {
   }
 
   public XPathParser(Reader reader, boolean validation, Properties variables, EntityResolver entityResolver) {
+    // 公共构造器，初始化成员变量
     commonConstructor(validation, variables, entityResolver);
+    // 根据reader构建document
     this.document = createDocument(new InputSource(reader));
   }
 

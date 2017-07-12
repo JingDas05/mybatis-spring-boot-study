@@ -26,7 +26,7 @@ import org.xml.sax.SAXException;
 
 /**
  * Offline entity resolver for the MyBatis DTDs
- * 离线的 xml约束解决器
+ * 离线的 xml约束解决器, 网上的文件解析会有延迟，用户体验不好
  * 
  * @author Clinton Begin
  * @author Eduardo Macarron

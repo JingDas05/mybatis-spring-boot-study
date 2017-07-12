@@ -28,7 +28,7 @@ public enum ResultSetType {
   FORWARD_ONLY(ResultSet.TYPE_FORWARD_ONLY),
   //支持结果集backforward ，random ，last ，first 等操作，对其它session 对数据库中数据做出的更改是不敏感的。
   SCROLL_INSENSITIVE(ResultSet.TYPE_SCROLL_INSENSITIVE),
-  //支持结果集backforward ，random ，last ，first 等操作，对其它session 对数据库中数据做出的更改是不敏感的。
+  //支持结果集backforward ，random ，last ，first 等操作，对其它session 对数据库中数据做出的更改是敏感的。
   SCROLL_SENSITIVE(ResultSet.TYPE_SCROLL_SENSITIVE);
 
   private int value;
