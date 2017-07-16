@@ -357,6 +357,8 @@
 			r.create_by role_create_by,
 			r.create_time role_create_time,
 			p.id role_privilege_id,
+# 			这个地方的名字前缀为 role_privilege，因为在本配置中userRoleListMap配置了columnPrefix="role_"
+# 		    在RoleMapper中配置 rolePrivilegeListMap配置了columnPrefix="privilege_"
 			p.privilege_name role_privilege_privilege_name,
 			p.privilege_url role_privilege_privilege_url
 		from sys_user u

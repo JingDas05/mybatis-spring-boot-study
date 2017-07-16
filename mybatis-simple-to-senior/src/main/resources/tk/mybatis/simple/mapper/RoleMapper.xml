@@ -9,10 +9,11 @@
 		<result property="enabled" column="enabled"/>
 		<association property="createInfo" javaType="tk.mybatis.simple.model.CreateInfo">
 			<result property="createBy" column="create_by"/>
-			<result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+			<result property="createTime" column="create_time" jdbcType=" "/>
 		</association>
 	</resultMap>
-	
+
+	<!--这个里面的resultMap是别的mapper.xml里面的配置,可以直接引用-->
 	<resultMap id="rolePrivilegeListMap" extends="roleMap" type="tk.mybatis.simple.model.SysRole">
 		<collection property="privilegeList" columnPrefix="privilege_" 
 					resultMap="tk.mybatis.simple.mapper.PrivilegeMapper.privilegeMap"/>
