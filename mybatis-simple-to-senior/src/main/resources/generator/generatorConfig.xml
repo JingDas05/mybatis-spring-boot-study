@@ -7,12 +7,18 @@
 	<!-- <classPathEntry location="F:\.m2\repository\mysql\mysql-connector-java\5.1.38\mysql-connector-java-5.1.38.jar"/> -->
 	
     <context id="MySqlContext" targetRuntime="MyBatis3" defaultModelType="flat">
+        <!--指定数据库的分隔符-->
         <property name="beginningDelimiter" value="`"/>
         <property name="endingDelimiter" value="`"/>
+        <!--指定编码格式-->
         <property name="javaFileEncoding" value="UTF-8"/>
 
+        <!--注释配置-->
+        <!--这个地方可以继承DefaultCommentGenerator,实现自己的注释逻辑-->
         <commentGenerator>
+            <!--阻止生成的注释包含时间戳-->
             <property name="suppressDate" value="true"/>
+            <!--添加数据库表的备注信息-->
             <property name="addRemarkComments" value="true"/>
         </commentGenerator>
 
@@ -24,13 +30,17 @@
 
         <javaModelGenerator targetPackage="test.model" targetProject="src\main\java">
             <property name="trimStrings" value="true" />
+            <!--设置所有实体类的基类-->
             <property name="rootClass" value="tk.mybatis.simple.model.BaseEntity" />
         </javaModelGenerator>
 
+        <!--指定了，MBG将生成XML的SQL映射文件和实体类-->
         <sqlMapGenerator targetPackage="test.xml"  targetProject="src\main\resources"/>
 
+        <!--配置Mapper接口的属性-->
         <javaClientGenerator type="XMLMAPPER" targetPackage="test.dao"  targetProject="src\main\java"/>
 
+        <!--这里配置的表才能经过上述配置生成最终的代码-->
         <table tableName="%">
             <generatedKey column="id" sqlStatement="MySql"/>
         </table>

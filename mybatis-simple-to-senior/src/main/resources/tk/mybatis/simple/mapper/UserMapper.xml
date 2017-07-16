@@ -179,7 +179,8 @@
 	<delete id="deleteById">
 		delete from sys_user where id = #{id}
 	</delete>
-	
+
+	<!--这个地方动态sql if标签用的很不错，而且ognl表达式用的很到位-->
 	<select id="selectByUser" resultType="tk.mybatis.simple.model.SysUser">
 		<bind name="print" value="@tk.mybatis.util.StringUtil@print(_parameter)"/>
 	    select id, 
