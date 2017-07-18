@@ -5,6 +5,7 @@
 <configuration>
 	<settings>
 	    <setting name="logImpl" value="LOG4J"/>
+        <!--开启二级缓存-->
 	    <setting name="cacheEnabled" value="true"/>
         <!--下划线转驼峰-->
 	    <setting name="mapUnderscoreToCamelCase" value="true"/>
