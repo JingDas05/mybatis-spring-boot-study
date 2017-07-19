@@ -7,7 +7,10 @@
 	    <!--flushInterval="60000"-->
 	    <!--size="512"-->
 	    <!--readOnly="false"/>-->
-	<cache/>
+	<!--<cache/>-->
+	<!--开启二级缓存 redis-->
+	<cache type="org.mybatis.caches.redis.RedisCache"/>
+
 	<resultMap id="roleMap" type="tk.mybatis.simple.model.SysRole">
 		<id property="id" column="id"/>
 		<result property="roleName" column="role_name"/>
