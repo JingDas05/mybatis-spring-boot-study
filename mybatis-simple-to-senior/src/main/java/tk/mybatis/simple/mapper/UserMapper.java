@@ -93,7 +93,7 @@ public interface UserMapper {
 	/**
 	 * 通过主键删除
 	 *
-	 * @param id
+	 * @param sysUser
 	 * @return
 	 */
 	int deleteById(SysUser sysUser);

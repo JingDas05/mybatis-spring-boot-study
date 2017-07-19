@@ -16,6 +16,8 @@ public class CountryMapperTest extends BaseMapperTest {
 	public void testSelectAll() {
 		SqlSession sqlSession = getSqlSession();
 		try {
+			// 这个地方tk.mybatis.simple.mapper.CountryMapper.selectAll 的 selectAll,是xml中定义的
+			// 相当于是在tk.mybatis.simple.mapper.CountryMapper.selectAll命名空间下的 id为selectAll 的statement
 			List<Country> countryList = sqlSession.selectList("tk.mybatis.simple.mapper.CountryMapper.selectAll");
 			printCountryList(countryList);
 		} finally {
