@@ -22,8 +22,10 @@ import java.util.Properties;
  */
 public interface Interceptor {
 
+  // 运行时要执行的拦截方法，通过参数 invocation可以得到很多游泳的信息
   Object intercept(Invocation invocation) throws Throwable;
 
+  // target 就是拦截器要拦截的对象
   Object plugin(Object target);
 
   //这个设置属性的方法，在扫描配置文件plugin节点XNode 的getChildrenAsProperties()会读取出来，之后传参
