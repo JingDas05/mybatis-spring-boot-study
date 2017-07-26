@@ -338,8 +338,8 @@ public abstract class AbstractSQL<T> {
         // Prevent Synthetic Access
     }
 
-    // conjunction 连接词, 最终结果 eg: SELECT id, privilege_name, privilege_url，其中 keyword是SELECT,
-    // parts 是id, privilege_name, privilege_url等
+    // conjunction(连接词), 最终结果 eg: SELECT id, privilege_name, privilege_url，其中 keyword是SELECT,
+    // parts 是select List中的值，eg: id, privilege_name, privilege_url等
     // 这个方法的逻辑就是，根据传入的parts 和 keyword等参数进行拼接
     private void sqlClause(SafeAppendable builder, String keyword, List<String> parts, String open, String close,
                            String conjunction) {
@@ -353,10 +353,12 @@ public abstract class AbstractSQL<T> {
         String last = "________";
         for (int i = 0, n = parts.size(); i < n; i++) {
           String part = parts.get(i);
+          // append 连接词的判断条件
           if (i > 0 && !part.equals(AND) && !part.equals(OR) && !last.equals(AND) && !last.equals(OR)) {
             builder.append(conjunction);
           }
           builder.append(part);
+          // last赋值
           last = part;
         }
         builder.append(close);
