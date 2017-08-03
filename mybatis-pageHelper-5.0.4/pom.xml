@@ -105,6 +105,21 @@
             <version>2.2.9</version>
             <scope>test</scope>
         </dependency>
+        <!--防止报错，添加依赖-->
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.21.0-GA</version>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>ognl</groupId>
+            <artifactId>ognl</artifactId>
+            <version>3.1.14</version>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
         <!--
         <dependency>
             <groupId>mysql</groupId>
