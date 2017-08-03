@@ -32,8 +32,7 @@ import java.util.Properties;
 	)
 )
 public class PageInterceptor implements Interceptor {
-    private static final List<ResultMapping> EMPTY_RESULTMAPPING
-    		= new ArrayList<ResultMapping>(0);
+    private static final List<ResultMapping> EMPTY_RESULTMAPPING = new ArrayList<ResultMapping>(0);
     private Dialect dialect;
     private Field additionalParametersField;
 
@@ -50,9 +49,8 @@ public class PageInterceptor implements Interceptor {
             //当前的目标对象
             Executor executor = (Executor) invocation.getTarget();
             BoundSql boundSql = ms.getBoundSql(parameterObject);
-            //反射获取动态参数
-            Map<String, Object> additionalParameters = 
-            		(Map<String, Object>) additionalParametersField.get(boundSql);
+            //反射获取动态参数，获取 boundSql 里面的additionalParametersField 字段
+            Map<String, Object> additionalParameters = (Map<String, Object>) additionalParametersField.get(boundSql);
             //判断是否需要进行 count 查询
             if (dialect.beforeCount(ms.getId(), parameterObject, rowBounds)){
             	//根据当前的 ms 创建一个返回值为 Long 类型的 ms
@@ -77,7 +75,7 @@ public class PageInterceptor implements Interceptor {
                 //当使用动态 SQL 时，可能会产生临时的参数，这些参数需要手动设置到新的 BoundSql 中
                 for (String key : additionalParameters.keySet()) {
                     countBoundSql.setAdditionalParameter(
-                    		key, additionalParameters.get(key));
+                            key, additionalParameters.get(key));
                 }
                 //执行 count 查询
                 Object countResultList = executor.query(
@@ -145,8 +143,7 @@ public class PageInterceptor implements Interceptor {
      * @param resultType
      * @return
      */
-    public MappedStatement newMappedStatement(
-            MappedStatement ms, Class<?> resultType) {
+    public MappedStatement newMappedStatement(MappedStatement ms, Class<?> resultType) {
         MappedStatement.Builder builder = new MappedStatement.Builder(
         		ms.getConfiguration(), 
         		ms.getId() + "_Count", 
@@ -157,14 +154,12 @@ public class PageInterceptor implements Interceptor {
         builder.fetchSize(ms.getFetchSize());
         builder.statementType(ms.getStatementType());
         builder.keyGenerator(ms.getKeyGenerator());
-        if (ms.getKeyProperties() != null 
-        		&& ms.getKeyProperties().length != 0) {
+        if (ms.getKeyProperties() != null && ms.getKeyProperties().length != 0) {
             StringBuilder keyProperties = new StringBuilder();
             for (String keyProperty : ms.getKeyProperties()) {
                 keyProperties.append(keyProperty).append(",");
             }
-            keyProperties.delete(
-            		keyProperties.length() - 1, keyProperties.length());
+            keyProperties.delete(keyProperties.length() - 1, keyProperties.length());
             builder.keyProperty(keyProperties.toString());
         }
         builder.timeout(ms.getTimeout());
@@ -190,6 +185,7 @@ public class PageInterceptor implements Interceptor {
         return Plugin.wrap(target, this);
     }
 
+    // 这个应该是从配置文件读取的属性配置
     @Override
     public void setProperties(Properties properties) {
         String dialectClass = properties.getProperty("dialect");

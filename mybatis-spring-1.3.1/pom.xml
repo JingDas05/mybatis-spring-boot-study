@@ -28,8 +28,8 @@
     <!--<relativePath />-->
     <!--</parent>-->
     <parent>
-        <groupId>org.mybatis.spring.boot</groupId>
-        <artifactId>mybatis-spring-boot</artifactId>
+        <groupId>org.mybatis.study</groupId>
+        <artifactId>mybatis-parent</artifactId>
         <version>1.2.0</version>
     </parent>
 
@@ -120,7 +120,7 @@
     <dependencies>
         <!--为了写注释，所以用自己的模块mybatis-3.4.4-->
         <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
+            <groupId>org.mybatis.study</groupId>
             <artifactId>mybatis</artifactId>
         </dependency>
         <!-- Compile dependencies -->

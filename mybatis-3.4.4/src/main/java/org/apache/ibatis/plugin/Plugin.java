@@ -44,8 +44,12 @@ public class Plugin implements InvocationHandler {
   }
 
   public static Object wrap(Object target, Interceptor interceptor) {
+    // 这个方法获取 拦截器注解上的所有拦截配置，返回封装参数Map
+    // key为拦截的接口Executor, ParameterHandler, ResultSetHandler, StatementHandler
+    // value 为拦截的方法
     Map<Class<?>, Set<Method>> signatureMap = getSignatureMap(interceptor);
     Class<?> type = target.getClass();
+    // 获取父接口
     Class<?>[] interfaces = getAllInterfaces(type, signatureMap);
     if (interfaces.length > 0) {
       // 创建代理对象
@@ -104,7 +108,6 @@ public class Plugin implements InvocationHandler {
 
   //
   private static Class<?>[] getAllInterfaces(Class<?> type, Map<Class<?>, Set<Method>> signatureMap) {
-    //
     Set<Class<?>> interfaces = new HashSet<Class<?>>();
     // 寻找type的父接口（Executor, ParameterHandler, ResultSetHandler, StatementHandler），并将结果放到interfaces中
     while (type != null) {
