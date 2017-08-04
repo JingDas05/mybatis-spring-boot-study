@@ -27,6 +27,9 @@ import java.sql.SQLWarning;
 import java.sql.Statement;
 
 /**
+ *
+ * 执行脚本工具
+ *
  * @author Clinton Begin
  */
 public class ScriptRunner {
@@ -139,6 +142,7 @@ public class ScriptRunner {
       while ((line = lineReader.readLine()) != null) {
         command = handleLine(command, line);
       }
+      // 如果不是自动提交，手动提交
       commitConnection();
       checkForMissingLineTerminator(command);
     } catch (Exception e) {
@@ -205,6 +209,7 @@ public class ScriptRunner {
       command.append(line.substring(0, line.lastIndexOf(delimiter)));
       command.append(LINE_SEPARATOR);
       println(command);
+      // 这个是关键，执行语句
       executeStatement(command.toString());
       command.setLength(0);
     } else if (trimmedLine.length() > 0) {

@@ -43,6 +43,8 @@ public class RowBoundsHelper {
             //创建SqlSessionFactory
             Reader reader = Resources.getResourceAsReader("rowbounds/mybatis-config.xml");
             sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+            getSqlSession();
+            // 关闭流
             reader.close();
             //创建数据库
             SqlSession session = null;
@@ -53,6 +55,7 @@ public class RowBoundsHelper {
                 ScriptRunner runner = new ScriptRunner(conn);
                 runner.setLogWriter(null);
                 runner.runScript(reader);
+                // 关闭流，很重要
                 reader.close();
             } finally {
                 if (session != null) {
