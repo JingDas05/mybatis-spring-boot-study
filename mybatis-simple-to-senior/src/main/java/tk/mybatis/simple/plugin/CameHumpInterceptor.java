@@ -16,7 +16,8 @@ import java.util.*;
 )
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class CameHumpInterceptor implements Interceptor {
-    
+
+
 	@Override
     public Object intercept(Invocation invocation) throws Throwable {
         //先执行得到结果，再对结果进行处理
@@ -58,6 +59,7 @@ public class CameHumpInterceptor implements Interceptor {
     public static String underlineToCamelhump(String inputString) {
         StringBuilder sb = new StringBuilder();
 
+        // 标志位 下一个字符是否应该是大写字母
         boolean nextUpperCase = false;
         for (int i = 0; i < inputString.length(); i++) {
             char c = inputString.charAt(i);

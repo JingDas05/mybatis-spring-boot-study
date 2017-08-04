@@ -24,6 +24,9 @@ import org.apache.ibatis.reflection.property.PropertyTokenizer;
 import org.apache.ibatis.session.Configuration;
 
 /**
+ *
+ * 从SqlSource获取的 实际的sql语句，这个sql语句或许会包含？占位符， parameterMappings提供实际参数
+ *
  * An actual SQL String got from an {@link SqlSource} after having processed any dynamic content.
  * The SQL may have SQL placeholders "?" and an list (ordered) of an parameter mappings 
  * with the additional information for each parameter (at least the property name of the input object to read 

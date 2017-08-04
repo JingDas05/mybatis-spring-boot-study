@@ -20,8 +20,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.mybatis.spring.boot</groupId>
-        <artifactId>mybatis-spring-boot</artifactId>
+        <groupId>org.mybatis.study</groupId>
+        <artifactId>mybatis-parent</artifactId>
         <version>1.2.0</version>
     </parent>
     <artifactId>mybatis-spring-boot-autoconfigure</artifactId>
@@ -47,12 +47,12 @@
 
         <!--自己导入的mybatis 和mybatis-spring源码，为了注释-->
         <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
+            <groupId>org.mybatis.study</groupId>
             <artifactId>mybatis</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
+            <groupId>org.mybatis.study</groupId>
             <artifactId>mybatis-spring</artifactId>
             <optional>true</optional>
         </dependency>

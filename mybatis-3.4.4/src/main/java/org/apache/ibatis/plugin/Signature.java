@@ -27,9 +27,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({})
 public @interface Signature {
+  // 拦截的接口： Executor, ParameterHandler, ResultSetHandler, StatementHandler
   Class<?> type();
 
+  // 拦截的方法名，需要和上面接口中的方法相对应
   String method();
 
+  // 设置拦截方法的参数类型数组，与上面的方法名可以唯一对应一个方法
   Class<?>[] args();
 }

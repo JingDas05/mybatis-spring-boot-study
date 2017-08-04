@@ -34,10 +34,13 @@ public interface Executor {
 
   ResultHandler NO_RESULT_HANDLER = null;
 
+  // 会在所有 INSERT UPDATE DELETE执行时被调用
   int update(MappedStatement ms, Object parameter) throws SQLException;
 
+  // SELECT 查询方法执行时被调用
   <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey cacheKey, BoundSql boundSql) throws SQLException;
 
+  // SELECT 查询方法执行时被调用
   <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException;
 
   <E> Cursor<E> queryCursor(MappedStatement ms, Object parameter, RowBounds rowBounds) throws SQLException;
