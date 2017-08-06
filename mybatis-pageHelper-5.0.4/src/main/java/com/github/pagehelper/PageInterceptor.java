@@ -66,6 +66,7 @@ public class PageInterceptor implements Interceptor {
     private Field additionalParametersField;
     private String countSuffix = "_COUNT";
 
+    // 拦截器执行时会执行下面的方法，传入的参数是
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
         try {
@@ -220,10 +221,12 @@ public class PageInterceptor implements Interceptor {
         return mappedStatement;
     }
 
+    // 这个方法会在外面统一调用，最先执行的方法
     @Override
     public Object plugin(Object target) {
         //TODO Spring bean 方式配置时，如果没有配置属性就不会执行下面的 setProperties 方法，就不会初始化，因此考虑在这个方法中做一次判断和初始化
         //TODO https://github.com/pagehelper/Mybatis-PageHelper/issues/26
+        // 这个地方返回的是代理对象，调用 Plugin的静态方法wrap, 参数是代理对象，和拦截器
         return Plugin.wrap(target, this);
     }
 

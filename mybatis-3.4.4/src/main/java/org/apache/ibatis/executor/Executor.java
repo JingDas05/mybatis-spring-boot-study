@@ -65,6 +65,7 @@ public interface Executor {
 
   boolean isClosed();
 
+  // BatchExecutor ReuseExecutor BatchExecutor 三种执行器调用此方法，注入进来缓存装饰者
   void setExecutorWrapper(Executor executor);
 
 }

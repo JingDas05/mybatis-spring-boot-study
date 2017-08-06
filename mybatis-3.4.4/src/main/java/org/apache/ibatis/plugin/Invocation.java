@@ -19,6 +19,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
+ *
+ * 执行器的封装，执行目标target， 执行方法method， 参数args
+ *
  * @author Clinton Begin
  */
 public class Invocation {

@@ -38,6 +38,7 @@ public class XNode {
   private String body;
   private Properties attributes;
   private Properties variables;
+  // 每个封装的XNode 都包含了一个全局的xpathParser引用，很重要
   private XPathParser xpathParser;
 
   public XNode(XPathParser xpathParser, Node node, Properties variables) {

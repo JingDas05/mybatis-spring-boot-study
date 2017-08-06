@@ -103,6 +103,7 @@
 
     <select id="selectIf" resultType="com.github.pagehelper.model.Country">
         select * from country
+#         Ognl表达式
         <if test="@Ognl@isNotNull(id)">
             <!--<if test="id!=null">-->
             where id &gt; #{id}

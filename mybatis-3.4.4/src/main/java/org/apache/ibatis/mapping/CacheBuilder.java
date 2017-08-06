@@ -47,6 +47,7 @@ public class CacheBuilder {
   private Properties properties;
   private boolean blocking;
 
+  // 初始化时需要传入cache id
   public CacheBuilder(String id) {
     this.id = id;
     this.decorators = new ArrayList<Class<? extends Cache>>();

@@ -81,10 +81,12 @@ public class XMLConfigBuilder extends BaseBuilder {
     this(new XPathParser(inputStream, true, props, new XMLMapperEntityResolver()), environment, props);
   }
 
+  // 解析的工作都是XPathParser做的
   // 私有方法，实际调用的方法
   // 这个地方实际需要的是XPathParser对象，XPathParser的初始化需要
   // InputStream inputStream, boolean validation, Properties variables, EntityResolver entityResolver
   private XMLConfigBuilder(XPathParser parser, String environment, Properties props) {
+    // 初始化configuration, 因为这个时候是读取配置文件，所以 new Configuration()
     super(new Configuration());
     ErrorContext.instance().resource("SQL Mapper Configuration");
     this.configuration.setVariables(props);
@@ -312,6 +314,7 @@ public class XMLConfigBuilder extends BaseBuilder {
       }
       for (XNode child : context.getChildren()) {
         String id = child.getStringAttribute("id");
+        //如果是 default 环境的话
         if (isSpecifiedEnvironment(id)) {
           // 解析transactionManager节点获取实例TransactionFactory
           TransactionFactory txFactory = transactionManagerElement(child.evalNode("transactionManager"));
@@ -350,6 +353,7 @@ public class XMLConfigBuilder extends BaseBuilder {
   private TransactionFactory transactionManagerElement(XNode context) throws Exception {
     if (context != null) {
       String type = context.getStringAttribute("type");
+      // 把标签中的 <properties></properties> 转换成Properties
       Properties props = context.getChildrenAsProperties();
       TransactionFactory factory = (TransactionFactory) resolveClass(type).newInstance();
       factory.setProperties(props);

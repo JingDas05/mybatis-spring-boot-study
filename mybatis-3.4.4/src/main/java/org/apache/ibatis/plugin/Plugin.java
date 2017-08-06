@@ -27,7 +27,7 @@ import org.apache.ibatis.reflection.ExceptionUtil;
 
 /**
  *
- * 这个类本身就是一个处理器代理处理器
+ * 这个类本身就是一个处理器代理处理器,构造器注入 代理的目标target， 拦截器Interceptor， 签名map signatureMap
  *
  * @author Clinton Begin
  */
@@ -43,6 +43,7 @@ public class Plugin implements InvocationHandler {
     this.signatureMap = signatureMap;
   }
 
+  // 进行封装，根据拦截器，返回代理对象
   public static Object wrap(Object target, Interceptor interceptor) {
     // 这个方法获取 拦截器注解上的所有拦截配置，返回封装参数Map
     // key为拦截的接口Executor, ParameterHandler, ResultSetHandler, StatementHandler
@@ -56,17 +57,20 @@ public class Plugin implements InvocationHandler {
       return Proxy.newProxyInstance(
           type.getClassLoader(),
           interfaces,
+          // 这个地方很重要，拦截处理器，构造器注入参数，参数从实际拦截器的注解而来
           new Plugin(target, interceptor, signatureMap));
     }
     return target;
   }
 
+  // 拦截处理器实际执行的方法
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     try {
       Set<Method> methods = signatureMap.get(method.getDeclaringClass());
       // 先执行拦截方法
       if (methods != null && methods.contains(method)) {
+        // 先去执行拦截器的 intercept()方法，参数是封装好的 目标以及相应的参数
         return interceptor.intercept(new Invocation(target, method, args));
       }
       // 再执行自己的方法

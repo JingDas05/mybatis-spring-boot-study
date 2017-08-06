@@ -23,6 +23,9 @@ import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.cache.CacheException;
 
 /**
+ *
+ * 永久缓存，简单的缓存策略，缓存的数据结构是hashMap
+ *
  * @author Clinton Begin
  */
 public class PerpetualCache implements Cache {

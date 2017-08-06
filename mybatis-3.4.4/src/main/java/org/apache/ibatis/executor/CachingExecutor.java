@@ -42,6 +42,7 @@ public class CachingExecutor implements Executor {
   private TransactionalCacheManager tcm = new TransactionalCacheManager();
 
   public CachingExecutor(Executor delegate) {
+    // 这个delegate 是BatchExecutor ReuseExecutor BatchExecutor中的一种
     this.delegate = delegate;
     delegate.setExecutorWrapper(this);
   }
@@ -170,6 +171,7 @@ public class CachingExecutor implements Executor {
 
   @Override
   public void setExecutorWrapper(Executor executor) {
+    // BatchExecutor ReuseExecutor BatchExecutor 三种执行器调用此方法，注入进来缓存装饰者，装饰者本身是不应该调用这个方法的
     throw new UnsupportedOperationException("This method should not be called");
   }
 

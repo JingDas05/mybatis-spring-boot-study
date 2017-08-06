@@ -319,7 +319,7 @@ public class DefaultSqlSession implements SqlSession {
     return (!autoCommit && dirty) || force;
   }
 
-  // 如果是容器，封装成object
+  // 如果是容器，封装成 StrictMap key为 collection list 或者array
   private Object wrapCollection(final Object object) {
     if (object instanceof Collection) {
       StrictMap<Object> map = new StrictMap<Object>();

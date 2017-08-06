@@ -44,6 +44,7 @@ import org.xml.sax.SAXParseException;
  */
 public class XPathParser {
 
+  // document 在构造的时候，根据inputStream进行构建
   private Document document;
   private boolean validation;
   private EntityResolver entityResolver;
@@ -211,11 +212,13 @@ public class XPathParser {
     return evalNode(document, expression);
   }
 
+  // 解析 xml 节点，
   public XNode evalNode(Object root, String expression) {
     Node node = (Node) evaluate(expression, root, XPathConstants.NODE);
     if (node == null) {
       return null;
     }
+    // 封装成 XNode 返回，包含了xpathParser，这个很重要
     return new XNode(this, node, variables);
   }
 
@@ -262,10 +265,12 @@ public class XPathParser {
     }
   }
 
+  // 公共构造器，构造器中需要初始化的东西提取出来了
   private void commonConstructor(boolean validation, Properties variables, EntityResolver entityResolver) {
     this.validation = validation;
     this.entityResolver = entityResolver;
     this.variables = variables;
+    // 初始化Xpath
     XPathFactory factory = XPathFactory.newInstance();
     this.xpath = factory.newXPath();
   }

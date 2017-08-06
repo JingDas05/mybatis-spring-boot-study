@@ -19,6 +19,9 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 /**
+ *
+ *实现类有 UnpooledDataSourceFactory, PooledDataSourceFactory, JndiDataSourceFactory
+ *
  * @author Clinton Begin
  */
 public interface DataSourceFactory {

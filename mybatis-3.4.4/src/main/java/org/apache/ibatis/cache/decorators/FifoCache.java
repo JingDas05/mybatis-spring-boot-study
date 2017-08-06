@@ -33,6 +33,7 @@ public class FifoCache implements Cache {
   private int size;
 
   public FifoCache(Cache delegate) {
+    // 装饰对象
     this.delegate = delegate;
     this.keyList = new LinkedList<Object>();
     this.size = 1024;
@@ -54,6 +55,7 @@ public class FifoCache implements Cache {
 
   @Override
   public void putObject(Object key, Object value) {
+    // fifo 记录了固定数量的key，如果大于size 的值就从 queue 的头部删除掉旧的
     cycleKeyList(key);
     delegate.putObject(key, value);
   }

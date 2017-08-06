@@ -42,6 +42,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
 
     public SimpleCache(Properties properties, String prefix) {
         CacheBuilder cacheBuilder = new CacheBuilder("SQL_CACHE");
+        // 如果配置文件中配置了实现类，就用配置文件的，否则就用默认的永久缓存
         String typeClass = properties.getProperty(prefix + ".typeClass");
         if (StringUtil.isNotEmpty(typeClass)) {
             try {
@@ -52,6 +53,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         } else {
             cacheBuilder.implementation(PerpetualCache.class);
         }
+        // 设置缓存的失效类
         String evictionClass = properties.getProperty(prefix + ".evictionClass");
         if (StringUtil.isNotEmpty(evictionClass)) {
             try {

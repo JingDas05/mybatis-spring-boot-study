@@ -47,6 +47,7 @@ public class MybatisHelper {
         try {
             //创建SqlSessionFactory
             Reader reader = Resources.getResourceAsReader(TestUtil.getXmlPath() + "/mybatis-config.xml");
+            // 根据Reader 生成SqlSessionFactory
             sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
             reader.close();
             if (TestUtil.getXmlPath().equalsIgnoreCase("hsqldb")
@@ -57,12 +58,15 @@ public class MybatisHelper {
                 try {
                     session = sqlSessionFactory.openSession();
                     Connection conn = session.getConnection();
+                    // 获取数据库初始化脚本
                     reader = Resources.getResourceAsReader(TestUtil.getXmlPath() + "/" + TestUtil.getXmlPath() + ".sql");
                     ScriptRunner runner = new ScriptRunner(conn);
                     runner.setLogWriter(null);
                     runner.runScript(reader);
+                    // 关闭流
                     reader.close();
                 } finally {
+                    // 关闭session
                     if (session != null) {
                         session.close();
                     }

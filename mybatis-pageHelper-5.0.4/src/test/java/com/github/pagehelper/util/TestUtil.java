@@ -34,6 +34,7 @@ import java.util.Properties;
 public class TestUtil {
     public static String XML_PATH;
 
+    // 获取xml文件的前缀，根据/test.properties 中的 database字段设定
     public synchronized static String getXmlPath() throws IOException {
         if (XML_PATH != null) {
             return XML_PATH;
