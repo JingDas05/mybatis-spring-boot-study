@@ -26,6 +26,9 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
+ *
+ * 结果映射的基本单位
+ *
  * @author Clinton Begin
  */
 public class ResultMapping {
@@ -52,6 +55,7 @@ public class ResultMapping {
   public static class Builder {
     private ResultMapping resultMapping = new ResultMapping();
 
+    // 构造时的必须参数
     public Builder(Configuration configuration, String property, String column, TypeHandler<?> typeHandler) {
       this(configuration, property);
       resultMapping.column = column;

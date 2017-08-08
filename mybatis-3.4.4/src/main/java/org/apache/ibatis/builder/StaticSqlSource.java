@@ -28,6 +28,7 @@ import org.apache.ibatis.session.Configuration;
 public class StaticSqlSource implements SqlSource {
 
   private String sql;
+  // 查询相关参数， 比如 SELECT * FROM country WHERE id = ?;
   private List<ParameterMapping> parameterMappings;
   private Configuration configuration;
 

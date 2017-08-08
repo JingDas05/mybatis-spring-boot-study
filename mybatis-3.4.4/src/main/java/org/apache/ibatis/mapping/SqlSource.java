@@ -22,6 +22,8 @@ package org.apache.ibatis.mapping;
  * SqlSource Sql源接口，代表从xml文件或注解映射的sql内容，主要就是用于创建BoundSql，
  * 有实现类DynamicSqlSource(动态Sql源)，StaticSqlSource(静态Sql源)等
  *
+ * sqlSource的sql语句一般有 “？”占位符， 比如 SELECT * FROM country WHERE id = ?;
+ *
  * @author Clinton Begin
  */
 public interface SqlSource {

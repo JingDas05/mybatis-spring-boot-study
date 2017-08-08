@@ -21,6 +21,9 @@ import java.util.List;
 import org.apache.ibatis.session.Configuration;
 
 /**
+ *
+ * 这个是全局存放所有映射参数的地方
+ *
  * @author Clinton Begin
  */
 public class ParameterMap {

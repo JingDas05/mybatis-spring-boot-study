@@ -36,6 +36,7 @@ public class ParameterMapping {
   private Class<?> javaType = Object.class;
   private JdbcType jdbcType;
   private Integer numericScale;
+  // 这个typeHandler是必须的
   private TypeHandler<?> typeHandler;
   private String resultMapId;
   private String jdbcTypeName;
@@ -54,6 +55,8 @@ public class ParameterMapping {
       parameterMapping.mode = ParameterMode.IN;
     }
 
+    // 参数映射类，这个会在sqlSource中用到，构造builder的时候需要至少以下参数
+    // ParameterMode 默认是 IN
     public Builder(Configuration configuration, String property, Class<?> javaType) {
       parameterMapping.configuration = configuration;
       parameterMapping.property = property;
@@ -126,7 +129,7 @@ public class ParameterMapping {
       }
     }
 
-    // 处理typeHandler为空，但是javaType的情况
+    // 处理typeHandler为空，但是有javaType的情况
     private void resolveTypeHandler() {
       if (parameterMapping.typeHandler == null && parameterMapping.javaType != null) {
         Configuration configuration = parameterMapping.configuration;
