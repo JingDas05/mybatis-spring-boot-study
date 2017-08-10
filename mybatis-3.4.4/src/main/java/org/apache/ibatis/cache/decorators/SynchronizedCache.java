@@ -20,10 +20,14 @@ import java.util.concurrent.locks.ReadWriteLock;
 import org.apache.ibatis.cache.Cache;
 
 /**
+ *
+ * 同步缓存， 在各个调用方法前面加上 synchronized 关键字
+ *
  * @author Clinton Begin
  */
 public class SynchronizedCache implements Cache {
 
+  // 装饰对象
   private Cache delegate;
   
   public SynchronizedCache(Cache delegate) {

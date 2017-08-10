@@ -30,6 +30,7 @@ public final class LogFactory {
 
   private static Constructor<? extends Log> logConstructor;
 
+  // 顺序执行下面的实现，直到找到 日志的实际实现
   static {
     tryImplementation(new Runnable() {
       @Override
@@ -69,6 +70,7 @@ public final class LogFactory {
     });
   }
 
+  // 单例，禁止实例化
   private LogFactory() {
     // disable construction
   }
@@ -79,6 +81,7 @@ public final class LogFactory {
 
   public static Log getLog(String logger) {
     try {
+      // 实例化日志记录实现类
       return logConstructor.newInstance(logger);
     } catch (Throwable t) {
       throw new LogException("Error creating logger for logger " + logger + ".  Cause: " + t, t);
@@ -129,6 +132,7 @@ public final class LogFactory {
 
   private static void setImplementation(Class<? extends Log> implClass) {
     try {
+      // 获取实际实现类的构造方法（参数是String ）
       Constructor<? extends Log> candidate = implClass.getConstructor(String.class);
       Log log = candidate.newInstance(LogFactory.class.getName());
       if (log.isDebugEnabled()) {

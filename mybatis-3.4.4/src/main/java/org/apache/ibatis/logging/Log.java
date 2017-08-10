@@ -16,6 +16,11 @@
 package org.apache.ibatis.logging;
 
 /**
+ *
+ * 日志接口
+ * 封装了一系列日志组件的操作，包括 Slf4J,Log4j,Log4j2等
+ *
+ *
  * @author Clinton Begin
  */
 public interface Log {

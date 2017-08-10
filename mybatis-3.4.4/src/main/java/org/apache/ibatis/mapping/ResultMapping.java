@@ -27,7 +27,7 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
  *
- * 结果映射的基本单位
+ * 结果映射的基本单位，<resultMap>下面的子标签
  *
  * @author Clinton Begin
  */

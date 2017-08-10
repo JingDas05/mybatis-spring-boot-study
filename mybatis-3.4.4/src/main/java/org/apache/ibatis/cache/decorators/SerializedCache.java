@@ -30,6 +30,9 @@ import org.apache.ibatis.cache.CacheException;
 import org.apache.ibatis.io.Resources;
 
 /**
+ *
+ * 序列化缓存
+ *
  * @author Clinton Begin
  */
 public class SerializedCache implements Cache {
@@ -90,6 +93,7 @@ public class SerializedCache implements Cache {
     return delegate.equals(obj);
   }
 
+  // java序列化
   private byte[] serialize(Serializable value) {
     try {
       ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -103,6 +107,7 @@ public class SerializedCache implements Cache {
     }
   }
 
+  // java反序列化
   private Serializable deserialize(byte[] value) {
     Serializable result;
     try {
