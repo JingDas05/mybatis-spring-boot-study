@@ -32,6 +32,8 @@ public class AnnotatedSubject {
     this.weight = weight;
   }
 
+  // 这个注解的意思是用当前的构造函数去生成实例，默认用的是第一个构造函数
+  // 不加注解，移到第一个位置也是可以的
   @AutomapConstructor
   public AnnotatedSubject(final int id, final String name, final int age, final Integer height, final Integer weight) {
     this.id = id;
@@ -40,4 +42,5 @@ public class AnnotatedSubject {
     this.height = height == null ? 0 : height;
     this.weight = weight == null ? 0 : weight;
   }
+
 }

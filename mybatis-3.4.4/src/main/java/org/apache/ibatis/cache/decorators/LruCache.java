@@ -50,9 +50,12 @@ public class LruCache implements Cache {
   }
 
   public void setSize(final int size) {
+    // 有序HashMap
     keyMap = new LinkedHashMap<Object, Object>(size, .75F, true) {
       private static final long serialVersionUID = 4267176411845948333L;
 
+      // 重写了LinkedHashMap 的方法，如果map的size大于参数size 就将最老的元素赋值给eldestKey
+      // accessOrder 为true，说明插入无序，最先读取的排在最前面，从而达到最少使用的最先去掉
       @Override
       protected boolean removeEldestEntry(Map.Entry<Object, Object> eldest) {
         boolean tooBig = size() > size;
@@ -67,6 +70,7 @@ public class LruCache implements Cache {
   @Override
   public void putObject(Object key, Object value) {
     delegate.putObject(key, value);
+    // 去除最少使用的entry
     cycleKeyList(key);
   }
 
@@ -92,6 +96,7 @@ public class LruCache implements Cache {
     return null;
   }
 
+  // 去除最少使用的entry
   private void cycleKeyList(Object key) {
     keyMap.put(key, key);
     if (eldestKey != null) {

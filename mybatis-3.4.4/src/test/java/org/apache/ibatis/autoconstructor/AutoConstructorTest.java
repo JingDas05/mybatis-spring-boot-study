@@ -33,6 +33,7 @@ import java.util.List;
 public class AutoConstructorTest {
   private static SqlSessionFactory sqlSessionFactory;
 
+  // 初始化数据库脚本
   @BeforeClass
   public static void setUp() throws Exception {
     // create a SqlSessionFactory
@@ -63,6 +64,7 @@ public class AutoConstructorTest {
     }
   }
 
+  // 测试的 Integer 转 int 失败的问题，属于类型转换
   @Test(expected = PersistenceException.class)
   public void primitiveSubjects() {
     final SqlSession sqlSession = sqlSessionFactory.openSession();
@@ -85,6 +87,7 @@ public class AutoConstructorTest {
     }
   }
 
+  // 这个测试的 @AutomapConstructor 的用法
   @Test
   public void annotatedSubject() {
     final SqlSession sqlSession = sqlSessionFactory.openSession();
@@ -96,6 +99,7 @@ public class AutoConstructorTest {
     }
   }
 
+  // 这个测试的结果映射类型不对
   @Test(expected = PersistenceException.class)
   public void badSubject() {
     final SqlSession sqlSession = sqlSessionFactory.openSession();

@@ -52,6 +52,7 @@
     )
   </insert>
 
+    <!--注意用法 favouriteSection:VARCHAR-->
   <insert id="insertAuthorDynamic" parameterType="org.apache.ibatis.domain.blog.Author">
     <selectKey keyProperty="id" resultType="int" order="BEFORE">
       select CAST(RANDOM()*1000000 as INTEGER) a from SYSIBM.SYSDUMMY1

@@ -66,6 +66,7 @@
         </constructor>
     </resultMap>
 
+    <!-- javaType 指定类型， resultMap 指定结果映射类型-->
     <resultMap id="blogUsingConstructorWithResultMapCollection" type="Blog">
         <constructor>
             <idArg column="id" javaType="_int"/>

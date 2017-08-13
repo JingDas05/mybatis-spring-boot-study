@@ -43,6 +43,7 @@ public interface BoundAuthorMapper {
 
   //======================================================
 
+//  这个地方没有 property = id , 默认就是id, 注解进行映射
   @ConstructorArgs({
       @Arg(column = "AUTHOR_ID", javaType = int.class)
   })
@@ -64,6 +65,7 @@ public interface BoundAuthorMapper {
 
   //======================================================
 
+  // 这个@ConstructorArgs注解是用 构造函数进行 result mapping的
   @ConstructorArgs({
       @Arg(column = "AUTHOR_ID", javaType = Integer.class),
       @Arg(column = "AUTHOR_USERNAME", javaType = String.class),
@@ -85,6 +87,7 @@ public interface BoundAuthorMapper {
 
   //======================================================
 
+  // 注意xml配置文件中的 #{2}，这个是取 int three 的参数，从#{0} 开始的
   List<Post> findThreeSpecificPosts(@Param("one") int one,
                                     RowBounds rowBounds,
                                     @Param("two") int two,
