@@ -212,6 +212,7 @@ public class BindingTest {
     }
   }
 
+  // 查询之后会把结果映射到handler中
   @Test
   public void shouldExecuteMultipleBoundSelectOfBlogsByIdInWithProvidedResultHandlerBetweenSessions() {
     SqlSession session = sqlSessionFactory.openSession();

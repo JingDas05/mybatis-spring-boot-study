@@ -618,7 +618,8 @@ public class MapperAnnotationBuilder {
     }
     return isLazy;
   }
-  
+
+  // 在一个resultMap里面 不能同时有 @One @Many注解
   private boolean hasNestedSelect(Result result) {
     if (result.one().select().length() > 0 && result.many().select().length() > 0) {
       throw new BuilderException("Cannot use both @One and @Many annotations in the same @Result");
