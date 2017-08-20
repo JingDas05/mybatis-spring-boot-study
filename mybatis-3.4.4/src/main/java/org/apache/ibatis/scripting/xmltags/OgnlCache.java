@@ -25,6 +25,8 @@ import org.apache.ibatis.builder.BuilderException;
 
 /**
  * Caches OGNL parsed expressions.
+ * 全局就这一个对象，不可修改，不可继承
+ * 静态方法，缓存OGNL已经解析的字段
  *
  * @author Eduardo Macarron
  *

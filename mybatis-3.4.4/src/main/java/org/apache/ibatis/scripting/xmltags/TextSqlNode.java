@@ -23,6 +23,9 @@ import org.apache.ibatis.scripting.ScriptingException;
 import org.apache.ibatis.type.SimpleTypeRegistry;
 
 /**
+ *
+ * 文字sqlNode 解析${}中的值，并调用apply方法，添加到DynamicContext中的sqlBuilder中
+ *
  * @author Clinton Begin
  */
 public class TextSqlNode implements SqlNode {
@@ -72,6 +75,7 @@ public class TextSqlNode implements SqlNode {
       this.injectionFilter = injectionFilter;
     }
 
+    // 解析传入的值text中的${},ognl去context 的 bindings中寻找值
     @Override
     public String handleToken(String content) {
       Object parameter = context.getBindings().get("_parameter");

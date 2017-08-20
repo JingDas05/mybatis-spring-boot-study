@@ -31,6 +31,8 @@ import java.util.TreeSet;
 import org.apache.ibatis.reflection.ReflectionException;
 
 /**
+ *
+ * 根据class去实例化
  * create()方法是重载的
  *
  * @author Clinton Begin
@@ -48,7 +50,7 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T create(Class<T> type, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
-        //如果传入的是接口，需要处理
+        //如果传入的是接口，需要处理，主要是对集合类型进行了默认实现
         Class<?> classToCreate = resolveInterface(type);
         // we know types are assignable
         // 反射机制，实例化class,
@@ -80,6 +82,7 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
             //通过构造函数参数实例化对象
             return constructor.newInstance(constructorArgs.toArray(new Object[constructorArgs.size()]));
         } catch (Exception e) {
+            // 把参数类型和参数都列出来，抛出异常
             StringBuilder argTypes = new StringBuilder();
             if (constructorArgTypes != null && !constructorArgTypes.isEmpty()) {
                 for (Class<?> argType : constructorArgTypes) {

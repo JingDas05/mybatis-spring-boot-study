@@ -27,6 +27,7 @@ public class PropertyTokenizer implements Iterator<PropertyTokenizer> {
   private String children;
 
   public PropertyTokenizer(String fullname) {
+    // 拆分 wusi.hand 字段，如果如前面所示就 name是"wusi",chlidren是"hand",否则只赋给name
     int delim = fullname.indexOf('.');
     if (delim > -1) {
       name = fullname.substring(0, delim);
