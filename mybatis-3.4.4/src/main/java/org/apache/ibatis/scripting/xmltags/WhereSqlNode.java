@@ -25,6 +25,7 @@ import org.apache.ibatis.session.Configuration;
  */
 public class WhereSqlNode extends TrimSqlNode {
 
+  // 如果出现prefix 那么后面的 prefixList里的元素都要被覆盖成""
   private static List<String> prefixList = Arrays.asList("AND ","OR ","AND\n", "OR\n", "AND\r", "OR\r", "AND\t", "OR\t");
 
   public WhereSqlNode(Configuration configuration, SqlNode contents) {

@@ -24,5 +24,6 @@ public interface SqlNode {
 
   // 这个作用是根据传入的name, expression解析，解析之后进行绑定，context.bind(name, value)
   // 共享同一个 context
+  // 返回bool类型，进行判断是否处理本次的Node
   boolean apply(DynamicContext context);
 }

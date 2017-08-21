@@ -134,9 +134,22 @@ public class DynamicSqlSourceTest extends BaseDataTest {
     assertEquals(expected, boundSql.getSql());
   }
 
+  // 去掉前缀是where 后面出现的 and or
   @Test
   public void shouldTrimWHEREInsteadOfANDForFirstCondition() throws Exception {
     final String expected = "SELECT * FROM BLOG WHERE  ID = ?";
+    // 这个地方构建了DynamicSqlSource，核心是构建了 一个 MixedSqlNode，里面是嵌套的结构包含了
+    // TextSqlNode 和 WhereSqlNode ，WhereSqlNode 包含了
+        // IfSqlNode， IfSqlNode 包含了
+            // TextSqlNode
+            // 最开始会先调用外层sqlNode的apply()，也就是 MixedSqlNode 的 apply方法（）
+            // MixedSqlNode 会循环调用包含sqlNode的方法，当调用 WhereSqlNode 的 apply 方法，会调用父类 TrimSqlNode的方法
+            // 父类 TrimSqlNode的方法 会先执行自己的apply方法(装饰 context )，之后执行context装饰者 FilteredDynamicContext
+            // 的applyAll方法去除前后缀等操作
+
+    // 总结来说就是层层调用apply方法，添加到context中
+    // 重点就是 TrimSqlNode中的 FilteredDynamicContext对象，加强 客户端 DynamicSqlSource 的 DynamicContext 的类，处理数据再
+    // 保存到DynamicContext中
     DynamicSqlSource source = createDynamicSqlSource(
         new TextSqlNode("SELECT * FROM BLOG"),
         new WhereSqlNode(new Configuration(),mixedContents(
@@ -145,6 +158,7 @@ public class DynamicSqlSourceTest extends BaseDataTest {
             new IfSqlNode(mixedContents(new TextSqlNode("   or NAME = ?  ")), "false"
             )
         )));
+    // getBoundSql() 核心方法，调用 apply() 获取boundSql
     BoundSql boundSql = source.getBoundSql(null);
     assertEquals(expected, boundSql.getSql());
   }
@@ -375,7 +389,7 @@ public class DynamicSqlSourceTest extends BaseDataTest {
     SqlSessionFactory sqlMapper = new SqlSessionFactoryBuilder().build(reader);
     Configuration configuration = sqlMapper.getConfiguration();
     MixedSqlNode sqlNode = mixedContents(contents);
-    // 创建动态sqlSource需要configuration对象
+    // 创建动态sqlSource需要configuration对象, 以及嵌套的sqlNode
     return new DynamicSqlSource(configuration, sqlNode);
   }
 

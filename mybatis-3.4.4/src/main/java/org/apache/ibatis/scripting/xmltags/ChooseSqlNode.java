@@ -32,6 +32,7 @@ public class ChooseSqlNode implements SqlNode {
   @Override
   public boolean apply(DynamicContext context) {
     for (SqlNode sqlNode : ifSqlNodes) {
+      // 调用sqlNode 的 apply方法
       if (sqlNode.apply(context)) {
         return true;
       }

@@ -51,12 +51,16 @@ public class TrimSqlNode implements SqlNode {
 
   @Override
   public boolean apply(DynamicContext context) {
+    //包装上层次传递进来的context
     FilteredDynamicContext filteredDynamicContext = new FilteredDynamicContext(context);
+    // 先调用SqlNode contents 的apply()方法
     boolean result = contents.apply(filteredDynamicContext);
+    // 调用修饰者的增强方法applyAll()
     filteredDynamicContext.applyAll();
     return result;
   }
 
+  // 运用 java Util StringTokenizer类，将"example1 | example2 | example3" 转化成list
   private static List<String> parseOverrides(String overrides) {
     if (overrides != null) {
       final StringTokenizer parser = new StringTokenizer(overrides, "|", false);
@@ -69,12 +73,14 @@ public class TrimSqlNode implements SqlNode {
     return Collections.emptyList();
   }
 
+  // FilteredDynamicContext 是 DynamicContext的装饰者
   private class FilteredDynamicContext extends DynamicContext {
     private DynamicContext delegate;
     private boolean prefixApplied;
     private boolean suffixApplied;
     private StringBuilder sqlBuffer;
 
+    // 构造时，初始化必要变量
     public FilteredDynamicContext(DynamicContext delegate) {
       super(configuration, null);
       this.delegate = delegate;
@@ -83,8 +89,11 @@ public class TrimSqlNode implements SqlNode {
       this.sqlBuffer = new StringBuilder();
     }
 
+    // 增强方法 applyAll()
     public void applyAll() {
+      // 去除掉前后空格
       sqlBuffer = new StringBuilder(sqlBuffer.toString().trim());
+      // 转换成大写
       String trimmedUppercaseSql = sqlBuffer.toString().toUpperCase(Locale.ENGLISH);
       if (trimmedUppercaseSql.length() > 0) {
         applyPrefix(sqlBuffer, trimmedUppercaseSql);
@@ -108,6 +117,7 @@ public class TrimSqlNode implements SqlNode {
       return delegate.getUniqueNumber();
     }
 
+    // 这个地方是关键，重写了父类的方法appendSql，将sql添加到了子类的sqlBuffer上
     @Override
     public void appendSql(String sql) {
       sqlBuffer.append(sql);
@@ -119,16 +129,22 @@ public class TrimSqlNode implements SqlNode {
     }
 
     private void applyPrefix(StringBuilder sql, String trimmedUppercaseSql) {
+      // 如果没有apply过
       if (!prefixApplied) {
+        // apply标志位置位
         prefixApplied = true;
+        // 内部类直接应用外面的变量
         if (prefixesToOverride != null) {
+          // toRemove 这个名字起的很好
           for (String toRemove : prefixesToOverride) {
+            // 去除开头 prefixesToOverride 里面的元素
             if (trimmedUppercaseSql.startsWith(toRemove)) {
               sql.delete(0, toRemove.trim().length());
               break;
             }
           }
         }
+        // 如果前缀不为空的话，插入前缀
         if (prefix != null) {
           sql.insert(0, " ");
           sql.insert(0, prefix);
@@ -136,6 +152,7 @@ public class TrimSqlNode implements SqlNode {
       }
     }
 
+    // 去掉后缀， eg: set name = 'wusi', 会去掉这个后面的逗号
     private void applySuffix(StringBuilder sql, String trimmedUppercaseSql) {
       if (!suffixApplied) {
         suffixApplied = true;
@@ -155,7 +172,6 @@ public class TrimSqlNode implements SqlNode {
         }
       }
     }
-
   }
 
 }
