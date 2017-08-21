@@ -17,9 +17,12 @@ package org.apache.ibatis.scripting.xmltags;
 
 /**
  * @author Clinton Begin
+ * 这个拼接字符串的中转对象，拼接sql
+ *
  */
 public interface SqlNode {
 
   // 这个作用是根据传入的name, expression解析，解析之后进行绑定，context.bind(name, value)
+  // 共享同一个 context
   boolean apply(DynamicContext context);
 }

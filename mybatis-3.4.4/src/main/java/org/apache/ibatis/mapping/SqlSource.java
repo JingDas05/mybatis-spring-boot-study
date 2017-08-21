@@ -32,5 +32,4 @@ public interface SqlSource {
   // sqlSource存储了一条sql语句的所有信息，通用的，没有具体的值，这个地方入参，返回数据库
   // 需要的带有参数的sql语句
   BoundSql getBoundSql(Object parameterObject);
-
 }

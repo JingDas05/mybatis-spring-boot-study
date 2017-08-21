@@ -46,6 +46,7 @@ import org.junit.Test;
 
 public class DynamicSqlSourceTest extends BaseDataTest {
 
+  // 验证简单的没有循环和条件的sql
   @Test
   public void shouldDemonstrateSimpleExpectedTextWithNoLoopsOrConditionals() throws Exception {
     final String expected = "SELECT * FROM BLOG";
@@ -55,6 +56,7 @@ public class DynamicSqlSourceTest extends BaseDataTest {
     assertEquals(expected, boundSql.getSql());
   }
 
+  // 验证多部件的没有循环和条件的sql
   @Test
   public void shouldDemonstrateMultipartExpectedTextWithNoLoopsOrConditionals() throws Exception {
     final String expected = "SELECT * FROM BLOG WHERE ID = ?";
@@ -364,13 +366,16 @@ public class DynamicSqlSourceTest extends BaseDataTest {
     assertEquals("__frch_u_0", boundSql.getParameterMappings().get(3).getProperty());
   }
 
+  // 公用方法，创建动态sqlSource
   private DynamicSqlSource createDynamicSqlSource(SqlNode... contents) throws IOException, SQLException {
     createBlogDataSource();
     final String resource = "org/apache/ibatis/builder/MapperConfig.xml";
     final Reader reader = Resources.getResourceAsReader(resource);
+    // SqlSessionFactory 这个是工厂类，用于生产 SqlSession
     SqlSessionFactory sqlMapper = new SqlSessionFactoryBuilder().build(reader);
     Configuration configuration = sqlMapper.getConfiguration();
     MixedSqlNode sqlNode = mixedContents(contents);
+    // 创建动态sqlSource需要configuration对象
     return new DynamicSqlSource(configuration, sqlNode);
   }
 

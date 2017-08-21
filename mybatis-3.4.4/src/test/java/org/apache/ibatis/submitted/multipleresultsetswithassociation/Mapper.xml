@@ -33,7 +33,9 @@
                      resultSet="orderHeaderResultSet" resultMap="orderHeaderResultMap" />
     </resultMap>
 	
-    <resultMap type="org.apache.ibatis.submitted.multipleresultsetswithassociation.OrderHeader" id="orderHeaderResultMap">
+    <resultMap type="org.apache.ibatis.submitted.multipleresultsetswithassociation.OrderHeader"
+               extends=""
+               id="orderHeaderResultMap">
         <id property="orderId" column="order_id"/>
     </resultMap>
 	
