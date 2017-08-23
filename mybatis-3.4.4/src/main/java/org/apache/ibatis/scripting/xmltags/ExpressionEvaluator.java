@@ -41,12 +41,14 @@ public class ExpressionEvaluator {
 
   public Iterable<?> evaluateIterable(String expression, Object parameterObject) {
     Object value = OgnlCache.getValue(expression, parameterObject);
+    // 如果解析失败就抛出异常，表达式没有解析成功
     if (value == null) {
       throw new BuilderException("The expression '" + expression + "' evaluated to a null value.");
     }
     if (value instanceof Iterable) {
       return (Iterable<?>) value;
     }
+    // 数组返回数组
     if (value.getClass().isArray()) {
         // the array may be primitive, so Arrays.asList() may throw
         // a ClassCastException (issue 209).  Do the work manually
@@ -59,6 +61,7 @@ public class ExpressionEvaluator {
         }
         return answer;
     }
+    // 如果是Map,强转为Map返回
     if (value instanceof Map) {
       return ((Map) value).entrySet();
     }

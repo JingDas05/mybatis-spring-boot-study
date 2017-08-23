@@ -37,7 +37,7 @@ public class DynamicSqlSource implements SqlSource {
 
   @Override
   public BoundSql getBoundSql(Object parameterObject) {
-    // 初始化context对象，用于存放参数，以及中间值
+    // 初始化context对象，用于存放参数，以及中间值，这个时候将参数parameterObject 放入到
     DynamicContext context = new DynamicContext(configuration, parameterObject);
     // 解析，将sqlNode里面的信息放到context中
     rootSqlNode.apply(context);

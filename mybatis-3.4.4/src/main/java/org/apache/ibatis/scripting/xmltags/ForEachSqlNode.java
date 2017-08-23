@@ -28,12 +28,15 @@ public class ForEachSqlNode implements SqlNode {
   public static final String ITEM_PREFIX = "__frch_";
 
   private ExpressionEvaluator evaluator;
+  // 这个为数组名字
   private String collectionExpression;
   private SqlNode contents;
   private String open;
   private String close;
   private String separator;
+  // 参数中的每一项
   private String item;
+  // 参数索引值，0， 1， 2
   private String index;
   private Configuration configuration;
 
@@ -52,6 +55,7 @@ public class ForEachSqlNode implements SqlNode {
   @Override
   public boolean apply(DynamicContext context) {
     Map<String, Object> bindings = context.getBindings();
+    // collectionExpression 是传递进来的参数名字key,把参数转化成迭代器
     final Iterable<?> iterable = evaluator.evaluateIterable(collectionExpression, bindings);
     if (!iterable.iterator().hasNext()) {
       return true;
@@ -59,7 +63,9 @@ public class ForEachSqlNode implements SqlNode {
     boolean first = true;
     applyOpen(context);
     int i = 0;
+    // 依次迭代参数数组
     for (Object o : iterable) {
+      // context 暂存
       DynamicContext oldContext = context;
       if (first) {
         context = new PrefixedContext(context, "");
@@ -92,18 +98,23 @@ public class ForEachSqlNode implements SqlNode {
 
   private void applyIndex(DynamicContext context, Object o, int i) {
     if (index != null) {
+      // key 为 index
       context.bind(index, o);
+      // key 为__frch_index_0
       context.bind(itemizeItem(index, i), o);
     }
   }
 
   private void applyItem(DynamicContext context, Object o, int i) {
     if (item != null) {
+      // key 为 item
       context.bind(item, o);
+      // key 为 __frch_item_0
       context.bind(itemizeItem(item, i), o);
     }
   }
 
+  // 向 context 中添加左开符号
   private void applyOpen(DynamicContext context) {
     if (open != null) {
       context.appendSql(open);
@@ -120,6 +131,7 @@ public class ForEachSqlNode implements SqlNode {
     return new StringBuilder(ITEM_PREFIX).append(item).append("_").append(i).toString();
   }
 
+  // 静态内部类，装饰DynamicContext
   private static class FilteredDynamicContext extends DynamicContext {
     private DynamicContext delegate;
     private int index;
@@ -172,7 +184,7 @@ public class ForEachSqlNode implements SqlNode {
 
   }
 
-
+  // 内部类，装饰DynamicContext,这里可以看到，每当有新的appendSql()方法逻辑时，就增加一个装饰类
   private class PrefixedContext extends DynamicContext {
     private DynamicContext delegate;
     private String prefix;
@@ -201,10 +213,12 @@ public class ForEachSqlNode implements SqlNode {
 
     @Override
     public void appendSql(String sql) {
+      // 如果前缀没有应用过，就添加前缀
       if (!prefixApplied && sql != null && sql.trim().length() > 0) {
         delegate.appendSql(prefix);
         prefixApplied = true;
       }
+      // 之后添加sql
       delegate.appendSql(sql);
     }
 

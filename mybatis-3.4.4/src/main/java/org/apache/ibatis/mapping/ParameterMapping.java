@@ -45,6 +45,7 @@ public class ParameterMapping {
   private ParameterMapping() {
   }
 
+  // 建造者模式，构建ParameterMapping
   public static class Builder {
     private ParameterMapping parameterMapping = new ParameterMapping();
 
