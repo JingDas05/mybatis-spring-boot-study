@@ -22,6 +22,7 @@
 
 <mapper namespace="org.apache.ibatis.domain.blog.mappers.NestedBlogMapper">
 
+  <!--这种嵌套和集合结果映射只能使用一次-->
   <resultMap id="blogJoinedWithPostsAndAuthor" type="Blog">
     <id property="id" column="blog_id"/>
     <result property="title" column="blog_title"/>

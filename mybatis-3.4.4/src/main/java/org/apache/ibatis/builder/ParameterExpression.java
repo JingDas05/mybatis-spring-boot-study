@@ -18,7 +18,7 @@ package org.apache.ibatis.builder;
 import java.util.HashMap;
 
 /**
- *
+ *  参数表达式
  *  本类的作用是 #{property,javaType=int,jdbcType=NUMERIC} 这样的内容转换成一个 map:
  *
  * Inline parameter expression parser. Supported grammar (simplified):

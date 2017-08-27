@@ -25,6 +25,7 @@
   <resultMap id="earlyNestedDiscriminatorPost" type="org.apache.ibatis.domain.blog.Post">
     <id property="id" column="post_id"/>
     <result property="subject" column="post_subject"/>
+    <!--根据draft的值去选择-->
     <discriminator javaType="int" column="draft">
       <case value="1">
         <association property="author" resultMap="joinedAuthor"/>
@@ -37,6 +38,7 @@
   <resultMap id="blogWithPosts" type="Blog">
     <id property="id" column="id"/>
     <result property="title" column="title"/>
+    <!--进行select属性查询时， 传入的查询参数是column列指定的参数-->
     <association property="author" column="author_id"
                  select="org.apache.ibatis.domain.blog.mappers.AuthorMapper.selectAuthorWithInlineParams"/>
     <collection property="posts" column="id" select="selectPostsForBlog"/>

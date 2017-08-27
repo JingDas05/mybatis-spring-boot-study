@@ -44,6 +44,13 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
+/**
+ *
+ * 从sqlNode 构建 SqlSource
+ * 从sqlSource 获取sqlBound
+ * sqlBound 是
+ *
+ */
 public class DynamicSqlSourceTest extends BaseDataTest {
 
   // 验证简单的没有循环和条件的sql

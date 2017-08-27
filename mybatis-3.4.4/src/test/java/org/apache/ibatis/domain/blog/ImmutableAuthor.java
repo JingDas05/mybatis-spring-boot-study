@@ -58,6 +58,7 @@ public class ImmutableAuthor implements Serializable {
     return favouriteSection;
   }
 
+  // 总体思想就是判断各种false，如果都不为false就返回true
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -68,6 +69,8 @@ public class ImmutableAuthor implements Serializable {
     if (id != author.id) return false;
     if (bio != null ? !bio.equals(author.bio) : author.bio != null) return false;
     if (email != null ? !email.equals(author.email) : author.email != null) return false;
+    // 首先判断this.password是否为空，如果不为空的话，判断this.password和传入进来的password比较
+    // 如果this.password 为空的话，那么判断传递进来的password是否为空
     if (password != null ? !password.equals(author.password) : author.password != null) return false;
     if (username != null ? !username.equals(author.username) : author.username != null) return false;
     if (favouriteSection != null ? !favouriteSection.equals(author.favouriteSection) : author.favouriteSection != null)

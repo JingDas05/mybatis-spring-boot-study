@@ -24,10 +24,14 @@ import java.util.Map;
 import org.apache.ibatis.builder.BuilderException;
 
 /**
+ *
+ * 封装了OgnlCache解析的操作
+ *
  * @author Clinton Begin
  */
 public class ExpressionEvaluator {
 
+    // 解析布尔值
   public boolean evaluateBoolean(String expression, Object parameterObject) {
     Object value = OgnlCache.getValue(expression, parameterObject);
     if (value instanceof Boolean) {

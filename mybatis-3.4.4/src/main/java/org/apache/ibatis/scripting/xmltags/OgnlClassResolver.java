@@ -23,6 +23,10 @@ import ognl.ClassResolver;
 import org.apache.ibatis.io.Resources;
 
 /**
+ *
+ * 自定义的OgnlClassResolver， 实现了ClassResolver接口，和 DefaultClassResolver 的作用一样
+ * 不同的是用Resources的方法寻找目标class，而不是 Class.forName()方法
+ *
  * Custom ognl {@code ClassResolver} which behaves same like ognl's
  * {@code DefaultClassResolver}. But uses the {@code Resources}
  * utility class to find the target class instead of {@code Class#forName(String)}. 

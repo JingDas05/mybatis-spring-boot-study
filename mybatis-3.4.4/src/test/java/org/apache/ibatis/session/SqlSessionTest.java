@@ -966,7 +966,7 @@ public class SqlSessionTest extends BaseDataTest {
     try {
       List<Post> posts = session.selectList("org.apache.ibatis.domain.blog.mappers.PostMapper.selectOddPostsInKeysList",
           new HashMap<String, List<Integer>>() {{put("keys",new ArrayList<Integer>() {{
-            add(0);
+              add(0);
             add(1);
             add(2);
             add(3);

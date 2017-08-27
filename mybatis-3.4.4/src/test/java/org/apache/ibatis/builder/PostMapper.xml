@@ -37,6 +37,7 @@
   <resultMap id="postLiteMap2NestedWithSelect" type="org.apache.ibatis.domain.blog.BlogLite">
     <id column="blog_id" property="id" />
     <collection property="posts" ofType="org.apache.ibatis.domain.blog.PostLite">
+      <!--这个地方是列表内每一个对象的构造函数定义-->
       <constructor>
           <arg javaType="org.apache.ibatis.domain.blog.PostLiteId" column="{id=id}" select="selectPostLiteId" />
           <arg javaType="_int" column="blog_id"/>
@@ -100,6 +101,7 @@
             <foreach item="item_id" index="index" open="(" close=")" separator="," collection="ids">#{ids[${index}]}
             </foreach>
           </if>
+#           如果上面的语句没有，前缀AND连接符就去掉
           <trim prefix="AND">
             <include refid="byBlogId">
                 <property name="prefix" value="blog"/>
@@ -124,6 +126,7 @@
     SELECT *
     FROM POST P
     WHERE ID in
+    #     这个地方没有指定collection的名字，是默认的list,所以客户端调用的时候需要是list就可以了
     <foreach item="item" index="index" collection="list"
              open="(" separator="," close=")">
       <if test="index % 2 != 0">
@@ -137,6 +140,7 @@
     SELECT *
     FROM POST P
     WHERE ID in
+#     这个地方指定了collection的名字，所以客户端调用的时候需要是map,key是keys，value 是值
     <foreach item="item" index="index" collection="keys"
              open="(" separator="," close=")">
       <if test="index % 2 != 0">

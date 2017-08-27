@@ -76,6 +76,4 @@ public class ExpressionEvaluatorTest {
       assertEquals(String.valueOf(++i), o);
     }
   }
-
-
 }

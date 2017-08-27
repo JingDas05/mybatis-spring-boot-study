@@ -106,10 +106,12 @@ public class XmlConfigBuilderTest {
 
     private E[] constants;
 
+    // Class<E> javaType的意思是 类型为E 的类class
     public EnumOrderTypeHandler(Class<E> javaType) {
       constants = javaType.getEnumConstants();
     }
 
+    // 这个枚举处理器根据枚举位置处理枚举类型，放入的时候，放置的是枚举的位置
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, E parameter, JdbcType jdbcType) throws SQLException {
       ps.setInt(i, parameter.ordinal() + 1); // 0 means NULL so add +1

@@ -40,8 +40,10 @@ public final class OgnlCache {
     // Prevent Instantiation of Static Class
   }
 
+  // 封装了Ognl原生的解析方法
   public static Object getValue(String expression, Object root) {
     try {
+      // 获取解析的上下文
       Map<Object, OgnlClassResolver> context = Ognl.createDefaultContext(root, new OgnlClassResolver());
       return Ognl.getValue(parseExpression(expression), context, root);
     } catch (OgnlException e) {
@@ -49,6 +51,7 @@ public final class OgnlCache {
     }
   }
 
+  // 解析表达式缓存，key就是解析表达式
   private static Object parseExpression(String expression) throws OgnlException {
     Object node = expressionCache.get(expression);
     if (node == null) {
