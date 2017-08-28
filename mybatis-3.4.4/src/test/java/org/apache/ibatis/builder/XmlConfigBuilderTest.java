@@ -191,6 +191,7 @@ public class XmlConfigBuilderTest {
       assertThat(config.getVfsImpl().getName(), is(JBoss6VFS.class.getName()));
       assertThat(config.getConfigurationFactory().getName(), is(String.class.getName()));
 
+      // 别名都是小写的
       assertTrue(config.getTypeAliasRegistry().getTypeAliases().get("blogauthor").equals(Author.class));
       assertTrue(config.getTypeAliasRegistry().getTypeAliases().get("blog").equals(Blog.class));
       assertTrue(config.getTypeAliasRegistry().getTypeAliases().get("cart").equals(Cart.class));
@@ -217,6 +218,7 @@ public class XmlConfigBuilderTest {
       assertThat(environment.getDataSource(), is(instanceOf(UnpooledDataSource.class)));
       assertThat(environment.getTransactionFactory(), is(instanceOf(JdbcTransactionFactory.class)));
 
+//      引入jdbc的配置文件，dataBaseId 为jdbc.properties中 url参数中 jdbc:derby:ibderby;create=true 中的 derby
       assertThat(config.getDatabaseId(), is("derby"));
 
       assertThat(config.getMapperRegistry().getMappers().size(), is(4));

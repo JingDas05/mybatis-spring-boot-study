@@ -22,6 +22,7 @@
 
 <configuration>
 
+  <!--引入jdbc的配置文件，dataBaseId 为jdbc.properties中 url参数中 jdbc:derby:ibderby;create=true 中的 derby-->
   <properties resource="org/apache/ibatis/builder/jdbc.properties">
     <property name="prop1" value="aaaa"/>
     <property name="jdbcTypeForNull" value="NULL" />

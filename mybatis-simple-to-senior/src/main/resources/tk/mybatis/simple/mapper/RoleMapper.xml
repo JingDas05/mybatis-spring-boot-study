@@ -23,12 +23,12 @@
 
 	<!--这个里面的resultMap是别的mapper.xml里面的配置,可以直接引用-->
 	<resultMap id="rolePrivilegeListMap" extends="roleMap" type="tk.mybatis.simple.model.SysRole">
-		<collection property="privilegeList" columnPrefix="privilege_" 
+		<collection property="privilegeList" columnPrefix="privilege_"
 					resultMap="tk.mybatis.simple.mapper.PrivilegeMapper.privilegeMap"/>
 	</resultMap>
-	
+
 	<resultMap id="rolePrivilegeListMapSelect" extends="roleMap" type="tk.mybatis.simple.model.SysRole">
-		<collection property="privilegeList" 
+		<collection property="privilegeList"
 					fetchType="lazy"
 					select="tk.mybatis.simple.mapper.PrivilegeMapper.selectPrivilegeByRoleId"
 					column="{roleId=id}"/>
