@@ -22,6 +22,7 @@ import org.junit.Test;
 
 public class LruCacheTest {
 
+  // 应该移除掉超出size的，最少使用的Item
   @Test
   public void shouldRemoveLeastRecentlyUsedItemInBeyondFiveEntries() {
     LruCache cache = new LruCache(new PerpetualCache("default"));
@@ -35,6 +36,7 @@ public class LruCacheTest {
     assertEquals(5, cache.getSize());
   }
 
+  // 移除掉按照命令删除的
   @Test
   public void shouldRemoveItemOnDemand() {
     Cache cache = new LruCache(new PerpetualCache("default"));
@@ -44,6 +46,7 @@ public class LruCacheTest {
     assertNull(cache.getObject(0));
   }
 
+  // 移除掉全部
   @Test
   public void shouldFlushAllItemsOnDemand() {
     Cache cache = new LruCache(new PerpetualCache("default"));

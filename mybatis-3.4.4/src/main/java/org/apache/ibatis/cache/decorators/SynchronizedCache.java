@@ -21,7 +21,7 @@ import org.apache.ibatis.cache.Cache;
 
 /**
  *
- * 同步缓存， 在各个调用方法前面加上 synchronized 关键字
+ * 同步缓存， 在各个调用方法前面加上 synchronized 关键字，性能或许比较低一些？
  *
  * @author Clinton Begin
  */

@@ -18,6 +18,9 @@ package org.apache.ibatis.cache;
 import java.util.concurrent.locks.ReadWriteLock;
 
 /**
+ *
+ * cache的实现采用了装饰者模式进行增强，很赞
+ *
  * SPI for cache providers.
  * One instance of cache will be created for each namespace.(每一个命名空间都会有一个cache实例)
  * The cache implementation must have a constructor that receives the cache id as an

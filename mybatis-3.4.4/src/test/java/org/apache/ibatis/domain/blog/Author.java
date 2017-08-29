@@ -109,6 +109,7 @@ public class Author implements Serializable {
     return true;
   }
 
+  // 重写hashCode的方法，很有效，算法是之前的结果*31+新加入字段的hashcode
   @Override
   public int hashCode() {
     int result;

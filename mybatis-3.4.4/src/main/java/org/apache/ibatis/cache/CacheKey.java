@@ -33,7 +33,9 @@ public class CacheKey implements Cloneable, Serializable {
   private static final int DEFAULT_MULTIPLYER = 37;
   private static final int DEFAULT_HASHCODE = 17;
 
+  // 乘数因子
   private int multiplier;
+  // 哈希值
   private int hashcode;
   private long checksum;
   private int count;
@@ -55,15 +57,17 @@ public class CacheKey implements Cloneable, Serializable {
     return updateList.size();
   }
 
+  // 更新 count checksum hashcode值
   public void update(Object object) {
+    // 中间值，当等于null的时候，baseHashCode等于1
     int baseHashCode = object == null ? 1 : ArrayUtil.hashCode(object); 
 
     count++;
     checksum += baseHashCode;
     baseHashCode *= count;
-
+    // 重新计算hashcode值
     hashcode = multiplier * hashcode + baseHashCode;
-
+    // updateList添加元素
     updateList.add(object);
   }
 
@@ -94,6 +98,7 @@ public class CacheKey implements Cloneable, Serializable {
       return false;
     }
 
+    // 循环比较，如果相对应位置元素不相等
     for (int i = 0; i < updateList.size(); i++) {
       Object thisObject = updateList.get(i);
       Object thatObject = cacheKey.updateList.get(i);
@@ -121,6 +126,7 @@ public class CacheKey implements Cloneable, Serializable {
   @Override
   public CacheKey clone() throws CloneNotSupportedException {
     CacheKey clonedCacheKey = (CacheKey) super.clone();
+    // 深度复制非基本类型
     clonedCacheKey.updateList = new ArrayList<Object>(updateList);
     return clonedCacheKey;
   }

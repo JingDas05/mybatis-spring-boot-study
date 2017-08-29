@@ -24,12 +24,15 @@ public class FifoCacheTest {
 
   @Test
   public void shouldRemoveFirstItemInBeyondFiveEntries() {
+    // 设定缓存id 为default
     FifoCache cache = new FifoCache(new PerpetualCache("default"));
+    // 缓存大小为5
     cache.setSize(5);
     for (int i = 0; i < 5; i++) {
       cache.putObject(i, i);
     }
     assertEquals(0, cache.getObject(0));
+    // 再添加一个元素，这时会触发FifoCache的移除操作
     cache.putObject(5, 5);
     assertNull(cache.getObject(0));
     assertEquals(5, cache.getSize());

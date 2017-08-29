@@ -51,6 +51,7 @@ import org.apache.ibatis.type.TypeHandler;
 
 /**
  * mapperBuilder 辅助类
+ * 管理缓存
  *
  * @author Clinton Begin
  */
@@ -113,7 +114,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
       throw new BuilderException("cache-ref element requires a namespace attribute.");
     }
     try {
-      // 标志位置位，如果下面的方法抛出异常，那么不能复位，线程不安全
+      // 标志位置位，如果下面的方法抛出异常，那么不能复位，线程不安全？
       unresolvedCacheRef = true;
       Cache cache = configuration.getCache(namespace);
       if (cache == null) {

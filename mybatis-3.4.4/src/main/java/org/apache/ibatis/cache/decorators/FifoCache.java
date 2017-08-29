@@ -28,7 +28,9 @@ import org.apache.ibatis.cache.Cache;
  */
 public class FifoCache implements Cache {
 
+  // 缓存被装饰者
   private final Cache delegate;
+  // 双向队列，用于存放 delegate 的key列表
   private Deque<Object> keyList;
   private int size;
 
@@ -36,6 +38,7 @@ public class FifoCache implements Cache {
     // 装饰对象
     this.delegate = delegate;
     this.keyList = new LinkedList<Object>();
+    // 默认长度1024
     this.size = 1024;
   }
 
@@ -55,8 +58,9 @@ public class FifoCache implements Cache {
 
   @Override
   public void putObject(Object key, Object value) {
-    // fifo 记录了固定数量的key，如果大于size 的值就从 queue 的头部删除掉旧的
+    // fifo的keyList 记录了固定size的key，如果大于固定值size， 就从被装饰者中删除掉对应key值的value
     cycleKeyList(key);
+    // 正常的逻辑，添加值
     delegate.putObject(key, value);
   }
 

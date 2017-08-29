@@ -73,6 +73,7 @@ public class PerpetualCache implements Cache {
     return null;
   }
 
+  // 根据id判断缓存是否相等
   @Override
   public boolean equals(Object o) {
     if (getId() == null) {
@@ -96,5 +97,4 @@ public class PerpetualCache implements Cache {
     }
     return getId().hashCode();
   }
-
 }

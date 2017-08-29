@@ -30,6 +30,7 @@ public class ScheduledCache implements Cache {
 
   public ScheduledCache(Cache delegate) {
     this.delegate = delegate;
+    // 清除间隔，基本单位是毫秒
     this.clearInterval = 60 * 60 * 1000; // 1 hour
     this.lastClear = System.currentTimeMillis();
   }
@@ -57,6 +58,7 @@ public class ScheduledCache implements Cache {
 
   @Override
   public Object getObject(Object key) {
+    // 获取的时候，调用清除定期缓存方法
     return clearWhenStale() ? null : delegate.getObject(key);
   }
 
@@ -68,6 +70,7 @@ public class ScheduledCache implements Cache {
 
   @Override
   public void clear() {
+    // 更新上一次清除时间
     lastClear = System.currentTimeMillis();
     delegate.clear();
   }
@@ -87,7 +90,9 @@ public class ScheduledCache implements Cache {
     return delegate.equals(obj);
   }
 
+  // 清除过期缓存
   private boolean clearWhenStale() {
+    // 如果当前时间 - 上次清除时间 > 清除间隔，调用清除方法（单一职责区分）
     if (System.currentTimeMillis() - lastClear > clearInterval) {
       clear();
       return true;

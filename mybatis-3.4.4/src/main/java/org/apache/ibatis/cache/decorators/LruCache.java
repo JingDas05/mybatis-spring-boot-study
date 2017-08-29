@@ -23,7 +23,7 @@ import org.apache.ibatis.cache.Cache;
 
 /**
  *
- * 最少使用缓存
+ * 最少使用缓存，运用 LinkedHashMap 巧妙设计
  * Lru (least recently used) cache decorator
  *
  * @author Clinton Begin
@@ -55,7 +55,7 @@ public class LruCache implements Cache {
       private static final long serialVersionUID = 4267176411845948333L;
 
       // 重写了LinkedHashMap 的方法，如果map的size大于参数size 就将最老的元素赋值给eldestKey
-      // accessOrder 为true，说明插入无序，最先读取的排在最前面，从而达到最少使用的最先去掉
+      // accessOrder 为true，说明插入无序，读取有序，最先读取的排在最前面，从而达到最少使用的最先去掉
       @Override
       protected boolean removeEldestEntry(Map.Entry<Object, Object> eldest) {
         boolean tooBig = size() > size;
@@ -99,6 +99,8 @@ public class LruCache implements Cache {
   // 去除最少使用的entry
   private void cycleKeyList(Object key) {
     keyMap.put(key, key);
+    // 这个地方 eldestKey 会在 LinkedHashMap 中的 removeEldestEntry()设置，
+    // removeEldestEntry() 应该是钩子方法，在 LinkedHashMap的恰当时机会被调用
     if (eldestKey != null) {
       delegate.removeObject(eldestKey);
       eldestKey = null;

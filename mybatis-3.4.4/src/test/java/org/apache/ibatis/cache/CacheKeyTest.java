@@ -44,6 +44,7 @@ public class CacheKeyTest {
     assertFalse(key1.toString().equals(key2.toString()));
   }
 
+  // 参数顺序不一致，也不相等
   @Test
   public void shouldTestCacheKeysNotEqualDueToOrder() throws Exception {
     CacheKey key1 = new CacheKey(new Object[] { 1, "hello", null });
