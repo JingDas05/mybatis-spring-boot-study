@@ -54,6 +54,7 @@ public class XmlMapperBuilderTest {
     XMLMapperBuilder builder = new XMLMapperBuilder(inputStream, configuration, resource, configuration.getSqlFragments());
     builder.parse();
 
+    // 这个地方的id，是不是应该加上namespace?
     MappedStatement mappedStatement = configuration.getMappedStatement("selectWithOptions");
     assertThat(mappedStatement.getFetchSize(), is(200));
     assertThat(mappedStatement.getTimeout(), is(10));

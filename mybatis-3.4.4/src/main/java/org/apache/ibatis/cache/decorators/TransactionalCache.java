@@ -1,4 +1,4 @@
-/**
+ /**
  *    Copyright 2009-2015 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,12 +27,12 @@ import org.apache.ibatis.logging.LogFactory;
 
 /**
  * The 2nd level cache transactional buffer.
- * 
+ *
  * This class holds all cache entries that are to be added to the 2nd level cache during a Session.
- * Entries are sent to the cache when commit is called or discarded if the Session is rolled back. 
- * Blocking cache support has been added. Therefore any get() that returns a cache miss 
- * will be followed by a put() so any lock associated with the key can be released. 
- * 
+ * Entries are sent to the cache when commit is called or discarded if the Session is rolled back.
+ * Blocking cache support has been added. Therefore any get() that returns a cache miss
+ * will be followed by a put() so any lock associated with the key can be released.
+ *
  * @author Clinton Begin
  * @author Eduardo Macarron
  */
@@ -43,6 +43,7 @@ public class TransactionalCache implements Cache {
   private Cache delegate;
   private boolean clearOnCommit;
   private Map<Object, Object> entriesToAddOnCommit;
+  // 保存缓存丢失的实体
   private Set<Object> entriesMissedInCache;
 
   public TransactionalCache(Cache delegate) {
@@ -70,6 +71,7 @@ public class TransactionalCache implements Cache {
       entriesMissedInCache.add(key);
     }
     // issue #146
+    // 如果提交后清除，返回null
     if (clearOnCommit) {
       return null;
     } else {
@@ -99,6 +101,7 @@ public class TransactionalCache implements Cache {
   }
 
   public void commit() {
+    // 如果设置了提交清楚，先清除被装饰者的缓存，再更新缓存
     if (clearOnCommit) {
       delegate.clear();
     }

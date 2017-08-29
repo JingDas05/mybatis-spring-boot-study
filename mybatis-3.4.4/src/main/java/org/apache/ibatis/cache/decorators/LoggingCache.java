@@ -56,6 +56,7 @@ public class LoggingCache implements Cache {
     delegate.putObject(key, object);
   }
 
+  // 获取元素的时候，requests hits自加，计算命中率
   @Override
   public Object getObject(Object key) {
     requests++;
