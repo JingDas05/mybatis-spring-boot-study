@@ -56,6 +56,7 @@ public class UnpooledDataSourceTest {
     assertEquals(before + 1, countRegisteredDrivers());
   }
 
+  // 统计drivers数量
   protected int countRegisteredDrivers() {
     Enumeration<Driver> drivers = DriverManager.getDrivers();
     int count = 0;

@@ -41,6 +41,7 @@ public class JndiDataSourceFactoryTest extends BaseDataTest {
 
   @Before
   public void setup() throws Exception {
+    // 调用 BaseDataTest 的方法createUnpooledDataSource(String resource)创建不是连接池的数据源
     expectedDataSource = createUnpooledDataSource(BLOG_PROPERTIES);
   }
 
@@ -50,8 +51,12 @@ public class JndiDataSourceFactoryTest extends BaseDataTest {
     JndiDataSourceFactory factory = new JndiDataSourceFactory();
     factory.setProperties(new Properties() {
       {
+        // key 为 env.java.naming.factory.initial, value 为org.apache.ibatis.datasource.jndi.JndiDataSourceFactoryTest$MockContextFactory
+        // 注意这个地方是内部类
         setProperty(JndiDataSourceFactory.ENV_PREFIX + Context.INITIAL_CONTEXT_FACTORY, TEST_INITIAL_CONTEXT_FACTORY);
+        // key 为 initial_context， value 为 /mypath/path/
         setProperty(JndiDataSourceFactory.INITIAL_CONTEXT, TEST_INITIAL_CONTEXT);
+        // key 为 data_source， value 为 myDataSource
         setProperty(JndiDataSourceFactory.DATA_SOURCE, TEST_DATA_SOURCE);
       }
     });
@@ -61,12 +66,16 @@ public class JndiDataSourceFactoryTest extends BaseDataTest {
 
   private void createJndiDataSource() throws Exception {
     try {
+      // 环境配置，key 为 java.naming.factory.initial， value
+      // 为org.apache.ibatis.datasource.jndi.JndiDataSourceFactoryTest$MockContextFactory
       Hashtable<String, String> env = new Hashtable<String, String>();
       env.put(Context.INITIAL_CONTEXT_FACTORY, TEST_INITIAL_CONTEXT_FACTORY);
 
+      // 新建模拟环境，并且绑定expectedDataSource数据源，key是myDataSource
       MockContext ctx = new MockContext(false);
       ctx.bind(TEST_DATA_SOURCE, expectedDataSource);
 
+      // 初始化环境，绑定上面的模拟环境，key为/mypath/path/
       InitialContext initCtx = new InitialContext(env);
       initCtx.bind(TEST_INITIAL_CONTEXT, ctx);
     } catch (NamingException e) {
@@ -74,6 +83,7 @@ public class JndiDataSourceFactoryTest extends BaseDataTest {
     }
   }
 
+  // 定义了一个模拟的MockContextFactory，实现getInitialContext(Hashtable<?, ?> environment)方法
   public static class MockContextFactory implements InitialContextFactory {
     @Override
     public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
@@ -81,6 +91,7 @@ public class JndiDataSourceFactoryTest extends BaseDataTest {
     }
   }
 
+  //  定义了一个模拟的 MockContext
   public static class MockContext extends InitialContext {
     private static Map<String,Object> bindings = new HashMap<String,Object>();
 

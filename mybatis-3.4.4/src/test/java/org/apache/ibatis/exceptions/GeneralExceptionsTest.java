@@ -72,8 +72,10 @@ public class GeneralExceptionsTest {
   }
 
   private void testExceptionConstructors(Class<?> exceptionType) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    // 无参构造对象
     Exception e = (Exception) exceptionType.newInstance();
     testThrowException(e);
+    // 获取签名构造函数，构造对象， 入参是构造函数参数
     e = (Exception) exceptionType.getConstructor(String.class).newInstance(EXPECTED_MESSAGE);
     testThrowException(e);
     e = (Exception) exceptionType.getConstructor(String.class, Throwable.class).newInstance(EXPECTED_MESSAGE, EXPECTED_CAUSE);
@@ -82,6 +84,7 @@ public class GeneralExceptionsTest {
     testThrowException(e);
   }
 
+  // 测试抛出异常和输入异常是否相同
   private void testThrowException(Exception thrown) {
     try {
       throw thrown;

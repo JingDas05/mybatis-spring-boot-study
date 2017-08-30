@@ -160,7 +160,9 @@ attr2 varchar(80) null,
 attr3 varchar(80) null,
 attr4 varchar(80) null,
 attr5 varchar(80) null,
+-- 定义主键语句，约束名字pk_item，定义主键是列itemid
 constraint pk_item primary key (itemid),
+-- 定义外键的语句，约束名fk_item_1，约束列productid相关联表product中列productid
 constraint fk_item_1 foreign key (productid)
 references product (productid),
 constraint fk_item_2 foreign key (supplier)

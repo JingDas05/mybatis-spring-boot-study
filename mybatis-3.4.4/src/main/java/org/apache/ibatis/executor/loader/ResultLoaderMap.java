@@ -50,6 +50,7 @@ public class ResultLoaderMap {
   private final Map<String, LoadPair> loaderMap = new HashMap<String, LoadPair>();
 
   public void addLoader(String property, MetaObject metaResultObject, ResultLoader resultLoader) {
+    // 获取属性第一个"."号前面的数据
     String upperFirst = getUppercaseFirstProperty(property);
     if (!upperFirst.equalsIgnoreCase(property) && loaderMap.containsKey(upperFirst)) {
       throw new ExecutorException("Nested lazy loaded result property '" + property +

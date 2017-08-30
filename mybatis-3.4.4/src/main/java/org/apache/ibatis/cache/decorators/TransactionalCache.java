@@ -27,9 +27,13 @@ import org.apache.ibatis.logging.LogFactory;
 
 /**
  * The 2nd level cache transactional buffer.
+ * 总体思想就是：放入元素时，首先不放入 delegate 中，先放入到entriesToAddOnCommit中，提交的时候在放置
+ * 到delegate中
  *
  * This class holds all cache entries that are to be added to the 2nd level cache during a Session.
+ * 这个类保留了所有要添加到二级缓存一个session中的所有实体
  * Entries are sent to the cache when commit is called or discarded if the Session is rolled back.
+ * 如果session回滚了，发送到缓存的实体会被丢弃
  * Blocking cache support has been added. Therefore any get() that returns a cache miss
  * will be followed by a put() so any lock associated with the key can be released.
  *
@@ -86,6 +90,7 @@ public class TransactionalCache implements Cache {
 
   @Override
   public void putObject(Object key, Object object) {
+    // 放入元素时，先放入到要提交的实体集合中
     entriesToAddOnCommit.put(key, object);
   }
 
@@ -101,7 +106,7 @@ public class TransactionalCache implements Cache {
   }
 
   public void commit() {
-    // 如果设置了提交清楚，先清除被装饰者的缓存，再更新缓存
+    // 如果设置了提交清除，先清除被装饰者的缓存，再更新缓存
     if (clearOnCommit) {
       delegate.clear();
     }
@@ -109,6 +114,7 @@ public class TransactionalCache implements Cache {
     reset();
   }
 
+  // 回滚，清除掉
   public void rollback() {
     unlockMissedEntries();
     reset();
@@ -119,11 +125,12 @@ public class TransactionalCache implements Cache {
     entriesToAddOnCommit.clear();
     entriesMissedInCache.clear();
   }
-
+  // 刷新等待的实体
   private void flushPendingEntries() {
     for (Map.Entry<Object, Object> entry : entriesToAddOnCommit.entrySet()) {
       delegate.putObject(entry.getKey(), entry.getValue());
     }
+    // 对于丢失的缓存，赋值为null
     for (Object entry : entriesMissedInCache) {
       if (!entriesToAddOnCommit.containsKey(entry)) {
         delegate.putObject(entry, null);
@@ -131,6 +138,7 @@ public class TransactionalCache implements Cache {
     }
   }
 
+  // 删除掉丢失的实体
   private void unlockMissedEntries() {
     for (Object entry : entriesMissedInCache) {
       try {
