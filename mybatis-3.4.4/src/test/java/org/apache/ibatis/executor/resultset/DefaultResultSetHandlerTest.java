@@ -133,6 +133,8 @@ public class DefaultResultSetHandlerTest {
   MappedStatement getMappedStatement() {
     final Configuration config = new Configuration();
     final TypeHandlerRegistry registry = config.getTypeHandlerRegistry();
+    // MappedStatement 对应一条查询语句的映射
+    // ResultMap 对应一个完整的结果映射，ResultMapping 对应某一列的结果映射
     return new MappedStatement.Builder(config, "testSelect", new StaticSqlSource(config, "some select statement"), SqlCommandType.SELECT).resultMaps(
         new ArrayList<ResultMap>() {
           {
@@ -144,5 +146,4 @@ public class DefaultResultSetHandlerTest {
           }
         }).build();
   }
-
 }

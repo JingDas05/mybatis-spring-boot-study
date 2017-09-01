@@ -33,6 +33,7 @@ import org.apache.ibatis.session.RowBounds;
 public class SelectKeyGenerator implements KeyGenerator {
   
   public static final String SELECT_KEY_SUFFIX = "!selectKey";
+  // 控制 before 或者 after
   private boolean executeBefore;
   private MappedStatement keyStatement;
 

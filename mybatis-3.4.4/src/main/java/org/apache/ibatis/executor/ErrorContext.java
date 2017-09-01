@@ -16,10 +16,14 @@
 package org.apache.ibatis.executor;
 
 /**
+ *
+ * 异常的包装对象
+ *
  * @author Clinton Begin
  */
 public class ErrorContext {
 
+  // 静态变量，在内存中
   private static final String LINE_SEPARATOR = System.getProperty("line.separator","\n");
   private static final ThreadLocal<ErrorContext> LOCAL = new ThreadLocal<ErrorContext>();
 
@@ -35,6 +39,7 @@ public class ErrorContext {
   }
 
   public static ErrorContext instance() {
+    // 首先从本地变量中获取，获取不到的话，新建放入缓存，并且返回
     ErrorContext context = LOCAL.get();
     if (context == null) {
       context = new ErrorContext();
@@ -43,12 +48,14 @@ public class ErrorContext {
     return context;
   }
 
+  // 当前对象保存到stored中，新建一个 ErrorContext 放置到本地变量中，返回新ErrorContext
   public ErrorContext store() {
     stored = this;
     LOCAL.set(new ErrorContext());
     return LOCAL.get();
   }
 
+  // 取出 stored 中存储的ErrorContext，放置到本地变量中， 清空 stored
   public ErrorContext recall() {
     if (stored != null) {
       LOCAL.set(stored);
@@ -57,6 +64,7 @@ public class ErrorContext {
     return LOCAL.get();
   }
 
+  // builder设计模式
   public ErrorContext resource(String resource) {
     this.resource = resource;
     return this;

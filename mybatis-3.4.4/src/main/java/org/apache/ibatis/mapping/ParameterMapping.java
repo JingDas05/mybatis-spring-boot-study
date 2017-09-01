@@ -35,6 +35,7 @@ public class ParameterMapping {
   private ParameterMode mode;
   private Class<?> javaType = Object.class;
   private JdbcType jdbcType;
+  // 数值刻度
   private Integer numericScale;
   // 这个typeHandler是必须的
   private TypeHandler<?> typeHandler;

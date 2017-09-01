@@ -18,12 +18,19 @@ package org.apache.ibatis.executor.resultset;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ *
+ *  基本类型的装箱和拆箱
+ *
+ */
 public class PrimitiveTypes {
   private final Map<Class<?>, Class<?>> primitiveToWrappers;
   private final Map<Class<?>, Class<?>> wrappersToPrimitives;
 
   public PrimitiveTypes() {
+    // 原始 -> 封装
     this.primitiveToWrappers = new HashMap<Class<?>, Class<?>>();
+    // 封装 -> 原始
     this.wrappersToPrimitives = new HashMap<Class<?>, Class<?>>();
 
     add(boolean.class, Boolean.class);

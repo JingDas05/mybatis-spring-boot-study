@@ -97,6 +97,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
   // temporary marking flag that indicate using constructor mapping (use field to reduce memory usage)
   private boolean useConstructorMappings;
 
+  // 原始类型 和 封装类型的切换
   private final PrimitiveTypes primitiveTypes;
 
   private static class PendingRelation {
@@ -121,11 +122,13 @@ public class DefaultResultSetHandler implements ResultSetHandler {
   public DefaultResultSetHandler(Executor executor, MappedStatement mappedStatement, ParameterHandler parameterHandler, ResultHandler<?> resultHandler, BoundSql boundSql,
                                  RowBounds rowBounds) {
     this.executor = executor;
+    // 先从 mappedStatement 获取 configuration
     this.configuration = mappedStatement.getConfiguration();
     this.mappedStatement = mappedStatement;
     this.rowBounds = rowBounds;
     this.parameterHandler = parameterHandler;
     this.boundSql = boundSql;
+    // 再从上面的 configuration 中获取 typeHandlerRegistry objectFactory reflectorFactory
     this.typeHandlerRegistry = configuration.getTypeHandlerRegistry();
     this.objectFactory = configuration.getObjectFactory();
     this.reflectorFactory = configuration.getReflectorFactory();

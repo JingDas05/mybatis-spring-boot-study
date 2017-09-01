@@ -80,6 +80,7 @@ public abstract class BaseStatementHandler implements StatementHandler {
     return parameterHandler;
   }
 
+  // 准备工作
   @Override
   public Statement prepare(Connection connection, Integer transactionTimeout) throws SQLException {
     ErrorContext.instance().sql(boundSql.getSql());
@@ -89,6 +90,7 @@ public abstract class BaseStatementHandler implements StatementHandler {
       setStatementTimeout(statement, transactionTimeout);
       setFetchSize(statement);
       return statement;
+      // 分开捕获异常，之后都要记得关闭statement
     } catch (SQLException e) {
       closeStatement(statement);
       throw e;
@@ -98,21 +100,28 @@ public abstract class BaseStatementHandler implements StatementHandler {
     }
   }
 
+  // 精华，上面的 prepare定义流程，调用了下面的抽象方法
   protected abstract Statement instantiateStatement(Connection connection) throws SQLException;
 
+  // 只能子类使用的方法
   protected void setStatementTimeout(Statement stmt, Integer transactionTimeout) throws SQLException {
     Integer queryTimeout = null;
+    // 获取超时时间
     if (mappedStatement.getTimeout() != null) {
       queryTimeout = mappedStatement.getTimeout();
     } else if (configuration.getDefaultStatementTimeout() != null) {
       queryTimeout = configuration.getDefaultStatementTimeout();
     }
+    // 如果超时时间不为空，设置超时时间
     if (queryTimeout != null) {
       stmt.setQueryTimeout(queryTimeout);
     }
     StatementUtil.applyTransactionTimeout(stmt, queryTimeout, transactionTimeout);
   }
 
+  // 只能子类使用的方法
+  // 设置 fetchSize， 首先用mappedStatement中的设置的fetchSize，没有就用默认值
+  // 本质是设置Statement中的参数
   protected void setFetchSize(Statement stmt) throws SQLException {
     Integer fetchSize = mappedStatement.getFetchSize();
     if (fetchSize != null) {

@@ -20,6 +20,7 @@ import java.sql.Statement;
 
 /**
  * Utility for {@link java.sql.Statement}.
+ * 总体就是选择事务超时和查询超时中小的那一个
  *
  * @since 3.4.0
  * @author Kazuki Shimizu
@@ -41,15 +42,18 @@ public class StatementUtil {
    * @throws SQLException if a database access error occurs, this method is called on a closed <code>Statement</code>
    */
   public static void applyTransactionTimeout(Statement statement, Integer queryTimeout, Integer transactionTimeout) throws SQLException {
+    // 如果超时时间为空，直接返回
     if (transactionTimeout == null){
       return;
     }
     Integer timeToLiveOfQuery = null;
     if (queryTimeout == null || queryTimeout == 0) {
       timeToLiveOfQuery = transactionTimeout;
+      // 选择事务超时和查询超时中小的
     } else if (transactionTimeout < queryTimeout) {
       timeToLiveOfQuery = transactionTimeout;
     }
+    // 如果时间不会空，设置超时
     if (timeToLiveOfQuery != null) {
       statement.setQueryTimeout(timeToLiveOfQuery);
     }

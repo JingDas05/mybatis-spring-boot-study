@@ -51,6 +51,7 @@ public class CallableStatementHandler extends BaseStatementHandler {
     Object parameterObject = boundSql.getParameterObject();
     KeyGenerator keyGenerator = mappedStatement.getKeyGenerator();
     keyGenerator.processAfter(executor, mappedStatement, cs, parameterObject);
+    // 存储过程调用，出参处理
     resultSetHandler.handleOutputParameters(cs);
     return rows;
   }
@@ -66,6 +67,7 @@ public class CallableStatementHandler extends BaseStatementHandler {
     CallableStatement cs = (CallableStatement) statement;
     cs.execute();
     List<E> resultList = resultSetHandler.<E>handleResultSets(cs);
+    // 存储过程调用，出参处理
     resultSetHandler.handleOutputParameters(cs);
     return resultList;
   }
@@ -75,6 +77,7 @@ public class CallableStatementHandler extends BaseStatementHandler {
     CallableStatement cs = (CallableStatement) statement;
     cs.execute();
     Cursor<E> resultList = resultSetHandler.<E>handleCursorResultSets(cs);
+    // 存储过程调用，出参处理
     resultSetHandler.handleOutputParameters(cs);
     return resultList;
   }
@@ -91,18 +94,23 @@ public class CallableStatementHandler extends BaseStatementHandler {
 
   @Override
   public void parameterize(Statement statement) throws SQLException {
+    // 注册出参
     registerOutputParameters((CallableStatement) statement);
     parameterHandler.setParameters((CallableStatement) statement);
   }
 
   private void registerOutputParameters(CallableStatement cs) throws SQLException {
+    // 获取 boundSql 中的 参数映射s
     List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
     for (int i = 0, n = parameterMappings.size(); i < n; i++) {
       ParameterMapping parameterMapping = parameterMappings.get(i);
+      // 如果参数的类型是 OUT 或者 INOUT
       if (parameterMapping.getMode() == ParameterMode.OUT || parameterMapping.getMode() == ParameterMode.INOUT) {
+        // 出参的 JdbcType 是必须要设置的，这个地方下面完全可以不用else，可能是安全考虑
         if (null == parameterMapping.getJdbcType()) {
           throw new ExecutorException("The JDBC Type must be specified for output parameter.  Parameter: " + parameterMapping.getProperty());
         } else {
+          // 区分数值型和字符型的出参
           if (parameterMapping.getNumericScale() != null && (parameterMapping.getJdbcType() == JdbcType.NUMERIC || parameterMapping.getJdbcType() == JdbcType.DECIMAL)) {
             cs.registerOutParameter(i + 1, parameterMapping.getJdbcType().TYPE_CODE, parameterMapping.getNumericScale());
           } else {
@@ -116,5 +124,4 @@ public class CallableStatementHandler extends BaseStatementHandler {
       }
     }
   }
-
 }
