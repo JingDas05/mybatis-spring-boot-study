@@ -36,7 +36,8 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.transaction.Transaction;
 
 /**
- * @author Jeff Butler 
+ * @author Jeff Butler
+ * 设计！设计！父类中已经定义好通用逻辑，子类只需要重写了父类的do______方法
  */
 public class BatchExecutor extends BaseExecutor {
 

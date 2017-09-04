@@ -542,7 +542,9 @@ public class Configuration {
         return resultSetHandler;
     }
 
+    // 创建StatementHandler之前先调用拦截器
     public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
+        // 创建的是路由StatementHandler，根据mappedStatement StatementType类型不同，选择不同的StatementHandler
         StatementHandler statementHandler = new RoutingStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
         statementHandler = (StatementHandler) interceptorChain.pluginAll(statementHandler);
         return statementHandler;

@@ -279,6 +279,7 @@ public class ResultLoaderMap {
     }
   }
 
+  //  设计！设计！父类中已经定义好通用逻辑，子类只需要重写了父类的do______方法
   private static final class ClosedExecutor extends BaseExecutor {
 
     public ClosedExecutor() {

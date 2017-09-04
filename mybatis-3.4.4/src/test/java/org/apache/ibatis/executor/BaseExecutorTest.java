@@ -62,7 +62,8 @@ public class BaseExecutorTest extends BaseDataTest {
 
   @Test
   public void shouldInsertNewAuthorWithBeforeAutoKey() throws Exception {
-    
+
+    // 这个地方创建的是SimpleExecutor
     Executor executor = createExecutor(new JdbcTransaction(ds, null, false));
     try {
       Author author = new Author(-1, "someone", "******", "someone@apache.org", null, Section.NEWS);

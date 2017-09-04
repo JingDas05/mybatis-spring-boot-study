@@ -33,6 +33,9 @@ import java.util.List;
 
 /**
  * @author Clinton Begin
+ * 设计！设计！父类中已经定义好通用逻辑，子类只需要重写了父类的do______方法
+ * 这里面的增删改查实际上是全权委托了statementHandler
+ * StatementHandler全权处理statement,包括prepare， parameterize， update等操作
  */
 public class SimpleExecutor extends BaseExecutor {
 
@@ -45,6 +48,7 @@ public class SimpleExecutor extends BaseExecutor {
     Statement stmt = null;
     try {
       Configuration configuration = ms.getConfiguration();
+      // 根据configuration创建StatementHandler，已在newStatementHandler()方法中执行拦截器
       StatementHandler handler = configuration.newStatementHandler(this, ms, parameter, RowBounds.DEFAULT, null, null);
       stmt = prepareStatement(handler, ms.getStatementLog());
       return handler.update(stmt);

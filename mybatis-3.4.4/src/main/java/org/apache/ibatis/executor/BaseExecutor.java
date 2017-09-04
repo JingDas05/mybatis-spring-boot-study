@@ -59,6 +59,7 @@ public abstract class BaseExecutor implements Executor {
   protected PerpetualCache localOutputParameterCache;
   protected Configuration configuration;
 
+  // 查询堆栈数量
   protected int queryStack;
   private boolean closed;
 
@@ -94,6 +95,7 @@ public abstract class BaseExecutor implements Executor {
       // Ignore.  There's nothing that can be done at this point.
       log.warn("Unexpected exception on closing transaction.  Cause: " + e);
     } finally {
+      // 复位
       transaction = null;
       deferredLoads = null;
       localCache = null;
@@ -109,11 +111,14 @@ public abstract class BaseExecutor implements Executor {
 
   @Override
   public int update(MappedStatement ms, Object parameter) throws SQLException {
+    // 构建异常上下文
     ErrorContext.instance().resource(ms.getResource()).activity("executing an update").object(ms.getId());
     if (closed) {
       throw new ExecutorException("Executor was closed.");
     }
+    // update 方法清除缓存
     clearLocalCache();
+    // 调用子类抽象方法
     return doUpdate(ms, parameter);
   }
 
@@ -333,9 +338,11 @@ public abstract class BaseExecutor implements Executor {
     return list;
   }
 
+  // 只限定子类使用
   protected Connection getConnection(Log statementLog) throws SQLException {
     Connection connection = transaction.getConnection();
     if (statementLog.isDebugEnabled()) {
+      // 返回连接代理，可以输出日志
       return ConnectionLogger.newInstance(connection, statementLog, queryStack);
     } else {
       return connection;
