@@ -103,6 +103,7 @@ public abstract class BaseTypeHandler<T> extends TypeReference<T> implements Typ
     }
   }
 
+  // 这个是存储过程用的
   @Override
   public T getResult(CallableStatement cs, int columnIndex) throws SQLException {
     T result;

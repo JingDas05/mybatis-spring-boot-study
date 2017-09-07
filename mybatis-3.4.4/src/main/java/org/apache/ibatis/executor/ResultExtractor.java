@@ -34,8 +34,10 @@ public class ResultExtractor {
     this.objectFactory = objectFactory;
   }
 
+  // 从list中提取对象
   public Object extractObjectFromList(List<Object> list, Class<?> targetType) {
     Object value = null;
+    // targetType不等于null 且 targetType是list的父类或者相等
     if (targetType != null && targetType.isAssignableFrom(list.getClass())) {
       value = list;
     } else if (targetType != null && objectFactory.isCollection(targetType)) {

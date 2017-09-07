@@ -380,6 +380,7 @@ public class BaseExecutorTest extends BaseDataTest {
     try {
       MappedStatement selectBlog = ExecutorTestHelper.prepareSelectBlogByIdAndAuthor(config);
       MappedStatement selectPost = ExecutorTestHelper.prepareSelectPostWithBlogByAuthorMappedStatement(config);
+      // 存储的时候，key为 MappedStatement id, value为 MappedStatement的引用
       config.addMappedStatement(selectBlog);
       config.addMappedStatement(selectPost);
       List<Post> posts = executor.query(selectPost, 2, RowBounds.DEFAULT, Executor.NO_RESULT_HANDLER);

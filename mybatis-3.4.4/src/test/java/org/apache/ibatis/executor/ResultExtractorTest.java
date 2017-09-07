@@ -72,6 +72,7 @@ public class ResultExtractorTest {
   @Test
   public void shouldExtractSet() {
     final List list = Arrays.asList(1, 2, 3);
+    // Class<Set> 的实质就是 Set.class
     final Class<Set> targetType = Set.class;
     final Set set = new HashSet();
     final MetaObject metaObject = mock(MetaObject.class);

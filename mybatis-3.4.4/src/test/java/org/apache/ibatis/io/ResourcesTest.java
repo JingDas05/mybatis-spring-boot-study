@@ -73,6 +73,7 @@ public class ResourcesTest extends BaseDataTest {
   public void shouldGetResourceAsStream() throws Exception {
     InputStream in = Resources.getResourceAsStream(CLASS_LOADER, JPETSTORE_PROPERTIES);
     assertNotNull(in);
+    // 注意一定要关闭流
     in.close();
   }
 

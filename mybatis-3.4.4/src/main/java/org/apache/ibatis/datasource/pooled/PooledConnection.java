@@ -24,6 +24,9 @@ import java.sql.SQLException;
 import org.apache.ibatis.reflection.ExceptionUtil;
 
 /**
+ *
+ * 这同时也是一个代理执行器，巧妙
+ *
  * @author Clinton Begin
  */
 class PooledConnection implements InvocationHandler {
@@ -45,9 +48,12 @@ class PooledConnection implements InvocationHandler {
    * Constructor for SimplePooledConnection that uses the Connection and PooledDataSource passed in
    *
    * @param connection - the connection that is to be presented as a pooled connection
+   * 需要记录的连接
    * @param dataSource - the dataSource that the connection is from
+   * 需要连接的数据源
    */
   public PooledConnection(Connection connection, PooledDataSource dataSource) {
+    // hashCode与代表的连接相同
     this.hashCode = connection.hashCode();
     this.realConnection = connection;
     this.dataSource = dataSource;

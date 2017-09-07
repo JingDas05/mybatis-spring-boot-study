@@ -152,6 +152,7 @@ public class MapWrapper extends BaseWrapper {
 
   @Override
   public <E> void addAll(List<E> element) {
+    // MapWrapper 不支持addAll操作
     throw new UnsupportedOperationException();
   }
 

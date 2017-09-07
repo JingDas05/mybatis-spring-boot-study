@@ -80,6 +80,7 @@ public enum JdbcType {
     this.TYPE_CODE = code;
   }
 
+  // 这个是根据参数取枚举JdbcType,所以先要构建key为 TYPE_CODE， value为枚举的map
   public static JdbcType forCode(int code)  {
     return codeLookup.get(code);
   }

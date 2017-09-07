@@ -30,6 +30,7 @@ public class ReuseExecutorTest extends BaseExecutorTest {
     super.shouldFetchPostWithBlogWithCompositeKey();
   }
 
+  // 重写了父类里面的 createExecutor()
   @Override
   protected Executor createExecutor(Transaction transaction) {
     return new ReuseExecutor(config,transaction);

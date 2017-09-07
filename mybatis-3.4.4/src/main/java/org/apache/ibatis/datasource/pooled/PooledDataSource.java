@@ -34,6 +34,7 @@ import org.apache.ibatis.logging.LogFactory;
 
 /**
  * This is a simple, synchronous, thread-safe database connection pool.
+ * 这是一个简单，同步，线程安全的数据库连接池
  *
  * @author Clinton Begin
  */

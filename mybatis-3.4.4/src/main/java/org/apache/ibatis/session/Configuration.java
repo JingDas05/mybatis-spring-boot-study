@@ -526,6 +526,8 @@ public class Configuration {
     }
 
     public MetaObject newMetaObject(Object object) {
+        // objectFactory 默认实现 DefaultObjectFactory， objectWrapperFactory 默认实现 DefaultObjectWrapperFactory
+        // reflectorFactory 默认实现 DefaultReflectorFactory
         return MetaObject.forObject(object, objectFactory, objectWrapperFactory, reflectorFactory);
     }
 

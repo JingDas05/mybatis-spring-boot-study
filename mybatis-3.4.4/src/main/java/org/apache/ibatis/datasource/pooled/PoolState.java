@@ -23,11 +23,14 @@ import java.util.List;
  */
 public class PoolState {
 
+  // 所属的数据源
   protected PooledDataSource dataSource;
-
+  // 空闲的连接
   protected final List<PooledConnection> idleConnections = new ArrayList<PooledConnection>();
+  // 活跃的连接
   protected final List<PooledConnection> activeConnections = new ArrayList<PooledConnection>();
   protected long requestCount = 0;
+  // 积累的请求时间
   protected long accumulatedRequestTime = 0;
   protected long accumulatedCheckoutTime = 0;
   protected long claimedOverdueConnectionCount = 0;
@@ -44,10 +47,11 @@ public class PoolState {
     return requestCount;
   }
 
+  // 计算平均请求时间
   public synchronized long getAverageRequestTime() {
     return requestCount == 0 ? 0 : accumulatedRequestTime / requestCount;
   }
-
+  // 计算平均等待时间
   public synchronized long getAverageWaitTime() {
     return hadToWaitCount == 0 ? 0 : accumulatedWaitTime / hadToWaitCount;
 
