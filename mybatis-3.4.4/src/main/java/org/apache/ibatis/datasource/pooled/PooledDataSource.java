@@ -322,6 +322,7 @@ public class PooledDataSource implements DataSource {
     return state;
   }
 
+  // 根据url username password 获取hashcode
   private int assembleConnectionTypeCode(String url, String username, String password) {
     return ("" + url + username + password).hashCode();
   }
@@ -371,16 +372,18 @@ public class PooledDataSource implements DataSource {
     long t = System.currentTimeMillis();
     int localBadConnectionCount = 0;
 
+    // 获取连接调用的方法
     while (conn == null) {
+      // state 为 PoolState
       synchronized (state) {
         if (!state.idleConnections.isEmpty()) {
-          // Pool has available connection
+          // Pool has available connection, 如果有空闲连接的话，直接取出一个空闲连接
           conn = state.idleConnections.remove(0);
           if (log.isDebugEnabled()) {
             log.debug("Checked out connection " + conn.getRealHashCode() + " from pool.");
           }
         } else {
-          // Pool does not have available connection
+          // Pool does not have available connection，没有可用连接且活跃的连接数小于 连接池最大活跃连接数
           if (state.activeConnections.size() < poolMaximumActiveConnections) {
             // Can create new connection
             conn = new PooledConnection(dataSource.getConnection(), this);
@@ -388,11 +391,11 @@ public class PooledDataSource implements DataSource {
               log.debug("Created connection " + conn.getRealHashCode() + ".");
             }
           } else {
-            // Cannot create new connection
+            // Cannot create new connection，如果不能创建新连接的话
             PooledConnection oldestActiveConnection = state.activeConnections.get(0);
             long longestCheckoutTime = oldestActiveConnection.getCheckoutTime();
             if (longestCheckoutTime > poolMaximumCheckoutTime) {
-              // Can claim overdue connection
+              // Can claim overdue connection 断言延时的连接
               state.claimedOverdueConnectionCount++;
               state.accumulatedCheckoutTimeOfOverdueConnections += longestCheckoutTime;
               state.accumulatedCheckoutTime += longestCheckoutTime;
@@ -457,9 +460,9 @@ public class PooledDataSource implements DataSource {
           }
         }
       }
-
     }
 
+    // 如果还是为空，抛出异常
     if (conn == null) {
       if (log.isDebugEnabled()) {
         log.debug("PooledDataSource: Unknown severe error condition.  The connection pool returned a null connection.");
@@ -530,6 +533,7 @@ public class PooledDataSource implements DataSource {
    *
    * @param conn - the pooled connection to unwrap
    * @return The 'real' connection
+   * 返回正真的连接，拆箱
    */
   public static Connection unwrapConnection(Connection conn) {
     if (Proxy.isProxyClass(conn.getClass())) {

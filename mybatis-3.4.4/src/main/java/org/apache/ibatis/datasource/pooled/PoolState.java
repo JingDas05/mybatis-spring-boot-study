@@ -32,11 +32,17 @@ public class PoolState {
   protected long requestCount = 0;
   // 积累的请求时间
   protected long accumulatedRequestTime = 0;
+  // 积累的最长连接时间
   protected long accumulatedCheckoutTime = 0;
+  // 过期的连接总数
   protected long claimedOverdueConnectionCount = 0;
+  // 累积的过期连接时间总和
   protected long accumulatedCheckoutTimeOfOverdueConnections = 0;
+  // 累积的等待时间
   protected long accumulatedWaitTime = 0;
+  // 必要等待总数
   protected long hadToWaitCount = 0;
+  // 坏连接计数
   protected long badConnectionCount = 0;
 
   public PoolState(PooledDataSource dataSource) {

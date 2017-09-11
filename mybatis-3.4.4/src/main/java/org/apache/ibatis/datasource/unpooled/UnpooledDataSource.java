@@ -49,6 +49,7 @@ public class UnpooledDataSource implements DataSource {
   private Boolean autoCommit;
   private Integer defaultTransactionIsolationLevel;
 
+  // 注册driver
   static {
     Enumeration<Driver> drivers = DriverManager.getDrivers();
     while (drivers.hasMoreElements()) {
@@ -57,9 +58,11 @@ public class UnpooledDataSource implements DataSource {
     }
   }
 
+  // 默认构造函数
   public UnpooledDataSource() {
   }
 
+  // 带参数的构造函数
   public UnpooledDataSource(String driver, String url, String username, String password) {
     this.driver = driver;
     this.url = url;
@@ -93,6 +96,7 @@ public class UnpooledDataSource implements DataSource {
     return doGetConnection(username, password);
   }
 
+  // 根据传入的参数取得连接
   @Override
   public Connection getConnection(String username, String password) throws SQLException {
     return doGetConnection(username, password);
@@ -198,12 +202,16 @@ public class UnpooledDataSource implements DataSource {
 
   private Connection doGetConnection(Properties properties) throws SQLException {
     initializeDriver();
+    // DriverManager是获取连接的关键类，参数是url, properties
     Connection connection = DriverManager.getConnection(url, properties);
+    // 配置连接
     configureConnection(connection);
     return connection;
   }
 
+  // 线程安全
   private synchronized void initializeDriver() throws SQLException {
+    // 如果registeredDrivers不包含driver
     if (!registeredDrivers.containsKey(driver)) {
       Class<?> driverType;
       try {
@@ -215,6 +223,7 @@ public class UnpooledDataSource implements DataSource {
         // DriverManager requires the driver to be loaded via the system ClassLoader.
         // http://www.kfu.com/~nsayer/Java/dyn-jdbc.html
         Driver driverInstance = (Driver)driverType.newInstance();
+        // DriverManager注册 Driver代理类
         DriverManager.registerDriver(new DriverProxy(driverInstance));
         registeredDrivers.put(driver, driverInstance);
       } catch (Exception e) {
@@ -223,6 +232,7 @@ public class UnpooledDataSource implements DataSource {
     }
   }
 
+  // 配置连接是否自动提交 和 事务隔离级别
   private void configureConnection(Connection conn) throws SQLException {
     if (autoCommit != null && autoCommit != conn.getAutoCommit()) {
       conn.setAutoCommit(autoCommit);
@@ -232,6 +242,7 @@ public class UnpooledDataSource implements DataSource {
     }
   }
 
+  // Driver 代理类
   private static class DriverProxy implements Driver {
     private Driver driver;
 
