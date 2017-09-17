@@ -27,9 +27,13 @@ import org.apache.ibatis.transaction.TransactionException;
 
 /**
  * {@link Transaction} that makes use of the JDBC commit and rollback facilities directly.
+ * 事务控制直接使用JDBC的提交和回滚功能
  * It relies on the connection retrieved from the dataSource to manage the scope of the transaction.
+ * 依赖于 datasource 的 connection，来决定事务的scope
  * Delays connection retrieval until getConnection() is called.
+ * 直到getConnection() 被调用，才会取回延迟的 connection
  * Ignores commit or rollback requests when autocommit is on.
+ * 当打开自动提交的时候，忽略提交和回滚
  *
  * @author Clinton Begin
  *
@@ -64,6 +68,7 @@ public class JdbcTransaction implements Transaction {
 
   @Override
   public void commit() throws SQLException {
+    // 连接不为空，且没有设置自动提交的话
     if (connection != null && !connection.getAutoCommit()) {
       if (log.isDebugEnabled()) {
         log.debug("Committing JDBC Connection [" + connection + "]");
@@ -74,6 +79,7 @@ public class JdbcTransaction implements Transaction {
 
   @Override
   public void rollback() throws SQLException {
+    // 连接不为空，且没有设置自动提交的话
     if (connection != null && !connection.getAutoCommit()) {
       if (log.isDebugEnabled()) {
         log.debug("Rolling back JDBC Connection [" + connection + "]");

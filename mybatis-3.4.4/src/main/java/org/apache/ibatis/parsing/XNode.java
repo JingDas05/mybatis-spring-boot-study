@@ -46,7 +46,9 @@ public class XNode {
     this.node = node;
     this.name = node.getNodeName();
     this.variables = variables;
+    // 解析初始化 attributes
     this.attributes = parseAttributes(node);
+    // 解析初始化 variables
     this.body = parseBody(node);
   }
 
@@ -354,7 +356,7 @@ public class XNode {
     return builder.toString();
   }
 
-  //初始化调用方法，解析封装的节点node, 封装城Properties
+  //初始化调用方法，解析封装的节点node 属性值, 封装城Properties
   private Properties parseAttributes(Node n) {
     Properties attributes = new Properties();
     NamedNodeMap attributeNodes = n.getAttributes();
@@ -371,11 +373,13 @@ public class XNode {
 
   private String parseBody(Node node) {
     String data = getBodyData(node);
+    // 当前节点不是文本节点
     if (data == null) {
       NodeList children = node.getChildNodes();
       for (int i = 0; i < children.getLength(); i++) {
         Node child = children.item(i);
         data = getBodyData(child);
+        // 获取子节点中第一个不为空的文本节点
         if (data != null) {
           break;
         }
@@ -384,6 +388,7 @@ public class XNode {
     return data;
   }
 
+  // 获取文本节点的内容
   private String getBodyData(Node child) {
     if (child.getNodeType() == Node.CDATA_SECTION_NODE
         || child.getNodeType() == Node.TEXT_NODE) {

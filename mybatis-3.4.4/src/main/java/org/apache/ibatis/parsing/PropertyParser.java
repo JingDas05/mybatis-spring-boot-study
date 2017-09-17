@@ -66,7 +66,7 @@ public class PropertyParser {
 
     private VariableTokenHandler(Properties variables) {
       this.variables = variables;
-      //初始化的时候赋值，是否开启默认值，设置默认值()
+      //初始化的时候赋值，设置默认值()
       this.enableDefaultValue = Boolean.parseBoolean(getPropertyValue(KEY_ENABLE_DEFAULT_VALUE, ENABLE_DEFAULT_VALUE));
       this.defaultValueSeparator = getPropertyValue(KEY_DEFAULT_VALUE_SEPARATOR, DEFAULT_VALUE_SEPARATOR);
     }
@@ -85,10 +85,13 @@ public class PropertyParser {
         // 如果允许默认值，解析content,把分割符前面的key取到，以及分隔符后面的默认值
         // 之后用key 调用properties 的 getProperty()方法取值
         if (enableDefaultValue) {
+          // 获取分隔符的位置
           final int separatorIndex = content.indexOf(defaultValueSeparator);
           String defaultValue = null;
           if (separatorIndex >= 0) {
+            // 获取分隔符前面的key值
             key = content.substring(0, separatorIndex);
+            // 获取分隔符后面的值
             defaultValue = content.substring(separatorIndex + defaultValueSeparator.length());
           }
           if (defaultValue != null) {

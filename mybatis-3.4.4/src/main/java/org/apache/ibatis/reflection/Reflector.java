@@ -42,6 +42,8 @@ import org.apache.ibatis.reflection.property.PropertyNamer;
  * This class represents a cached set of class definition information that
  * allows for easy mapping between property names and getter/setter methods.
  *
+ * 反射模块的基础，每个Reflector 对应一个类， 缓存了反射操作需要使用的类的元信息
+ *
  * @author Clinton Begin
  */
 public class Reflector {
@@ -51,22 +53,29 @@ public class Reflector {
   private Class<?> type;
   private String[] readablePropertyNames = EMPTY_STRING_ARRAY;
   private String[] writeablePropertyNames = EMPTY_STRING_ARRAY;
+  // 记录了setter方法，key属性名，value Invoker对象，它是对setter方法对应的Method方法的封装
   private Map<String, Invoker> setMethods = new HashMap<String, Invoker>();
   private Map<String, Invoker> getMethods = new HashMap<String, Invoker>();
+  // 记录了setter方法的参数值类型，key属性名，value setter方法的参数类型
   private Map<String, Class<?>> setTypes = new HashMap<String, Class<?>>();
   private Map<String, Class<?>> getTypes = new HashMap<String, Class<?>>();
   private Constructor<?> defaultConstructor;
 
+  // 所有属性名称的集合
   private Map<String, String> caseInsensitivePropertyMap = new HashMap<String, String>();
 
+  // 参数是需要解析的Class对象
   public Reflector(Class<?> clazz) {
     type = clazz;
     addDefaultConstructor(clazz);
     addGetMethods(clazz);
+    // 处理clazz中 setter 方法，填充 setMethods 集合和 setTypes集合
     addSetMethods(clazz);
+    // 处理没有getter/setter方法的字段
     addFields(clazz);
     readablePropertyNames = getMethods.keySet().toArray(new String[getMethods.keySet().size()]);
     writeablePropertyNames = setMethods.keySet().toArray(new String[setMethods.keySet().size()]);
+    // 记录所有大写格式的属性名称
     for (String propName : readablePropertyNames) {
       caseInsensitivePropertyMap.put(propName.toUpperCase(Locale.ENGLISH), propName);
     }
@@ -75,6 +84,7 @@ public class Reflector {
     }
   }
 
+  // 设置无参构造函数
   private void addDefaultConstructor(Class<?> clazz) {
     Constructor<?>[] consts = clazz.getDeclaredConstructors();
     for (Constructor<?> constructor : consts) {
@@ -84,6 +94,7 @@ public class Reflector {
             constructor.setAccessible(true);
           } catch (Exception e) {
             // Ignored. This is only a final precaution, nothing we can do.
+            // 这是一个最终的预防，我们什么也做不了
           }
         }
         if (constructor.isAccessible()) {
@@ -156,6 +167,7 @@ public class Reflector {
   private void addSetMethods(Class<?> cls) {
     Map<String, List<Method>> conflictingSetters = new HashMap<String, List<Method>>();
     Method[] methods = getClassMethods(cls);
+    // 将以set开头的且参数是一个的方法添加到methods中
     for (Method method : methods) {
       String name = method.getName();
       if (name.startsWith("set") && name.length() > 3) {
@@ -165,9 +177,11 @@ public class Reflector {
         }
       }
     }
+    // 子类覆写了父类的方法，这两个方法都会添加到conflictingSetters中，解决冲突
     resolveSetterConflicts(conflictingSetters);
   }
 
+  // 添加方法，如果对应 List<Method>>为空，新建一个，如果已经存在，添加方法
   private void addMethodConflict(Map<String, List<Method>> conflictingMethods, String name, Method method) {
     List<Method> list = conflictingMethods.get(name);
     if (list == null) {
@@ -183,15 +197,19 @@ public class Reflector {
       Class<?> getterType = getTypes.get(propName);
       Method match = null;
       ReflectionException exception = null;
+      // 寻找最佳匹配
       for (Method setter : setters) {
+        // 如果与getTypes里的匹配了，这个就是最佳匹配
         Class<?> paramType = setter.getParameterTypes()[0];
         if (paramType.equals(getterType)) {
           // should be the best match
           match = setter;
           break;
         }
+        // 如果上一步没有找到，且如果异常为空
         if (exception == null) {
           try {
+            // 处理子类覆盖问题
             match = pickBetterSetter(match, setter, propName);
           } catch (ReflectionException e) {
             // there could still be the 'best match'
@@ -214,6 +232,7 @@ public class Reflector {
     }
     Class<?> paramType1 = setter1.getParameterTypes()[0];
     Class<?> paramType2 = setter2.getParameterTypes()[0];
+    // 如果paramType1是paramType2的同类或者父类，那么paramType2所属方法是子类的方法，用这个方法
     if (paramType1.isAssignableFrom(paramType2)) {
       return setter2;
     } else if (paramType2.isAssignableFrom(paramType1)) {
@@ -308,7 +327,7 @@ public class Reflector {
    * declared in this class and any superclass.
    * We use this method, instead of the simpler Class.getMethods(),
    * because we want to look for private methods as well.
-   *
+   * 这个方法返回包含的所有方法的数组，包含了 private方法
    * @param cls The class
    * @return An array containing all methods in this class
    */
@@ -333,6 +352,7 @@ public class Reflector {
     return methods.toArray(new Method[methods.size()]);
   }
 
+  // 为灭个方法生成唯一的签名，并且记录到 uniqueMethods 集合中
   private void addUniqueMethods(Map<String, Method> uniqueMethods, Method[] methods) {
     for (Method currentMethod : methods) {
       if (!currentMethod.isBridge()) {
