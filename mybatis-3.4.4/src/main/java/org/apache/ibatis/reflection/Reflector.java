@@ -251,6 +251,7 @@ public class Reflector {
     }
   }
 
+  // 类型转换到Class
   private Class<?> typeToClass(Type src) {
     Class<?> result = null;
     if (src instanceof Class) {
@@ -282,11 +283,14 @@ public class Reflector {
           // Ignored. This is only a final precaution, nothing we can do.
         }
       }
+      // 如果字段可以接触得到
       if (field.isAccessible()) {
         if (!setMethods.containsKey(field.getName())) {
+          // JDK1.5 允许通过反射 修改 final Field
           // issue #379 - removed the check for final because JDK 1.5 allows
           // modification of final fields through reflection (JSR-133). (JGB)
           // pr #16 - final static can only be set by the classloader
+          // 返回字段修饰符
           int modifiers = field.getModifiers();
           if (!(Modifier.isFinal(modifiers) && Modifier.isStatic(modifiers))) {
             addSetField(field);
@@ -297,6 +301,7 @@ public class Reflector {
         }
       }
     }
+    // 处理父类中的字段
     if (clazz.getSuperclass() != null) {
       addFields(clazz.getSuperclass());
     }
@@ -304,6 +309,7 @@ public class Reflector {
 
   private void addSetField(Field field) {
     if (isValidPropertyName(field.getName())) {
+      // value 实际是 封装对象 SetFieldInvoker
       setMethods.put(field.getName(), new SetFieldInvoker(field));
       Type fieldType = TypeParameterResolver.resolveFieldType(field, type);
       setTypes.put(field.getName(), typeToClass(fieldType));
@@ -318,6 +324,7 @@ public class Reflector {
     }
   }
 
+  // 检验是否是合法的字段名字， 不能 以 $开头， 不等于 serialVersionUID， 不等于 class
   private boolean isValidPropertyName(String name) {
     return !(name.startsWith("$") || "serialVersionUID".equals(name) || "class".equals(name));
   }

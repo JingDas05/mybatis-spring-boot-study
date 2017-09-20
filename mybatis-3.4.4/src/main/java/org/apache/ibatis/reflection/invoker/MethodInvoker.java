@@ -20,15 +20,18 @@ import java.lang.reflect.Method;
 
 /**
  * @author Clinton Begin
+ * 对于方法的封装
  */
 public class MethodInvoker implements Invoker {
 
+  // 入参或者返回类型的Class
   private Class<?> type;
   private Method method;
 
   public MethodInvoker(Method method) {
     this.method = method;
 
+    // 如果入参只有一个参数，就取参数类型，否则取返回参数的类型
     if (method.getParameterTypes().length == 1) {
       type = method.getParameterTypes()[0];
     } else {

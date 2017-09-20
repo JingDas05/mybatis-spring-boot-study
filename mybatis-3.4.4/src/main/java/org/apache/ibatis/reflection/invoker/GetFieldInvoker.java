@@ -28,6 +28,7 @@ public class GetFieldInvoker implements Invoker {
     this.field = field;
   }
 
+  // getField方法返回字段获取值
   @Override
   public Object invoke(Object target, Object[] args) throws IllegalAccessException, InvocationTargetException {
     return field.get(target);

@@ -33,9 +33,13 @@ public class TypeParameterResolver {
   /**
    * @return The field type as {@link Type}. If it has type parameters in the declaration,<br>
    *         they will be resolved to the actual runtime {@link Type}s.
+   *  @param srcType field 所在类
+   *  @param field  要解析的字段
    */
   public static Type resolveFieldType(Field field, Type srcType) {
+    // 获取字段的声明类型
     Type fieldType = field.getGenericType();
+    // 获取字段定义所在类的Class对象
     Class<?> declaringClass = field.getDeclaringClass();
     return resolveType(fieldType, srcType, declaringClass);
   }
@@ -65,6 +69,8 @@ public class TypeParameterResolver {
   }
 
   private static Type resolveType(Type type, Type srcType, Class<?> declaringClass) {
+    // 根据type的具体类型，去执行相应的转换
+    // TypeVariable应该是泛型
     if (type instanceof TypeVariable) {
       return resolveTypeVar((TypeVariable<?>) type, srcType, declaringClass);
     } else if (type instanceof ParameterizedType) {
@@ -93,16 +99,28 @@ public class TypeParameterResolver {
     }
   }
 
+  /**
+   * 示例查看如下
+   * @see org.apache.ibatis.reflection.mybatis技术内幕
+   *
+   * */
   private static ParameterizedType resolveParameterizedType(ParameterizedType parameterizedType, Type srcType, Class<?> declaringClass) {
+    // 得到示例中 得到原始类型Map对应的Class对象
     Class<?> rawType = (Class<?>) parameterizedType.getRawType();
+    // 得到 K V
     Type[] typeArgs = parameterizedType.getActualTypeArguments();
+    // 用于保存解析后的结果
     Type[] args = new Type[typeArgs.length];
+    // 开始解析 K 和 V
     for (int i = 0; i < typeArgs.length; i++) {
       if (typeArgs[i] instanceof TypeVariable) {
+        // 解析类型变量
         args[i] = resolveTypeVar((TypeVariable<?>) typeArgs[i], srcType, declaringClass);
       } else if (typeArgs[i] instanceof ParameterizedType) {
+        // 如果嵌套ParameterizedType， 继续解析
         args[i] = resolveParameterizedType((ParameterizedType) typeArgs[i], srcType, declaringClass);
       } else if (typeArgs[i] instanceof WildcardType) {
+        // 如果嵌套 WildcardType， 继续解析
         args[i] = resolveWildcardType((WildcardType) typeArgs[i], srcType, declaringClass);
       } else {
         args[i] = typeArgs[i];
