@@ -27,8 +27,10 @@ import java.sql.SQLException;
  */
 public interface TypeHandler<T> {
 
+  // SQL语句绑定参数时，会将数据由JdbcType类型转换成Java类型
   void setParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType) throws SQLException;
 
+  // Java类型转换成JdbcType类型
   T getResult(ResultSet rs, String columnName) throws SQLException;
 
   T getResult(ResultSet rs, int columnIndex) throws SQLException;

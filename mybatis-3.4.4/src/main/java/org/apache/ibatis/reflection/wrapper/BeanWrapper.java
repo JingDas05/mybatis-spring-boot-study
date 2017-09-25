@@ -42,6 +42,7 @@ public class BeanWrapper extends BaseWrapper {
 
   @Override
   public Object get(PropertyTokenizer prop) {
+    // 如果有索引值就调用getCollectionValue， 否则调用getBeanProperty
     if (prop.getIndex() != null) {
       Object collection = resolveCollection(prop, object);
       return getCollectionValue(prop, collection);

@@ -40,14 +40,14 @@ import org.apache.ibatis.io.Resources;
  */
 public final class TypeHandlerRegistry {
 
-  //key为JdbcType, value为TypeHandler
+  //key为JdbcType, value为TypeHandler, 该集合主要用于从结果集读取数据，将数据从Jdbc类型转换成Java类型
   private final Map<JdbcType, TypeHandler<?>> JDBC_TYPE_HANDLER_MAP = new EnumMap<JdbcType, TypeHandler<?>>(JdbcType.class);
-  //key为Type, value为TypeHandler
+  //key为Type, value为 Map<JdbcType, TypeHandler<?>> java转换成jdbc时 可能存在一对多的关系 String -> char varchar
   private final Map<Type, Map<JdbcType, TypeHandler<?>>> TYPE_HANDLER_MAP = new ConcurrentHashMap<Type, Map<JdbcType, TypeHandler<?>>>();
   private final TypeHandler<Object> UNKNOWN_TYPE_HANDLER = new UnknownTypeHandler(this);
-  //key为Class, value为TypeHandler
+  //key为 TypeHandler类型, value为TypeHandler对象
   private final Map<Class<?>, TypeHandler<?>> ALL_TYPE_HANDLERS_MAP = new HashMap<Class<?>, TypeHandler<?>>();
-
+ // 空 TypeHandler 集合的标识
   private static final Map<JdbcType, TypeHandler<?>> NULL_TYPE_HANDLER_MAP = new HashMap<JdbcType, TypeHandler<?>>();
 
   public TypeHandlerRegistry() {
@@ -237,6 +237,7 @@ public final class TypeHandlerRegistry {
         jdbcHandlerMap = getJdbcHandlerMapForSuperclass(clazz);
       }
     }
+    //
     TYPE_HANDLER_MAP.put(type, jdbcHandlerMap == null ? NULL_TYPE_HANDLER_MAP : jdbcHandlerMap);
     return jdbcHandlerMap;
   }
@@ -254,6 +255,7 @@ public final class TypeHandlerRegistry {
     return null;
   }
 
+  // 寻找父类的类型处理器
   private Map<JdbcType, TypeHandler<?>> getJdbcHandlerMapForSuperclass(Class<?> clazz) {
     Class<?> superclass =  clazz.getSuperclass();
     if (superclass == null || Object.class.equals(superclass)) {

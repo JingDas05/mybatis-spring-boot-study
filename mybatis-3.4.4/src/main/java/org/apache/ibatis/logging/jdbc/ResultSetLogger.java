@@ -82,6 +82,7 @@ public final class ResultSetLogger extends BaseJdbcLogger implements InvocationH
           debug("     Total: " + rows, false);
         }
       }
+      // 每次都要清空列
       clearColumnInfo();
       return o;
     } catch (Throwable t) {
@@ -93,6 +94,7 @@ public final class ResultSetLogger extends BaseJdbcLogger implements InvocationH
     StringBuilder row = new StringBuilder();
     row.append("   Columns: ");
     for (int i = 1; i <= columnCount; i++) {
+      // 如果 resultSet里面列的类型在BLOB_TYPES中
       if (BLOB_TYPES.contains(rsmd.getColumnType(i))) {
         blobColumns.add(i);
       }

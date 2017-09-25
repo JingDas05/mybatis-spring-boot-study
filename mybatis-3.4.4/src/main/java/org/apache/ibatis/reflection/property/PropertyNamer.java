@@ -21,6 +21,8 @@ import org.apache.ibatis.reflection.ReflectionException;
 
 /**
  * @author Clinton Begin
+ *
+ * 方法名到属性名的转换以及多种检测操作
  */
 public final class PropertyNamer {
 
@@ -37,6 +39,7 @@ public final class PropertyNamer {
       throw new ReflectionException("Error parsing property name '" + name + "'.  Didn't start with 'is', 'get' or 'set'.");
     }
 
+    // 如果只有一个字母，或者多个字母，但是开头字母是大写的就变成小写的
     if (name.length() == 1 || (name.length() > 1 && !Character.isUpperCase(name.charAt(1)))) {
       name = name.substring(0, 1).toLowerCase(Locale.ENGLISH) + name.substring(1);
     }

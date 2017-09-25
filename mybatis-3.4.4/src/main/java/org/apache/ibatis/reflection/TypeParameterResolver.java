@@ -154,6 +154,7 @@ public class TypeParameterResolver {
   private static Type resolveTypeVar(TypeVariable<?> typeVar, Type srcType, Class<?> declaringClass) {
     Type result = null;
     Class<?> clazz = null;
+    // 获取srcType 的 Class对象
     if (srcType instanceof Class) {
       clazz = (Class<?>) srcType;
     } else if (srcType instanceof ParameterizedType) {
@@ -163,15 +164,17 @@ public class TypeParameterResolver {
       throw new IllegalArgumentException("The 2nd arg must be Class or ParameterizedType, but was: " + srcType.getClass());
     }
 
+    // 如果开始查找的起点srcType和 要查找的typeVar所属的类相同
     if (clazz == declaringClass) {
+      // 获取上界
       Type[] bounds = typeVar.getBounds();
       if(bounds.length > 0) {
         return bounds[0];
       }
       return Object.class;
     }
-
     Type superclass = clazz.getGenericSuperclass();
+    // 扫描父类，递归入口
     result = scanSuperTypes(typeVar, srcType, declaringClass, clazz, superclass);
     if (result != null) {
       return result;

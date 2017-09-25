@@ -36,6 +36,7 @@ public class PropertyTokenizer implements Iterator<PropertyTokenizer> {
       name = fullname;
       children = null;
     }
+    // eg: orders[0].items[0].name 第一次迭代 分为 orders[0] 和items[0].name
     indexedName = name;
     delim = name.indexOf('[');
     if (delim > -1) {
@@ -65,6 +66,7 @@ public class PropertyTokenizer implements Iterator<PropertyTokenizer> {
     return children != null;
   }
 
+  // 实现了Iterator接口，可以迭代处理嵌套多层表达式
   @Override
   public PropertyTokenizer next() {
     return new PropertyTokenizer(children);

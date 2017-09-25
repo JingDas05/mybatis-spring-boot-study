@@ -50,10 +50,13 @@ public final class ConnectionLogger extends BaseJdbcLogger implements Invocation
         return method.invoke(this, params);
       }    
       if ("prepareStatement".equals(method.getName())) {
+        // 如果是调试级别，输出日志
         if (isDebugEnabled()) {
           debug(" Preparing: " + removeBreakingWhitespace((String) params[0]), true);
-        }        
+        }
+        // 执行真正方法
         PreparedStatement stmt = (PreparedStatement) method.invoke(connection, params);
+        // 返回 代理对象
         stmt = PreparedStatementLogger.newInstance(stmt, statementLog, queryStack);
         return stmt;
       } else if ("prepareCall".equals(method.getName())) {
@@ -82,6 +85,7 @@ public final class ConnectionLogger extends BaseJdbcLogger implements Invocation
    * @return - the connection with logging
    */
   public static Connection newInstance(Connection conn, Log statementLog, int queryStack) {
+    // 代理处理器需要传入实际代理的对象，以及相关需要的引用
     InvocationHandler handler = new ConnectionLogger(conn, statementLog, queryStack);
     ClassLoader cl = Connection.class.getClassLoader();
     // 返回连接代理对象

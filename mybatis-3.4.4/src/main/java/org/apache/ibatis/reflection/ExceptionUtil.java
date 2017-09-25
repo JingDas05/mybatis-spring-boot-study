@@ -29,6 +29,7 @@ public class ExceptionUtil {
 
   public static Throwable unwrapThrowable(Throwable wrapped) {
     Throwable unwrapped = wrapped;
+    // 主动去寻找
     while (true) {
       if (unwrapped instanceof InvocationTargetException) {
         unwrapped = ((InvocationTargetException) unwrapped).getTargetException();

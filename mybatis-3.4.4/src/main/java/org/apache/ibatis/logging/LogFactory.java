@@ -130,6 +130,7 @@ public final class LogFactory {
     }
   }
 
+  // 获取的是构造函数，而不是实例
   private static void setImplementation(Class<? extends Log> implClass) {
     try {
       // 获取实际实现类的构造方法（参数是String ）

@@ -92,7 +92,7 @@ public final class PreparedStatementLogger extends BaseJdbcLogger implements Inv
   public static PreparedStatement newInstance(PreparedStatement stmt, Log statementLog, int queryStack) {
     InvocationHandler handler = new PreparedStatementLogger(stmt, statementLog, queryStack);
     ClassLoader cl = PreparedStatement.class.getClassLoader();
-    // 返回 PreparedStatement的代理对象
+    // 返回 PreparedStatement的代理对象，注意实现的接口是一个数组 PreparedStatement CallableStatement
     return (PreparedStatement) Proxy.newProxyInstance(cl, new Class[]{PreparedStatement.class, CallableStatement.class}, handler);
   }
 

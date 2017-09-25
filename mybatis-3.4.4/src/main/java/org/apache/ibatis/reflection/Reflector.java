@@ -359,7 +359,7 @@ public class Reflector {
     return methods.toArray(new Method[methods.size()]);
   }
 
-  // 为灭个方法生成唯一的签名，并且记录到 uniqueMethods 集合中
+  // 为每个方法生成唯一的签名，并且记录到 uniqueMethods 集合中
   private void addUniqueMethods(Map<String, Method> uniqueMethods, Method[] methods) {
     for (Method currentMethod : methods) {
       if (!currentMethod.isBridge()) {

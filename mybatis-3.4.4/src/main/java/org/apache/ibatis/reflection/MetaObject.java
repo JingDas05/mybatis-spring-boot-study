@@ -38,6 +38,7 @@ public class MetaObject {
   private ObjectWrapperFactory objectWrapperFactory;
   private ReflectorFactory reflectorFactory;
 
+  // 这个构造函数是private的
   private MetaObject(Object object, ObjectFactory objectFactory, ObjectWrapperFactory objectWrapperFactory, ReflectorFactory reflectorFactory) {
     this.originalObject = object;
     this.objectFactory = objectFactory;
@@ -59,6 +60,7 @@ public class MetaObject {
   }
 
   // 封装object， 构建metaObject, 里面有objectFactory， objectWrapperFactory，reflectorFactory引用
+  // 只能通过这个初始化
   public static MetaObject forObject(Object object, ObjectFactory objectFactory, ObjectWrapperFactory objectWrapperFactory, ReflectorFactory reflectorFactory) {
     if (object == null) {
       return SystemMetaObject.NULL_META_OBJECT;
@@ -121,6 +123,7 @@ public class MetaObject {
         return metaValue.getValue(prop.getChildren());
       }
     } else {
+      // 这个地方是具体的 objectWrapper 实现类
       return objectWrapper.get(prop);
     }
   }

@@ -32,10 +32,12 @@ import org.apache.ibatis.reflection.property.PropertyTokenizer;
 public class MetaClass {
 
   private ReflectorFactory reflectorFactory;
+  // MetaClass 对应的类的反射对象
   private Reflector reflector;
 
   private MetaClass(Class<?> type, ReflectorFactory reflectorFactory) {
 	this.reflectorFactory = reflectorFactory;
+	// 用反射工厂去创建反射对象
     this.reflector = reflectorFactory.findForClass(type);
   }
 
@@ -89,13 +91,17 @@ public class MetaClass {
   }
 
   private MetaClass metaClassForProperty(PropertyTokenizer prop) {
+    // 获取表达式所表示的属性的类型
     Class<?> propType = getGetterType(prop);
     return MetaClass.forClass(propType, reflectorFactory);
   }
 
+  // prop eg: orders[0].id
   private Class<?> getGetterType(PropertyTokenizer prop) {
+    // prop.getName()的结果是 orders
     Class<?> type = reflector.getGetterType(prop.getName());
     if (prop.getIndex() != null && Collection.class.isAssignableFrom(type)) {
+      // returnType 为 ParameterizedType对象
       Type returnType = getGenericGetterType(prop.getName());
       if (returnType instanceof ParameterizedType) {
         Type[] actualTypeArguments = ((ParameterizedType) returnType).getActualTypeArguments();
@@ -148,6 +154,7 @@ public class MetaClass {
 
   public boolean hasGetter(String name) {
     PropertyTokenizer prop = new PropertyTokenizer(name);
+    // 如果有子类，还需要判断子类的 hasGetter
     if (prop.hasNext()) {
       if (reflector.hasGetter(prop.getName())) {
         MetaClass metaProp = metaClassForProperty(prop);
@@ -168,6 +175,7 @@ public class MetaClass {
     return reflector.getSetInvoker(name);
   }
 
+  // builder 的引用会一直传递下去
   private StringBuilder buildProperty(String name, StringBuilder builder) {
     PropertyTokenizer prop = new PropertyTokenizer(name);
     if (prop.hasNext()) {
@@ -175,10 +183,13 @@ public class MetaClass {
       if (propertyName != null) {
         builder.append(propertyName);
         builder.append(".");
+        // 为该属性创建MetaClass对象
         MetaClass metaProp = metaClassForProperty(propertyName);
+        // 递归解析，并且将解析结果添加到builder保存
         metaProp.buildProperty(prop.getChildren(), builder);
       }
     } else {
+      // 递归出口
       String propertyName = reflector.findPropertyName(name);
       if (propertyName != null) {
         builder.append(propertyName);
