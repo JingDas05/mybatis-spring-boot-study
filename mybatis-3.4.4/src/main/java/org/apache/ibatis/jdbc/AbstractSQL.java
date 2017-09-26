@@ -315,6 +315,7 @@ public abstract class AbstractSQL<T> {
       DELETE, INSERT, SELECT, UPDATE
     }
 
+    // 每一个SQLStatement都有唯一的 statementType
     StatementType statementType;
     // 这些变量存放的是 关键词sets， select等后面的变量
     List<String> sets = new ArrayList<String>();

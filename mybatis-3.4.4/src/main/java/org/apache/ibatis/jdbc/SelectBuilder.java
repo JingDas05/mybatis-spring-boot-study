@@ -23,6 +23,7 @@ package org.apache.ibatis.jdbc;
 @Deprecated
 public class SelectBuilder {
 
+  // 这个变量只对当前线程可见
   private static final ThreadLocal<SQL> localSQL = new ThreadLocal<SQL>();
 
   static {
