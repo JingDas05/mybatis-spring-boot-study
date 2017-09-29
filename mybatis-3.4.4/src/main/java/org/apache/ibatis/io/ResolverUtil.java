@@ -63,6 +63,7 @@ public class ResolverUtil<T> {
 
     /**
      * 函数式接口，判断是否符合
+     * type 待检测的类，如果该类符合检测的条件，则返回true,否则返回false
      */
     public static interface Test {
         boolean matches(Class<?> type);
@@ -162,6 +163,7 @@ public class ResolverUtil<T> {
         String path = getPackagePath(packageName);
 
         try {
+            // VFS.list()查找packageName包下的所有资源
             List<String> children = VFS.getInstance().list(path);
             for (String child : children) {
                 if (child.endsWith(".class")) {
@@ -199,6 +201,7 @@ public class ResolverUtil<T> {
             if (log.isDebugEnabled()) {
                 log.debug("Checking to see if class " + externalName + " matches criteria [" + test + "]");
             }
+            // 获取要检测的类的实际class对象
             Class<?> type = loader.loadClass(externalName);
             //如果符合的话，就将class对象添加到matches集合中，这个地方调用test的match方法，如果符合就添加
             if (test.matches(type)) {

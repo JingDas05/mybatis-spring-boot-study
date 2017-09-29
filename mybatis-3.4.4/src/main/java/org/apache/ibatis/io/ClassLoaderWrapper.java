@@ -148,6 +148,7 @@ public class ClassLoaderWrapper {
 
         // ...but some class loaders want this leading "/", so we'll add it
         // and try again if we didn't find the resource
+        // 尝试以"/"开头，再次查找
         if (null == url) {
           url = cl.getResource("/" + resource);
         }

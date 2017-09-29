@@ -43,6 +43,7 @@ public class DefaultVFS extends VFS {
   private static final Log log = LogFactory.getLog(DefaultVFS.class);
 
   /** The magic header that indicates a JAR (ZIP) file. */
+  // 魔法头部，代表着文件是 JAR 文件
   private static final byte[] JAR_MAGIC = { 'P', 'K', 3, 4 };
 
   @Override
@@ -52,6 +53,7 @@ public class DefaultVFS extends VFS {
 
   @Override
   public List<String> list(URL url, String path) throws IOException {
+    // 声明为null
     InputStream is = null;
     try {
       List<String> resources = new ArrayList<String>();
@@ -156,6 +158,7 @@ public class DefaultVFS extends VFS {
 
       return resources;
     } finally {
+      // 最后一定要记得关闭资源
       if (is != null) {
         try {
           is.close();
@@ -177,6 +180,7 @@ public class DefaultVFS extends VFS {
    */
   protected List<String> listResources(JarInputStream jar, String path) throws IOException {
     // Include the leading and trailing slash when matching names
+    // 开头结尾不是以“/”开头的就变成以“/”开头的
     if (!path.startsWith("/")) {
       path = "/" + path;
     }
@@ -195,6 +199,7 @@ public class DefaultVFS extends VFS {
         }
 
         // Check file name
+        // 如果名字是path开头的就添加到 resources中
         if (name.startsWith(path)) {
           if (log.isDebugEnabled()) {
             log.debug("Found resource: " + name);
@@ -223,6 +228,7 @@ public class DefaultVFS extends VFS {
     }
 
     // If the file part of the URL is itself a URL, then that URL probably points to the JAR
+    // 一直到抛出异常才会停止
     try {
       for (;;) {
         url = new URL(url.getFile());
@@ -253,6 +259,7 @@ public class DefaultVFS extends VFS {
     // Try to open and test it
     try {
       URL testUrl = new URL(jarUrl.toString());
+      // 如果是jar包直接返回jar包的路径，如果不是进行WebLogic下的检查
       if (isJar(testUrl)) {
         return testUrl;
       }
@@ -267,6 +274,7 @@ public class DefaultVFS extends VFS {
         // File name might be URL-encoded
         if (!file.exists()) {
           try {
+            // 调用URLEncoder 进行编码
             file = new File(URLEncoder.encode(jarUrl.toString(), "UTF-8"));
           } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("Unsupported encoding?  UTF-8?  That's unpossible.");
@@ -278,6 +286,7 @@ public class DefaultVFS extends VFS {
             log.debug("Trying real file: " + file.getAbsolutePath());
           }
           testUrl = file.toURI().toURL();
+          // 如果是jar包，才返回
           if (isJar(testUrl)) {
             return testUrl;
           }
@@ -314,6 +323,7 @@ public class DefaultVFS extends VFS {
 
   /**
    * Returns true if the resource located at the given URL is a JAR file.
+   * 判断URL是否是JAR file
    * 
    * @param url The URL of the resource to test.
    * @param buffer A buffer into which the first few bytes of the resource are read. The buffer
@@ -324,7 +334,9 @@ public class DefaultVFS extends VFS {
     InputStream is = null;
     try {
       is = url.openStream();
+      // read操作是针对is进行的
       is.read(buffer, 0, JAR_MAGIC.length);
+      // 如果是jar文件，开头的序列化字符串为 { 'P', 'K', 3, 4 }
       if (Arrays.equals(buffer, JAR_MAGIC)) {
         if (log.isDebugEnabled()) {
           log.debug("Found JAR: " + url);
@@ -334,6 +346,7 @@ public class DefaultVFS extends VFS {
     } catch (Exception e) {
       // Failure to read the stream means this is not a JAR
     } finally {
+      // 最后记得关闭流！！
       if (is != null) {
         try {
           is.close();

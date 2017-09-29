@@ -42,6 +42,7 @@ public abstract class VFS {
   public static final List<Class<? extends VFS>> USER_IMPLEMENTATIONS = new ArrayList<Class<? extends VFS>>();
 
   /** Singleton instance. */
+  // 单例模式，记录了全局唯一的VFS对象
   private static VFS instance;
 
   /**
@@ -55,12 +56,14 @@ public abstract class VFS {
     }
 
     // Try the user implementations first, then the built-ins
+    // 优先使用用户自定义的VFS实现，如果没有，则使用MyBatis提供的VFS实现
     List<Class<? extends VFS>> impls = new ArrayList<Class<? extends VFS>>();
     impls.addAll(USER_IMPLEMENTATIONS);
     impls.addAll(Arrays.asList((Class<? extends VFS>[]) IMPLEMENTATIONS));
 
     // Try each implementation class until a valid one is found
     VFS vfs = null;
+    // 遍历集合，一旦获得有效的VFS对象，则结束循环
     for (int i = 0; vfs == null || !vfs.isValid(); i++) {
       Class<? extends VFS> impl = impls.get(i);
       try {
@@ -154,6 +157,7 @@ public abstract class VFS {
     } catch (IllegalAccessException e) {
       throw new RuntimeException(e);
     } catch (InvocationTargetException e) {
+      // 这个是执行时的异常，所以进行判断下
       if (e.getTargetException() instanceof IOException) {
         throw (IOException) e.getTargetException();
       } else {
@@ -200,6 +204,7 @@ public abstract class VFS {
   public List<String> list(String path) throws IOException {
     List<String> names = new ArrayList<String>();
     for (URL url : getResources(path)) {
+      // 最终会调用上面的抽象方法，查找指定资源的名称列表
       names.addAll(list(url, path));
     }
     return names;
