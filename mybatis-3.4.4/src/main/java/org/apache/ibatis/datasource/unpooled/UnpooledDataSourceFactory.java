@@ -42,14 +42,19 @@ public class UnpooledDataSourceFactory implements DataSourceFactory {
   @Override
   public void setProperties(Properties properties) {
     Properties driverProperties = new Properties();
+    // 获取dataSource 的MetaObject
     MetaObject metaDataSource = SystemMetaObject.forObject(dataSource);
     for (Object key : properties.keySet()) {
       String propertyName = (String) key;
+      // 对于每一个属性键值对进行处理
+      // 如果是driver.开头的，直接赋值
       if (propertyName.startsWith(DRIVER_PROPERTY_PREFIX)) {
         String value = properties.getProperty(propertyName);
         driverProperties.setProperty(propertyName.substring(DRIVER_PROPERTY_PREFIX_LENGTH), value);
+        // 如果 dataSource 有属性的setter方法
       } else if (metaDataSource.hasSetter(propertyName)) {
         String value = (String) properties.get(propertyName);
+        // 分别处理Integer Long Boolean 类型的值
         Object convertedValue = convertValue(metaDataSource, propertyName, value);
         metaDataSource.setValue(propertyName, convertedValue);
       } else {
@@ -68,6 +73,7 @@ public class UnpooledDataSourceFactory implements DataSourceFactory {
 
   private Object convertValue(MetaObject metaDataSource, String propertyName, String value) {
     Object convertedValue = value;
+    // 获取 属性的类型
     Class<?> targetType = metaDataSource.getSetterType(propertyName);
     if (targetType == Integer.class || targetType == int.class) {
       convertedValue = Integer.valueOf(value);

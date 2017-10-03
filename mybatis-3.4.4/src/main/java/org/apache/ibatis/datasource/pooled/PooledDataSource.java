@@ -42,19 +42,28 @@ public class PooledDataSource implements DataSource {
 
   private static final Log log = LogFactory.getLog(PooledDataSource.class);
 
+  // 通过 PoolState 管理连接池的状态并记录统计信息
   private final PoolState state = new PoolState(this);
 
+  // 用于生成真实的数据库连接对象
   private final UnpooledDataSource dataSource;
 
   // OPTIONAL CONFIGURATION FIELDS
+  // 最大活跃连接数
   protected int poolMaximumActiveConnections = 10;
+  // 最大空闲连接数
   protected int poolMaximumIdleConnections = 5;
+  // 最大 checkout 时长
   protected int poolMaximumCheckoutTime = 20000;
+  // 在无法获取连接时，线程需要等待的时间
   protected int poolTimeToWait = 20000;
+  // 在检测一个数据库连接是否可用时，会给数据库发送一个测试的SQL语句
   protected String poolPingQuery = "NO PING QUERY SET";
+  // 是否允许发送测试SQL语句
   protected boolean poolPingEnabled;
+  // 当连接超过下面的毫秒数未使用时，会发送一次测试SQL语句，检验连接是否正常
   protected int poolPingConnectionsNotUsedFor;
-
+  // 根据数据库的URL 用户名 密码 生成一个hash值，该哈希值用于标志着当前的连接池，在构造函数中初始化
   private int expectedConnectionTypeCode;
 
   public PooledDataSource() {

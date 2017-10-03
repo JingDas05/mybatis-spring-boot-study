@@ -38,10 +38,16 @@ class PooledConnection implements InvocationHandler {
   private PooledDataSource dataSource;
   private Connection realConnection;
   private Connection proxyConnection;
+  // 从连接池中取出该连接的时间戳
   private long checkoutTimestamp;
+  // 该连接创建的时间戳
   private long createdTimestamp;
+  // 最后一次被使用的时间戳
   private long lastUsedTimestamp;
+  // 根据数据库URL 用户名 和 密码 计算出来的hash值，可用于标识该连接所在的连接池
   private int connectionTypeCode;
+  // 检测当前 PooledConnection 是否有效
+  // 主要防止通过close()方法将连接归还给连接池后，还操作该连接
   private boolean valid;
 
   /*
@@ -238,6 +244,7 @@ class PooledConnection implements InvocationHandler {
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     String methodName = method.getName();
+    // 如果调用close()方法，则将其重新放入连接池，而不是真正的关闭数据库连接
     if (CLOSE.hashCode() == methodName.hashCode() && CLOSE.equals(methodName)) {
       dataSource.pushConnection(this);
       return null;

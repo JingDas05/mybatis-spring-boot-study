@@ -36,9 +36,12 @@ import org.apache.ibatis.io.Resources;
  * @author Eduardo Macarron
  */
 public class UnpooledDataSource implements DataSource {
-  
+
+  // 加载Driver类的类加载器
   private ClassLoader driverClassLoader;
+  // 这个成员变量在UnpooledDataSourceFactory中 setProperties()方法进行赋值的
   private Properties driverProperties;
+  // 缓存所有已注册的数据库连接驱动
   private static Map<String, Driver> registeredDrivers = new ConcurrentHashMap<String, Driver>();
 
   private String driver;
@@ -47,9 +50,10 @@ public class UnpooledDataSource implements DataSource {
   private String password;
 
   private Boolean autoCommit;
+  // 事务隔离级别
   private Integer defaultTransactionIsolationLevel;
 
-  // 注册driver
+  // 将已注册的driver，复制一份到 registeredDrivers
   static {
     Enumeration<Driver> drivers = DriverManager.getDrivers();
     while (drivers.hasMoreElements()) {
@@ -215,6 +219,7 @@ public class UnpooledDataSource implements DataSource {
     if (!registeredDrivers.containsKey(driver)) {
       Class<?> driverType;
       try {
+        // 如果 driverClassLoader 不为null，加载driver,否则直接通过Resources直接获取Class
         if (driverClassLoader != null) {
           driverType = Class.forName(driver, true, driverClassLoader);
         } else {
