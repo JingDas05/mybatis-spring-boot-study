@@ -20,14 +20,14 @@ import java.sql.SQLException;
 
 /**
  * Wraps a database connection.
- * Handles the connection lifecycle that comprises: its creation, preparation, commit/rollback and close. 
+ * Handles the connection lifecycle that comprises(包含): its creation, preparation, commit/rollback and close.
  *
  * @author Clinton Begin
  */
 public interface Transaction {
 
   /**
-   * Retrieve inner database connection
+   * Retrieve(取回) inner database connection
    * @return DataBase connection
    * @throws SQLException
    */
