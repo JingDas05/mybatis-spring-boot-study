@@ -302,7 +302,7 @@ public class MapperAnnotationBuilder {
     return null;
   }
 
-  // 解析mapper接口的方法
+  // 解析mapper接口里的每一个方法
   void parseStatement(Method method) {
     // parameterTypeClass这个变量为ParamMap.class
     Class<?> parameterTypeClass = getParameterType(method);

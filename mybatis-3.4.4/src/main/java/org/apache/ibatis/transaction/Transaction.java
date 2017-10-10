@@ -53,6 +53,7 @@ public interface Transaction {
 
   /**
    * Get transaction timeout if set
+   * 获取事务超时时间
    * @throws SQLException
    */
   Integer getTimeout() throws SQLException;

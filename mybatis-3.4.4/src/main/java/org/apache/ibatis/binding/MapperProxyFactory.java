@@ -30,7 +30,7 @@ public class MapperProxyFactory<T> {
 
   // 代理的mapper接口
   private final Class<T> mapperInterface;
-  // 线程安全的容器
+  // 线程安全的缓存容器，key为mapper接口中某方法对应的method对象，value是对应的MapperMethod对象
   private final Map<Method, MapperMethod> methodCache = new ConcurrentHashMap<Method, MapperMethod>();
 
   public MapperProxyFactory(Class<T> mapperInterface) {

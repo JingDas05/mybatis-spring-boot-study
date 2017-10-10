@@ -46,11 +46,13 @@ public class MapperRegistry {
 
   @SuppressWarnings("unchecked")
   public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
+    // 查找指定type对应的MapperProxyFactory对象
     final MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type);
     if (mapperProxyFactory == null) {
       throw new BindingException("Type " + type + " is not known to the MapperRegistry.");
     }
     try {
+      // 创建实现了type接口的代理对象
       return mapperProxyFactory.newInstance(sqlSession);
     } catch (Exception e) {
       throw new BindingException("Error getting mapper instance. Cause: " + e, e);
@@ -61,9 +63,10 @@ public class MapperRegistry {
     return knownMappers.containsKey(type);
   }
 
-  //参数type为接口级别的mapper类
+  // 参数type为接口级别的mapper类
   public <T> void addMapper(Class<T> type) {
     if (type.isInterface()) {
+      // 如果已经有mapper了就抛出异常
       if (hasMapper(type)) {
         throw new BindingException("Type " + type + " is already known to the MapperRegistry.");
       }
