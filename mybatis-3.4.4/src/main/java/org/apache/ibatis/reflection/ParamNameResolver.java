@@ -40,6 +40,13 @@ public class ParamNameResolver {
    * the parameter index is used. Note that this index could be different from the actual index
    * when the method has special parameters (i.e. {@link RowBounds} or {@link ResultHandler}).
    * </p>
+   *
+   * key表示参数列表中的索引位置，value表示参数名称，参数名称可以通过@Param注解指定，如果没有指定@Param注解
+   * 则使用参数索引作为其名称
+   * 由于 RowBounds 和 ResultHandler并不记录到name中，所以就会导致参数的索引与名称不一致
+   * 如下：
+   * method(int a, RowBounds rb, int b) 对应的names为{{0，“0”}， {2，“1”}}
+   *
    * <ul>
    * <li>aMethod(@Param("M") int a, @Param("N") int b) -&gt; {{0, "M"}, {1, "N"}}</li>
    * <li>aMethod(int a, int b) -&gt; {{0, "0"}, {1, "1"}}</li>
@@ -48,6 +55,7 @@ public class ParamNameResolver {
    */
   private final SortedMap<Integer, String> names;
 
+  // 记录了是否使用了 @Param注解
   private boolean hasParamAnnotation;
 
   public ParamNameResolver(Configuration config, Method method) {

@@ -211,6 +211,7 @@ public class MapperMethod {
 
   public static class SqlCommand {
 
+    // 记录了SQL语句的名称和类型
     private final String name;
     // UNKNOWN, INSERT, UPDATE, DELETE, SELECT, FLUSH;
     private final SqlCommandType type;
@@ -221,6 +222,7 @@ public class MapperMethod {
       MappedStatement ms = resolveMappedStatement(mapperInterface, methodName, declaringClass,
           configuration);
       if (ms == null) {
+        // 如果name=null 那么就是 FLUSH 类型的
         if (method.getAnnotation(Flush.class) != null) {
           name = null;
           type = SqlCommandType.FLUSH;
@@ -258,6 +260,7 @@ public class MapperMethod {
       String statementId = mapperInterface.getName() + "." + methodName;
       if (configuration.hasStatement(statementId)) {
         return configuration.getMappedStatement(statementId);
+        // 配置文件里没有，而且不是在父接口中的话就 return null
       } else if (mapperInterface.equals(declaringClass)) {
         return null;
       }
@@ -285,6 +288,7 @@ public class MapperMethod {
     private final String mapKey;
     private final Integer resultHandlerIndex;
     private final Integer rowBoundsIndex;
+    // 处理Mapper接口中定义的方法的参数
     private final ParamNameResolver paramNameResolver;
 
     public MethodSignature(Configuration configuration, Class<?> mapperInterface, Method method) {
