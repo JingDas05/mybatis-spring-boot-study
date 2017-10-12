@@ -51,6 +51,7 @@ public class TypeParameterResolver {
   public static Type resolveReturnType(Method method, Type srcType) {
     Type returnType = method.getGenericReturnType();
     Class<?> declaringClass = method.getDeclaringClass();
+    // srcType 和 declaringClass 是不一样的，method所在的类有可能是srcType 的父类
     return resolveType(returnType, srcType, declaringClass);
   }
 

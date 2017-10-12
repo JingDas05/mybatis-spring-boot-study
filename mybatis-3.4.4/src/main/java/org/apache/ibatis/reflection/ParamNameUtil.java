@@ -27,6 +27,7 @@ import org.apache.ibatis.lang.UsesJava8;
 
 @UsesJava8
 public class ParamNameUtil {
+  // 根据方法获取方法的参数名集合
   public static List<String> getParamNames(Method method) {
     return getParameterNames(method);
   }

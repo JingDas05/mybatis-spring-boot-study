@@ -55,34 +55,44 @@ public class ParamNameResolver {
    */
   private final SortedMap<Integer, String> names;
 
-  // 记录了是否使用了 @Param注解
+  // 记录了是否使用了 @Param 注解
   private boolean hasParamAnnotation;
 
+  // 解决方法的参数
   public ParamNameResolver(Configuration config, Method method) {
+    // 获取参数列表中每个参数的类型
     final Class<?>[] paramTypes = method.getParameterTypes();
+    // 获取参数列表上的注解
     final Annotation[][] paramAnnotations = method.getParameterAnnotations();
+    // 该集合用于记录参数索引与参数名称的对应关系
     final SortedMap<Integer, String> map = new TreeMap<Integer, String>();
     int paramCount = paramAnnotations.length;
     // get names from @Param annotations
     for (int paramIndex = 0; paramIndex < paramCount; paramIndex++) {
+      // 判断是否是RowBounds 以及ResultHandler，如果是的话就忽略
       if (isSpecialParameter(paramTypes[paramIndex])) {
         // skip special parameters
         continue;
       }
       String name = null;
+      // 遍历该参数对应的注解集合
       for (Annotation annotation : paramAnnotations[paramIndex]) {
+        // 只要 @Param注解出现一次，就将 hasParamAnnotation 初始化为true
         if (annotation instanceof Param) {
           hasParamAnnotation = true;
           name = ((Param) annotation).value();
           break;
         }
       }
+      // 如果没有 @Param 注解进行以下处理
       if (name == null) {
         // @Param was not specified.
+        // 该参数没有对应的 @Param 注解，则根据配置决定是否使用参数实际名称作为其参数
         if (config.isUseActualParamName()) {
           name = getActualParamName(method, paramIndex);
         }
         if (name == null) {
+          // 使用参数的索引作为其名称,这个地方说明了为什么索引与名称不一致的问题
           // use the parameter index as the name ("0", "1", ...)
           // gcode issue #71
           name = String.valueOf(map.size());
@@ -90,6 +100,7 @@ public class ParamNameResolver {
       }
       map.put(paramIndex, name);
     }
+    // 初始化为不可修改
     names = Collections.unmodifiableSortedMap(map);
   }
 
@@ -118,21 +129,28 @@ public class ParamNameResolver {
    * In addition to the default names, this method also adds the generic names (param1, param2,
    * ...).
    * </p>
+   *
+   * names里存放的是位置索引和参数名的对应关系，没有存放实际的参数值
+   *
    */
   public Object getNamedParams(Object[] args) {
     final int paramCount = names.size();
     if (args == null || paramCount == 0) {
       return null;
+      // 未使用 @Param 且只有一个参数
     } else if (!hasParamAnnotation && paramCount == 1) {
       return args[names.firstKey()];
     } else {
+      // param这个Map中记录了参数名称与实参之间的对应关系
+      // ParamMap继承了 HashMap (如果向ParamMap中添加已经存在的key，会报错，其他行为与HashMap相同)
       final Map<String, Object> param = new ParamMap<Object>();
       int i = 0;
       for (Map.Entry<Integer, String> entry : names.entrySet()) {
         param.put(entry.getValue(), args[entry.getKey()]);
         // add generic param names (param1, param2, ...)
+        // 下面是为参数创建“param+索引”格式的默认参数名称
         final String genericParamName = GENERIC_NAME_PREFIX + String.valueOf(i + 1);
-        // ensure not to overwrite parameter named with @Param
+        // ensure not to overwrite parameter named with @Param，如果@Param注解指定的参数名称就是 param+索引，则不需要添加
         if (!names.containsValue(genericParamName)) {
           param.put(genericParamName, args[entry.getKey()]);
         }

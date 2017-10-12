@@ -51,11 +51,13 @@ public class MapperMethod {
     this.method = new MethodSignature(config, mapperInterface, method);
   }
 
+  // 核心方法，完成数据库操作
   public Object execute(SqlSession sqlSession, Object[] args) {
     Object result;
     switch (command.getType()) {
       case INSERT: {
     	Object param = method.convertArgsToSqlCommandParam(args);
+    	// 调用 sqlSession 的相关的方法，并且对结果进行转换
         result = rowCountResult(sqlSession.insert(command.getName(), param));
         break;
       }
@@ -70,6 +72,7 @@ public class MapperMethod {
         break;
       }
       case SELECT:
+        // 处理返回值为void且有ResultHandler处理的方法
         if (method.returnsVoid() && method.hasResultHandler()) {
           executeWithResultHandler(sqlSession, args);
           result = null;
@@ -80,6 +83,7 @@ public class MapperMethod {
         } else if (method.returnsCursor()) {
           result = executeForCursor(sqlSession, args);
         } else {
+          // 处理返回值为单一对象的方法
           Object param = method.convertArgsToSqlCommandParam(args);
           result = sqlSession.selectOne(command.getName(), param);
         }
@@ -97,6 +101,7 @@ public class MapperMethod {
     return result;
   }
 
+  // 当执行INSERT UPDATE DELETE 类型的SQL语句时，返回的是int值，所以用以下方法解决
   private Object rowCountResult(int rowCount) {
     final Object result;
     if (method.returnsVoid()) {
@@ -114,14 +119,18 @@ public class MapperMethod {
   }
 
   private void executeWithResultHandler(SqlSession sqlSession, Object[] args) {
+    // MappedStatement 中记录了SQL语句相关信息
     MappedStatement ms = sqlSession.getConfiguration().getMappedStatement(command.getName());
+    // 当使用 ResultHandler处理结果集时，必须指定ResultMap 或者 ResultType
     if (void.class.equals(ms.getResultMaps().get(0).getType())) {
       throw new BindingException("method " + command.getName() 
           + " needs either a @ResultMap annotation, a @ResultType annotation," 
           + " or a resultType attribute in XML so a ResultHandler can be used as a parameter.");
     }
     Object param = method.convertArgsToSqlCommandParam(args);
+    // 检测参数列表中是否有 RowBounds 类型的参数
     if (method.hasRowBounds()) {
+      // 获取RowBounds队形，根据 MethodSignature.rowBoundsIndex字段指定位置，从args中查找
       RowBounds rowBounds = method.extractRowBounds(args);
       sqlSession.select(command.getName(), param, rowBounds, method.extractResultHandler(args));
     } else {
@@ -129,6 +138,7 @@ public class MapperMethod {
     }
   }
 
+  // 如果返回值为数组或者 Collection 实现类
   private <E> Object executeForMany(SqlSession sqlSession, Object[] args) {
     List<E> result;
     Object param = method.convertArgsToSqlCommandParam(args);
@@ -139,6 +149,7 @@ public class MapperMethod {
       result = sqlSession.<E>selectList(command.getName(), param);
     }
     // issue #510 Collections & arrays support
+    // 将结果集转换为 数组 或 Collection集合
     if (!method.getReturnType().isAssignableFrom(result.getClass())) {
       if (method.getReturnType().isArray()) {
         return convertToArray(result);
@@ -162,26 +173,34 @@ public class MapperMethod {
   }
 
   private <E> Object convertToDeclaredCollection(Configuration config, List<E> list) {
+    // 使用 objectFactory 通过反射方式创建集合对象
     Object collection = config.getObjectFactory().create(method.getReturnType());
+    // 创建 MetaObject 对象
     MetaObject metaObject = config.newMetaObject(collection);
+    // 实际上调用Collection.addAll()方法
     metaObject.addAll(list);
     return collection;
   }
 
+  // 注意这个地方Array 提供的静态方法 newInstance() 和 set()
   @SuppressWarnings("unchecked")
   private <E> Object convertToArray(List<E> list) {
     Class<?> arrayComponentType = method.getReturnType().getComponentType();
     Object array = Array.newInstance(arrayComponentType, list.size());
+    // 判断是否是基本类型
     if (arrayComponentType.isPrimitive()) {
       for (int i = 0; i < list.size(); i++) {
         Array.set(array, i, list.get(i));
       }
       return array;
-    } else {
+    }
+    // 如果不是基本类型，就强转，这个地方的代码很棒
+    else {
       return list.toArray((E[])array);
     }
   }
 
+  // 处理返回值是Map的情况
   private <K, V> Map<K, V> executeForMap(SqlSession sqlSession, Object[] args) {
     Map<K, V> result;
     Object param = method.convertArgsToSqlCommandParam(args);
@@ -280,18 +299,28 @@ public class MapperMethod {
 
   public static class MethodSignature {
 
+    // 返回值类型是否为Collection或者数组
     private final boolean returnsMany;
+    // 返回值类型是否为Map类型
     private final boolean returnsMap;
+    // 返回值类型是否为void
     private final boolean returnsVoid;
+    // 返回值是否为Cursor类型
     private final boolean returnsCursor;
+    // 返回值类型
     private final Class<?> returnType;
+    // 如果返回值类型是Map,则该字段记录了作为key的列名
     private final String mapKey;
+    // 用来记录该方法参数列表中 resultHandler 类型参数的位置
     private final Integer resultHandlerIndex;
+    // 用来记录该方法参数列表中 rowBounds 类型参数的位置
     private final Integer rowBoundsIndex;
     // 处理Mapper接口中定义的方法的参数
     private final ParamNameResolver paramNameResolver;
 
+    // 解析相应的Method对象，并初始化以上字段
     public MethodSignature(Configuration configuration, Class<?> mapperInterface, Method method) {
+      // 调用 TypeParameterResolver 取得返回值类型
       Type resolvedReturnType = TypeParameterResolver.resolveReturnType(method, mapperInterface);
       if (resolvedReturnType instanceof Class<?>) {
         this.returnType = (Class<?>) resolvedReturnType;
@@ -310,7 +339,9 @@ public class MapperMethod {
       this.paramNameResolver = new ParamNameResolver(configuration, method);
     }
 
+    // 实参列表转换成SQL语句对应的参数列表
     public Object convertArgsToSqlCommandParam(Object[] args) {
+      // 实际调用的是 paramNameResolver
       return paramNameResolver.getNamedParams(args);
     }
 
@@ -354,6 +385,7 @@ public class MapperMethod {
       return returnsCursor;
     }
 
+    // 查找指定类型的参数在参数列表中的位置
     private Integer getUniqueParamIndex(Method method, Class<?> paramType) {
       Integer index = null;
       final Class<?>[] argTypes = method.getParameterTypes();
@@ -362,6 +394,7 @@ public class MapperMethod {
           if (index == null) {
             index = i;
           } else {
+            // 重复定义了，抛出异常
             throw new BindingException(method.getName() + " cannot have multiple " + paramType.getSimpleName() + " parameters");
           }
         }
