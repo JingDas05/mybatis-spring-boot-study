@@ -29,11 +29,15 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
+ * 建造者模式，扮演着建造者接口的角色
+ * 提供了供具体实现类使用的公用方法
+ *
  * @author Clinton Begin
  */
 public abstract class BaseBuilder {
+  // 初始化创建，全局唯一，保存了几乎全部配置
   protected final Configuration configuration;
-  //下面的两个成员变量在子类中经常用到，所以在父类的构造函数中初始化
+  //下面的两个成员变量在子类中经常用到，所以在父类的构造函数中初始化，都是全局唯一的
   protected final TypeAliasRegistry typeAliasRegistry;
   protected final TypeHandlerRegistry typeHandlerRegistry;
 

@@ -47,6 +47,7 @@ public class SqlSessionFactoryBuilder {
     return build(reader, null, properties);
   }
 
+  // 初始化入口
   public SqlSessionFactory build(Reader reader, String environment, Properties properties) {
     try {
       XMLConfigBuilder parser = new XMLConfigBuilder(reader, environment, properties);
@@ -76,9 +77,12 @@ public class SqlSessionFactoryBuilder {
     return build(inputStream, null, properties);
   }
 
+  // 初始化入口
   public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
     try {
+      // 读取配置文件
       XMLConfigBuilder parser = new XMLConfigBuilder(inputStream, environment, properties);
+      // 解析配置文件得到Configuration对象，创建DefaultSqlSessionFactory对象
       return build(parser.parse());
     } catch (Exception e) {
       throw ExceptionFactory.wrapException("Error building SqlSession.", e);

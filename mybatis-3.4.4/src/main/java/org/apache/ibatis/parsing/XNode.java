@@ -33,6 +33,7 @@ import org.w3c.dom.NodeList;
  */
 public class XNode {
 
+  // 解析的起始节点
   private Node node;
   private String name;
   private String body;
