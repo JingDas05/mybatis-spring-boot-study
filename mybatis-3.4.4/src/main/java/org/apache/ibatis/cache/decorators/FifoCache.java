@@ -30,8 +30,9 @@ public class FifoCache implements Cache {
 
   // 缓存被装饰者
   private final Cache delegate;
-  // 双向队列，用于存放 delegate 的key列表
+  // 双向队列，用于存放 delegate 的key列表，为了记录key进入缓存的先后顺序
   private Deque<Object> keyList;
+  // 记录了缓存项的上限，超过该值需要清除缓存
   private int size;
 
   public FifoCache(Cache delegate) {
@@ -85,6 +86,7 @@ public class FifoCache implements Cache {
     return null;
   }
 
+  // 检测是否超过阈值，如果超过阈值，对key进行删除
   private void cycleKeyList(Object key) {
     keyList.addLast(key);
     if (keyList.size() > size) {

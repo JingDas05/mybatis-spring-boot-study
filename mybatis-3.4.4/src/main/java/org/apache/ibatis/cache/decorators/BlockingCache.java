@@ -30,14 +30,19 @@ import org.apache.ibatis.cache.CacheException;
  * Simple and inefficient version of EhCache's BlockingCache decorator.
  * It sets a lock over a cache key when the element is not found in cache.
  * This way, other threads will wait until this element is filled instead of hitting the database.
- * 
+ *
+ * 阻塞版本的缓存装饰器，它会保证只有一个线程到数据库中查找指定key对应的数据
+ *
  * @author Eduardo Macarron
  *
  */
 public class BlockingCache implements Cache {
 
+  // 阻塞超时时长
   private long timeout;
+  // 被装饰的底层Cache对象
   private final Cache delegate;
+  // 每个 key 都有对应的 ReentrantLock 对象
   private final ConcurrentHashMap<Object, ReentrantLock> locks;
 
   public BlockingCache(Cache delegate) {
@@ -66,9 +71,11 @@ public class BlockingCache implements Cache {
 
   @Override
   public Object getObject(Object key) {
+    // 获取该key对应的锁
     acquireLock(key);
     Object value = delegate.getObject(key);
-    if (value != null) {
+    // 如果缓存有key对应的缓存项，释放锁，否则继续持有锁
+      if (value != null) {
       releaseLock(key);
     }        
     return value;
@@ -93,15 +100,20 @@ public class BlockingCache implements Cache {
   
   private ReentrantLock getLockForKey(Object key) {
     ReentrantLock lock = new ReentrantLock();
+    // 如果不存在，再置入，返回的是之前的lock,如果之前是null,就返回null
+    // 尝试添加到locks集合中，如果locks集合中已经有相对应的ReentrantLock对象，则使用locks集合中的ReentrantLock对象
     ReentrantLock previous = locks.putIfAbsent(key, lock);
     return previous == null ? lock : previous;
   }
-  
+
+  // 获取该key对应的锁
   private void acquireLock(Object key) {
     Lock lock = getLockForKey(key);
+    // 获取锁，带超时时长
     if (timeout > 0) {
       try {
         boolean acquired = lock.tryLock(timeout, TimeUnit.MILLISECONDS);
+        // 超时，抛出异常
         if (!acquired) {
           throw new CacheException("Couldn't get a lock in " + timeout + " for the key " +  key + " at the cache " + delegate.getId());  
         }
@@ -109,6 +121,7 @@ public class BlockingCache implements Cache {
         throw new CacheException("Got interrupted while trying to acquire lock for key " + key, e);
       }
     } else {
+      // 获取锁，不带超时时长
       lock.lock();
     }
   }

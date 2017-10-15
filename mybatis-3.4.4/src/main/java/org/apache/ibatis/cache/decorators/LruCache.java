@@ -31,7 +31,9 @@ import org.apache.ibatis.cache.Cache;
 public class LruCache implements Cache {
 
   private final Cache delegate;
+  // 记录key最近的使用情况
   private Map<Object, Object> keyMap;
+  // 记录最少被使用的缓存项key
   private Object eldestKey;
 
   public LruCache(Cache delegate) {
@@ -49,17 +51,20 @@ public class LruCache implements Cache {
     return delegate.getSize();
   }
 
+  // 重新设置缓存大小时，会重置keyMap字段
   public void setSize(final int size) {
-    // 有序HashMap
+    // 有序HashMap，accessOrder说明了 LinkedHashMap 的 get()会改变其记录的顺序
     keyMap = new LinkedHashMap<Object, Object>(size, .75F, true) {
       private static final long serialVersionUID = 4267176411845948333L;
 
+      // 当调用LinkedHashMap 的 put() 方法时，会调用该方法
       // 重写了LinkedHashMap 的方法，如果map的size大于参数size 就将最老的元素赋值给eldestKey
       // accessOrder 为true，说明插入无序，读取有序，最先读取的排在最前面，从而达到最少使用的最先去掉
       @Override
       protected boolean removeEldestEntry(Map.Entry<Object, Object> eldest) {
         boolean tooBig = size() > size;
         if (tooBig) {
+          // 如果已达到缓存的上限，则更新eldestKey字段，后面会删除该项
           eldestKey = eldest.getKey();
         }
         return tooBig;
@@ -69,6 +74,7 @@ public class LruCache implements Cache {
 
   @Override
   public void putObject(Object key, Object value) {
+    // 添加缓存项
     delegate.putObject(key, value);
     // 去除最少使用的entry
     cycleKeyList(key);
@@ -76,7 +82,8 @@ public class LruCache implements Cache {
 
   @Override
   public Object getObject(Object key) {
-    keyMap.get(key); //touch
+    // touch 修改LinkedHashMap中记录的顺序
+    keyMap.get(key);
     return delegate.getObject(key);
   }
 

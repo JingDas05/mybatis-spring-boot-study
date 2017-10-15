@@ -22,6 +22,10 @@ import java.util.List;
 import org.apache.ibatis.reflection.ArrayUtil;
 
 /**
+ *
+ * mybatis 中涉及动态SQL等多方面因素，其缓存项的key不能仅仅通过String表示
+ * CacheKey中可以添加多个对象，由这些对象共同确定两个 CacheKey 对象是否相同
+ *
  * @author Clinton Begin
  */
 public class CacheKey implements Cloneable, Serializable {
@@ -37,8 +41,11 @@ public class CacheKey implements Cloneable, Serializable {
   private int multiplier;
   // 哈希值
   private int hashcode;
+  // 校验和
   private long checksum;
+  // updateList集合的个数
   private int count;
+  // 由该集合中的所有对象共同决定两个CacheKey是否相同
   private List<Object> updateList;
 
   public CacheKey() {
@@ -77,6 +84,7 @@ public class CacheKey implements Cloneable, Serializable {
     }
   }
 
+  // 统计了所有false的情况，最后返回true
   @Override
   public boolean equals(Object object) {
     if (this == object) {
