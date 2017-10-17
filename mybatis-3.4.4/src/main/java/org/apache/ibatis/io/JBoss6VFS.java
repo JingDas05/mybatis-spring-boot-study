@@ -15,6 +15,7 @@
  */
 package org.apache.ibatis.io;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;

@@ -47,7 +47,7 @@ public class TransactionalCache implements Cache {
   private Cache delegate;
   private boolean clearOnCommit;
   private Map<Object, Object> entriesToAddOnCommit;
-  // 保存缓存丢失的实体
+  // 保存缓存丢失的实体（想要获取的缓存，结果没发现）
   private Set<Object> entriesMissedInCache;
 
   public TransactionalCache(Cache delegate) {

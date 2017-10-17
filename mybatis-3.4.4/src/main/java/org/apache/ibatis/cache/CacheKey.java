@@ -106,7 +106,7 @@ public class CacheKey implements Cloneable, Serializable {
       return false;
     }
 
-    // 循环比较，如果相对应位置元素不相等
+    // 循环比较 updateList，如果相对应位置元素不相等
     for (int i = 0; i < updateList.size(); i++) {
       Object thisObject = updateList.get(i);
       Object thatObject = cacheKey.updateList.get(i);

@@ -62,14 +62,16 @@ public interface Cache {
   /**
    * As of 3.3.0 this method is only called during a rollback 
    * for any previous value that was missing in the cache.
+   * 在3.3.0中，这个方法只是在回滚中调用
    * This lets any blocking cache to release the lock that 
    * may have previously put on the key.
+   * 这会让任何阻塞的缓存释放锁
    * A blocking cache puts a lock when a value is null 
    * and releases it when the value is back again.
    * This way other threads will wait for the value to be 
    * available instead of hitting the database.
+   * 用这种方法，其他线程会等待值，而不是查询数据库
    *
-   * 
    * @param key The key
    * @return Not used
    */
