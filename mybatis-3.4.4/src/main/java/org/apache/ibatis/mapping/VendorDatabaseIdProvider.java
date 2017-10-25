@@ -84,6 +84,7 @@ public class VendorDatabaseIdProvider implements DatabaseIdProvider {
     try {
       con = dataSource.getConnection();
       DatabaseMetaData metaData = con.getMetaData();
+      // 确定最终使用的 databaseId
       return metaData.getDatabaseProductName();
     } finally {
       if (con != null) {

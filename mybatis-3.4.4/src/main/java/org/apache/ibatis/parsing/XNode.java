@@ -79,6 +79,7 @@ public class XNode {
     return builder.toString();
   }
 
+  // 如果没有id, id生成器
   public String getValueBasedIdentifier() {
     StringBuilder builder = new StringBuilder();
     XNode current = this;

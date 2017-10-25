@@ -24,7 +24,9 @@ import org.apache.ibatis.cache.Cache;
  * @author Clinton Begin
  */
 public class CacheRefResolver {
+  // mapper对应的 MapperBuilderAssistant
   private final MapperBuilderAssistant assistant;
+  // 引用的缓存空间，有可能是别的命名空间的
   private final String cacheRefNamespace;
 
   public CacheRefResolver(MapperBuilderAssistant assistant, String cacheRefNamespace) {

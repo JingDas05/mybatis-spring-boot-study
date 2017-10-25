@@ -38,13 +38,21 @@ import org.apache.ibatis.reflection.SystemMetaObject;
  * @author Clinton Begin
  */
 public class CacheBuilder {
+  // Cache对象的唯一标识， 一般情况下对应映射文件中的配置namespace
   private String id;
+  // Cache 接口的真正实现类，默认值是前面介绍的 PerpetualCache
   private Class<? extends Cache> implementation;
+  // 装饰器集合，默认只包含 LruCache.class
   private List<Class<? extends Cache>> decorators;
+  // Cache 大小
   private Integer size;
+  // 清理周期时间
   private Long clearInterval;
+  // 是否可读写
   private boolean readWrite;
+  // 其他配置信息
   private Properties properties;
+  // 是否阻塞
   private boolean blocking;
 
   // 初始化时需要传入cache id
@@ -91,17 +99,24 @@ public class CacheBuilder {
   }
 
   public Cache build() {
+    // 如果 implementation字段 和 decorators集合为空，则为其设置默认值
     setDefaultImplementations();
+    // 根据implementation 和 id 创建缓存
     Cache cache = newBaseCacheInstance(implementation, id);
+    // 设置属性
     setCacheProperties(cache);
     // issue #352, do not apply decorators to custom caches
+    // 如果是PerpetualCache类型，则为其添加 decorators 集合中的装饰器，如果是自定义类型的Cache接口实现，则不添加
+    // decorators 集合中的装饰器
     if (PerpetualCache.class.equals(cache.getClass())) {
       for (Class<? extends Cache> decorator : decorators) {
         cache = newCacheDecoratorInstance(decorator, cache);
         setCacheProperties(cache);
       }
       cache = setStandardDecorators(cache);
-    } else if (!LoggingCache.class.isAssignableFrom(cache.getClass())) {
+    }
+    // 如果不是LoggingCache的子类，则添加LoggingCache装饰器
+    else if (!LoggingCache.class.isAssignableFrom(cache.getClass())) {
       cache = new LoggingCache(cache);
     }
     return cache;
@@ -118,6 +133,7 @@ public class CacheBuilder {
     }
   }
 
+  // 添加mybatis中提供的标准装饰器
   private Cache setStandardDecorators(Cache cache) {
     try {
       MetaObject metaCache = SystemMetaObject.forObject(cache);
@@ -128,11 +144,13 @@ public class CacheBuilder {
         cache = new ScheduledCache(cache);
         ((ScheduledCache) cache).setClearInterval(clearInterval);
       }
+      // 是否只读，对应添加 SerializedCache 装饰器
       if (readWrite) {
         cache = new SerializedCache(cache);
       }
       cache = new LoggingCache(cache);
       cache = new SynchronizedCache(cache);
+      // 是否阻塞，对应添加BlockingCache装饰器
       if (blocking) {
         cache = new BlockingCache(cache);
       }
@@ -145,9 +163,13 @@ public class CacheBuilder {
   private void setCacheProperties(Cache cache) {
     if (properties != null) {
       MetaObject metaCache = SystemMetaObject.forObject(cache);
+      // 遍历 properties， 设置属性
       for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+        // 属性名称
         String name = (String) entry.getKey();
+        // 属性值
         String value = (String) entry.getValue();
+        // 根据 type 的实际类型进行转换，设置属性
         if (metaCache.hasSetter(name)) {
           Class<?> type = metaCache.getSetterType(name);
           if (String.class == type) {
@@ -179,6 +201,7 @@ public class CacheBuilder {
         }
       }
     }
+    // 如果Cache类继承了 InitializingObject， 则调用其initialize()方法继续自定义的初始化操作
     if (InitializingObject.class.isAssignableFrom(cache.getClass())){
       try {
         ((InitializingObject) cache).initialize();

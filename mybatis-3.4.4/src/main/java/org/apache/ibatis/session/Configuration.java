@@ -146,6 +146,7 @@ public class Configuration {
 
     // 这个变量存放的是解析mapper.xml文件的对象，key是id,value是解析的结果(每一个增删改查语句)
     protected final Map<String, MappedStatement> mappedStatements = new StrictMap<MappedStatement>("Mapped Statements collection");
+    // StrictMap<Cache> 类型的字段，记录了Cache的id与Cache对象（二级缓存）之间的对相应关系
     protected final Map<String, Cache> caches = new StrictMap<Cache>("Caches collection");
     protected final Map<String, ResultMap> resultMaps = new StrictMap<ResultMap>("Result Maps collection");
     protected final Map<String, ParameterMap> parameterMaps = new StrictMap<ParameterMap>("Parameter Maps collection");
@@ -867,14 +868,17 @@ public class Configuration {
 
         @SuppressWarnings("unchecked")
         public V put(String key, V value) {
+            // 如果已经包含key，则直接返回异常
             if (containsKey(key)) {
                 throw new IllegalArgumentException(name + " already contains value for " + key);
             }
             if (key.contains(".")) {
+                // 按照“。”将key切分成数组，并将数组的最后一项作为shortKey
                 final String shortKey = getShortName(key);
                 if (super.get(shortKey) == null) {
                     super.put(shortKey, value);
                 } else {
+                    // 如果 shortKey 已经存在，则将 value 修改成Ambiguity对象
                     super.put(shortKey, (V) new Ambiguity(shortKey));
                 }
             }
@@ -886,7 +890,7 @@ public class Configuration {
             if (value == null) {
                 throw new IllegalArgumentException(name + " does not contain value for " + key);
             }
-            //key要求使用全限定名
+            //如果 value是 Ambiguity类型，则报错
             if (value instanceof Ambiguity) {
                 throw new IllegalArgumentException(((Ambiguity) value).getSubject() + " is ambiguous in " + name
                         + " (try using the full name including the namespace, or rename one of the entries)");

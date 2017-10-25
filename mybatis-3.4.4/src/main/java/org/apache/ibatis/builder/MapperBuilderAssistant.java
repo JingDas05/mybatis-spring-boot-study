@@ -50,7 +50,7 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
 /**
- * mapperBuilder 辅助类
+ * mapperBuilder 辅助类， 一个mapper配置文件对应一个MapperBuilderAssistant
  * 管理缓存
  *
  * @author Clinton Begin
@@ -91,6 +91,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
     if (base == null) {
       return null;
     }
+    // 如果引用为true，才允许包含逗号，否则抛出异常 BuilderException
     if (isReference) {
       // is it qualified with any namespace yet?
       if (base.contains(".")) {
@@ -116,6 +117,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
     try {
       // 标志位置位，如果下面的方法抛出异常，那么不能复位，线程不安全？
       unresolvedCacheRef = true;
+      // 获取namespace对应的Cache对象
       Cache cache = configuration.getCache(namespace);
       if (cache == null) {
         throw new IncompleteElementException("No cache for namespace '" + namespace + "' could be found.");
@@ -146,6 +148,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
         .blocking(blocking)
         .properties(props)
         .build();
+    // 将cache对象添加到 Configuration.caches集合中保存，其中会将cache的id作为key,cache对象本身作为value
     configuration.addCache(cache);
     currentCache = cache;
     return cache;
@@ -182,6 +185,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
         .build();
   }
 
+  // 构建 ResultMap 并返回
   public ResultMap addResultMap(
       String id,
       Class<?> type,
@@ -189,17 +193,22 @@ public class MapperBuilderAssistant extends BaseBuilder {
       Discriminator discriminator,
       List<ResultMapping> resultMappings,
       Boolean autoMapping) {
+    // namespace.id 形式的，不是引用的
     id = applyCurrentNamespace(id, false);
+    // 是引用的命名空间
     extend = applyCurrentNamespace(extend, true);
-
+    // 针对 extend 属性处理
     if (extend != null) {
+      // 如果配置里没有，就抛出异常
       if (!configuration.hasResultMap(extend)) {
         throw new IncompleteElementException("Could not find a parent resultmap with id '" + extend + "'");
       }
       ResultMap resultMap = configuration.getResultMap(extend);
       List<ResultMapping> extendedResultMappings = new ArrayList<ResultMapping>(resultMap.getResultMappings());
+      // 删除需要覆盖的 resultMapping集合
       extendedResultMappings.removeAll(resultMappings);
       // Remove parent constructor if this resultMap declares a constructor.
+      // 如果当前<resultMap>节点定义了 <Constructor>节点，则不需要使用父 resultMap中记录的 <Constructor>节点
       boolean declaresConstructor = false;
       for (ResultMapping resultMapping : resultMappings) {
         if (resultMapping.getFlags().contains(ResultFlag.CONSTRUCTOR)) {
@@ -215,6 +224,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
           }
         }
       }
+      // 添加需要被继承下来的ResultMapping对象集合
       resultMappings.addAll(extendedResultMappings);
     }
     ResultMap resultMap = new ResultMap.Builder(configuration, id, type, resultMappings, autoMapping)
@@ -382,9 +392,16 @@ public class MapperBuilderAssistant extends BaseBuilder {
       String resultSet,
       String foreignColumn,
       boolean lazy) {
+    // 解析 <resultType>节点指定的 property 属性的类型，
+    // resultType 是 resultMap对应的 bean
+    // property 是当前节点对应 bean 里面的字段
+    // javaType 对应的 java 类型
     Class<?> javaTypeClass = resolveResultJavaType(resultType, property, javaType);
+    // 获取 typeHandler 对象，依赖 typeHandlerRegistry
     TypeHandler<?> typeHandlerInstance = resolveTypeHandler(javaTypeClass, typeHandler);
+    // 解析 column 属性值，当 column是 “{prop1=col1. prop2=col2}”形式时，会解析成 resultMapping对象集合，主要用于嵌套查询的参数传递
     List<ResultMapping> composites = parseCompositeColumnName(column);
+    // 创建 ResultMapping 对象
     return new ResultMapping.Builder(configuration, property, column, javaTypeClass)
         .jdbcType(jdbcType)
         .nestedQueryId(applyCurrentNamespace(nestedSelect, true))
@@ -431,7 +448,9 @@ public class MapperBuilderAssistant extends BaseBuilder {
     return composites;
   }
 
+  // 获取 bean property setter 方法对应的参数类型，作为javaType类型
   private Class<?> resolveResultJavaType(Class<?> resultType, String property, Class<?> javaType) {
+    // 如果 javaType 为空，但是 property 不为空的情况下
     if (javaType == null && property != null) {
       try {
         MetaClass metaResultType = MetaClass.forClass(resultType, configuration.getReflectorFactory());
@@ -440,6 +459,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
         //ignore, following null check statement will deal with the situation
       }
     }
+    // 如果还没取到，就当做是Object
     if (javaType == null) {
       javaType = Object.class;
     }

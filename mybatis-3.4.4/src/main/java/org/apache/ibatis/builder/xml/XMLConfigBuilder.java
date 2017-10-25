@@ -182,9 +182,12 @@ public class XMLConfigBuilder extends BaseBuilder {
         //处理package节点
         if ("package".equals(child.getName())) {
           String typeAliasPackage = child.getStringAttribute("name");
+          // 扫描指定包中所有类，并解析@Alias注解，完成别名注册
           configuration.getTypeAliasRegistry().registerAliases(typeAliasPackage);
         } else {
+          // 获取指定别名
           String alias = child.getStringAttribute("alias");
+          // 获取别名对应的类型
           String type = child.getStringAttribute("type");
           try {
             Class<?> clazz = Resources.classForName(type);
@@ -206,8 +209,10 @@ public class XMLConfigBuilder extends BaseBuilder {
       for (XNode child : parent.getChildren()) {
         String interceptor = child.getStringAttribute("interceptor");
         Properties properties = child.getChildrenAsProperties();
+        // 通过前面介绍的TypeAliasRegistry解析别名之后，实例化 Interceptor 对象
         Interceptor interceptorInstance = (Interceptor) resolveClass(interceptor).newInstance();
         interceptorInstance.setProperties(properties);
+        // 记录 Interceptor
         configuration.addInterceptor(interceptorInstance);
       }
     }
@@ -219,7 +224,7 @@ public class XMLConfigBuilder extends BaseBuilder {
       Properties properties = context.getChildrenAsProperties();
       ObjectFactory factory = (ObjectFactory) resolveClass(type).newInstance();
       factory.setProperties(properties);
-      //设置configuration的成员objectFactory
+      //将自定义的objectFactory对象记录到 configuration 对象的 ObjectFactory字段中
       configuration.setObjectFactory(factory);
     }
   }
@@ -335,13 +340,14 @@ public class XMLConfigBuilder extends BaseBuilder {
       }
       for (XNode child : context.getChildren()) {
         String id = child.getStringAttribute("id");
-        //如果是 default 环境的话
+        //寻找指定的环境id
         if (isSpecifiedEnvironment(id)) {
           // 解析transactionManager节点获取实例TransactionFactory
           TransactionFactory txFactory = transactionManagerElement(child.evalNode("transactionManager"));
           // 解析dataSource节点获取实例DataSourceFactory
           DataSourceFactory dsFactory = dataSourceElement(child.evalNode("dataSource"));
           DataSource dataSource = dsFactory.getDataSource();
+          // 建造者模式创建Environment，用上面的 id txFactory dataSource
           Environment.Builder environmentBuilder = new Environment.Builder(id)
               .transactionFactory(txFactory)
               .dataSource(dataSource);
@@ -360,7 +366,9 @@ public class XMLConfigBuilder extends BaseBuilder {
           type = "DB_VENDOR";
       }
       Properties properties = context.getChildrenAsProperties();
+      // 创建 DatabaseIdProvider 对象
       databaseIdProvider = (DatabaseIdProvider) resolveClass(type).newInstance();
+      // 配置 DatabaseIdProvider， 完成初始化
       databaseIdProvider.setProperties(properties);
     }
     // 获取environment的作用就是获得dataSource
@@ -428,12 +436,15 @@ public class XMLConfigBuilder extends BaseBuilder {
   //核心方法，注册mapper,果然重要的都放在最后
   private void mapperElement(XNode parent) throws Exception {
     if (parent != null) {
+      // 处理 <mappers>的子节点
       for (XNode child : parent.getChildren()) {
         //处理路径为包名的逻辑，这个是注册包下所有的接口，不是解析xml文件
         if ("package".equals(child.getName())) {
           String mapperPackage = child.getStringAttribute("name");
+          // 扫描指定的包，并向 MapperRegistry注册Mapper接口
           configuration.addMappers(mapperPackage);
         } else {
+          // 获取<mapper>节点的 resource url mapperClass 属性，这三个属性互斥
           String resource = child.getStringAttribute("resource");
           String url = child.getStringAttribute("url");
           String mapperClass = child.getStringAttribute("class");
