@@ -106,6 +106,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
         throw new BuilderException("Dots are not allowed in element names, please remove it from " + base);
       }
     }
+    // 返回当前的命名空间 + .base
     return currentNamespace + "." + base;
   }
 

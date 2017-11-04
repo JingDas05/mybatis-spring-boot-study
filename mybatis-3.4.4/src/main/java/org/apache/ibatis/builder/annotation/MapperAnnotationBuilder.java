@@ -135,6 +135,7 @@ public class MapperAnnotationBuilder {
       parseCache();
       // 处理mapper接口上 @CacheNamespaceRef 注解
       parseCacheRef();
+      // 获取接口中定义的全部方法
       Method[] methods = type.getMethods();
       for (Method method : methods) {
         try {

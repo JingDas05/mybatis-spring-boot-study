@@ -84,6 +84,7 @@ public class XMLMapperBuilder extends BaseBuilder {
     // BuilderAssistant 和 XMLMapperBuilder 是组合关系，XMLMapperBuilder消亡了 MapperBuilderAssistant 也没了，contain-a的关系
     this.builderAssistant = new MapperBuilderAssistant(configuration, resource);
     this.parser = parser;
+    // 这个字段是保存sql节点的
     this.sqlFragments = sqlFragments;
     this.resource = resource;
   }
@@ -187,11 +188,14 @@ public class XMLMapperBuilder extends BaseBuilder {
 
   private void parsePendingStatements() {
     Collection<XMLStatementBuilder> incompleteStatements = configuration.getIncompleteStatements();
+    // 加锁同步
     synchronized (incompleteStatements) {
       Iterator<XMLStatementBuilder> iter = incompleteStatements.iterator();
       while (iter.hasNext()) {
         try {
+          // 重新解析解析SQL语句节点
           iter.next().parseStatementNode();
+          // 移除 解析好的 XMLStatementBuilder 对象
           iter.remove();
         } catch (IncompleteElementException e) {
           // Statement is still missing a resource...
@@ -453,9 +457,9 @@ public class XMLMapperBuilder extends BaseBuilder {
           // Spring may not know the real resource name so we set a flag
           // to prevent loading again this resource from the mapper interface
           // look at MapperAnnotationBuilder#loadXmlResource
-          // 添加到已加载资源列表
+          // 追加namespace前缀，添加到 configuration.loadedResources 集合中保存
           configuration.addLoadedResource("namespace:" + namespace);
-          // 添加接口mapper映射
+          // 注册mapper接口
           configuration.addMapper(boundType);
         }
       }

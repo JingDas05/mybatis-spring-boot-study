@@ -64,6 +64,7 @@ public class LanguageDriverRegistry {
 
   public void setDefaultDriverClass(Class<?> defaultDriverClass) {
     register(defaultDriverClass);
+    // 默认的是 XMLLanguageDriver
     this.defaultDriverClass = defaultDriverClass;
   }
 

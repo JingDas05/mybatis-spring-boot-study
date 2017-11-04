@@ -50,10 +50,13 @@ public class XMLScriptBuilder extends BaseBuilder {
 
   // 解析script节点
   public SqlSource parseScriptNode() {
+    // 首先判断当前的节点是不是有动态SQL，动态 SQL 会包含占位符或是动态 SQL的相关节点
     List<SqlNode> contents = parseDynamicTags(context);
+    // 构建 MixedSqlNode
     MixedSqlNode rootSqlNode = new MixedSqlNode(contents);
     // 初始化sqlSource，需要sqlNode, sqlNode是接口，实现类包括TextSqlNode和MixedSqlNode等
     SqlSource sqlSource = null;
+    // 根据是否动态，创建相应的 sqlSource对象
     if (isDynamic) {
       sqlSource = new DynamicSqlSource(configuration, rootSqlNode);
     } else {
@@ -62,11 +65,14 @@ public class XMLScriptBuilder extends BaseBuilder {
     return sqlSource;
   }
 
+  // 包含标签节点 和 ${}占位符，都认为是 SQL语句
   List<SqlNode> parseDynamicTags(XNode node) {
+    // 用于记录生成的sqlNode集合
     List<SqlNode> contents = new ArrayList<SqlNode>();
     NodeList children = node.getNode().getChildNodes();
     for (int i = 0; i < children.getLength(); i++) {
       XNode child = node.newXNode(children.item(i));
+      // 文本节点的处理
       if (child.getNode().getNodeType() == Node.CDATA_SECTION_NODE || child.getNode().getNodeType() == Node.TEXT_NODE) {
         String data = child.getStringBody("");
         // 建立文本sqlNode
@@ -81,11 +87,13 @@ public class XMLScriptBuilder extends BaseBuilder {
         }
       } else if (child.getNode().getNodeType() == Node.ELEMENT_NODE) {
         // issue #628 解析动态sql标签 if， choose (when, otherwise)， trim (where, set) ， foreach等
+        // 根据不同的动态标签生成不同的 NodeHandler
         String nodeName = child.getNode().getNodeName();
         NodeHandler handler = nodeHandlers(nodeName);
         if (handler == null) {
           throw new BuilderException("Unknown element <" + nodeName + "> in SQL statement.");
         }
+        // 处理动态SQL， 并将解析得到的SqlNode对象放入到 contents 集合中保存
         handler.handleNode(child, contents);
         isDynamic = true;
       }
@@ -93,6 +101,7 @@ public class XMLScriptBuilder extends BaseBuilder {
     return contents;
   }
 
+  // 创建相对应的处理器，并且取出返回
   NodeHandler nodeHandlers(String nodeName) {
     Map<String, NodeHandler> map = new HashMap<String, NodeHandler>();
     map.put("trim", new TrimHandler());
@@ -107,6 +116,7 @@ public class XMLScriptBuilder extends BaseBuilder {
     return map.get(nodeName);
   }
 
+  // 这个地方会调用 sqlNode 实现类的构造方法，初始化sqlNode接口的实现类
   private interface NodeHandler {
     void handleNode(XNode nodeToHandle, List<SqlNode> targetContents);
   }
@@ -121,12 +131,11 @@ public class XMLScriptBuilder extends BaseBuilder {
     public void handleNode(XNode nodeToHandle, List<SqlNode> targetContents) {
       final String name = nodeToHandle.getStringAttribute("name");
       final String expression = nodeToHandle.getStringAttribute("value");
-      // 创建VarDeclSqlNode
+      // 创建VarDeclSqlNode，并添加到 targetContents 中
       final VarDeclSqlNode node = new VarDeclSqlNode(name, expression);
       targetContents.add(node);
     }
   }
-
 
   private class TrimHandler implements NodeHandler {
     public TrimHandler() {
@@ -231,6 +240,7 @@ public class XMLScriptBuilder extends BaseBuilder {
     public void handleNode(XNode nodeToHandle, List<SqlNode> targetContents) {
       List<SqlNode> whenSqlNodes = new ArrayList<SqlNode>();
       List<SqlNode> otherwiseSqlNodes = new ArrayList<SqlNode>();
+      // 解析，并把不同的sqlNode 添加到各自的whenSqlNodes， otherwiseSqlNodes集合中
       handleWhenOtherwiseNodes(nodeToHandle, whenSqlNodes, otherwiseSqlNodes);
       SqlNode defaultSqlNode = getDefaultSqlNode(otherwiseSqlNodes);
       ChooseSqlNode chooseSqlNode = new ChooseSqlNode(whenSqlNodes, defaultSqlNode);
@@ -250,6 +260,7 @@ public class XMLScriptBuilder extends BaseBuilder {
       }
     }
 
+    // DefaultSqlNode 只能有一个
     private SqlNode getDefaultSqlNode(List<SqlNode> defaultSqlNodes) {
       SqlNode defaultSqlNode = null;
       if (defaultSqlNodes.size() == 1) {

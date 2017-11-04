@@ -47,35 +47,46 @@ public class XMLIncludeTransformer {
     if (configurationVariables != null) {
       variablesContext.putAll(configurationVariables);
     }
+    // 处理 <include>子节点
     applyIncludes(source, variablesContext, false);
   }
 
   /**
    * Recursively apply includes through all SQL fragments.
+   * 递归地处理 处理 Map<String, XNode> sqlFragments 中所有的 includes
    * @param source Include node in DOM tree
    * @param variablesContext Current context for static variables with values
    */
   private void applyIncludes(Node source, final Properties variablesContext, boolean included) {
-    if (source.getNodeName().equals("include")) {
+    if (source.getNodeName().equals("include")) { // -----------------------------------------------------（2）
+      // 查找 refid属性指向的<sql>节点，返回的是其 深克隆对象
       Node toInclude = findSqlFragment(getStringAttribute(source, "refid"), variablesContext);
+      // 解析<include>节点下的<property>经济得到那，并将键值对的值添加到 variablesContext，用于替换占位符
       Properties toIncludeContext = getVariablesContext(source, variablesContext);
+      // 递归处理<include>节点，在<sql>节点中可能会使用<include>节点引用了其他的SQL片段
+      // toInclude 为refid 指向的 sql节点
       applyIncludes(toInclude, toIncludeContext, true);
+      // 这个 toInclude 是替换好的sql节点
       if (toInclude.getOwnerDocument() != source.getOwnerDocument()) {
         toInclude = source.getOwnerDocument().importNode(toInclude, true);
       }
+      // 将<include>节点替换成<sql>节点
       source.getParentNode().replaceChild(toInclude, source);
+      // 这个地方应该是个迭代器
       while (toInclude.hasChildNodes()) {
         toInclude.getParentNode().insertBefore(toInclude.getFirstChild(), toInclude);
       }
+      // 删除sql节点
       toInclude.getParentNode().removeChild(toInclude);
-    } else if (source.getNodeType() == Node.ELEMENT_NODE) {
+    } else if (source.getNodeType() == Node.ELEMENT_NODE) {// ---------------------------------------------（1）
       NodeList children = source.getChildNodes();
       for (int i = 0; i < children.getLength(); i++) {
         applyIncludes(children.item(i), variablesContext, included);
       }
-    } else if (included && source.getNodeType() == Node.TEXT_NODE
+    } else if (included && source.getNodeType() == Node.TEXT_NODE // ---------------------------------------（3）
         && !variablesContext.isEmpty()) {
       // replace variables ins all text nodes
+      // 使用之前解析得到 Properties 对象替换对应的占位符
       source.setNodeValue(PropertyParser.parse(source.getNodeValue(), variablesContext));
     }
   }
@@ -85,6 +96,7 @@ public class XMLIncludeTransformer {
     refid = builderAssistant.applyCurrentNamespace(refid, true);
     try {
       XNode nodeToInclude = configuration.getSqlFragments().get(refid);
+      // 返回克隆对象
       return nodeToInclude.getNode().cloneNode(true);
     } catch (IllegalArgumentException e) {
       throw new IncompleteElementException("Could not find SQL statement to include with refid '" + refid + "'", e);

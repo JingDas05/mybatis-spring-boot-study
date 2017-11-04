@@ -46,7 +46,7 @@ public class TextSqlNode implements SqlNode {
   public boolean isDynamic() {
     // 构建动态sql检查解析器
     DynamicCheckerTokenParser checker = new DynamicCheckerTokenParser();
-    // 构建公用token解析器，入参是上一步的动态sql检查解析器
+    // 这个地方传入的 DynamicCheckerTokenParser 如果被调用了 handle()方法，会将isDynamic置位，说明是动态的
     GenericTokenParser parser = createParser(checker);
     parser.parse(text);
     return checker.isDynamic();
@@ -54,6 +54,7 @@ public class TextSqlNode implements SqlNode {
 
   @Override
   public boolean apply(DynamicContext context) {
+    // 这个地方传入的 BindingTokenParser，如果被调用了 handle()方法，会绑定 ${ }里面的值
     GenericTokenParser parser = createParser(new BindingTokenParser(context, injectionFilter));
     context.appendSql(parser.parse(text));
     return true;

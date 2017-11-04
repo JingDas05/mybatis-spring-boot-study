@@ -36,6 +36,7 @@ import org.apache.ibatis.session.Configuration;
  */
 public final class MappedStatement {
 
+  // 节点中的id属性（包含命名空间前缀）
   private String resource;
   private Configuration configuration;
   private String id;
@@ -44,6 +45,7 @@ public final class MappedStatement {
   // 这个是查询模式 STATEMENT, PREPARED, CALLABLE 中的一种
   private StatementType statementType;
   private ResultSetType resultSetType;
+  // 对应一条sql语句，不是数据库可以直接执行的，可能包含动态SQL语句相关的节点或是占位符等需要解析的元素
   private SqlSource sqlSource;
   private Cache cache;
   private ParameterMap parameterMap;
