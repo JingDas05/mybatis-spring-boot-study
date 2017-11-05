@@ -28,7 +28,7 @@ import org.apache.ibatis.session.Configuration;
 
 /**
  *
- * 构建sqlSource时需要的动态上下文
+ * 记录解析动态SQL语句之后产生的SQL语句片段，用于记录动态SQL语句解析结果的容器
  *
  * @author Clinton Begin
  */
@@ -41,23 +41,22 @@ public class DynamicContext {
     OgnlRuntime.setPropertyAccessor(ContextMap.class, new ContextAccessor());
   }
 
+  // 参数上下文
   private final ContextMap bindings;
+  // sqlNode解析动态SQL时，会将解析后的SQL语句片段添加到该属性中保存，最终拼凑出一条完整的SQL语句
   private final StringBuilder sqlBuilder = new StringBuilder();
   private int uniqueNumber = 0;
 
   public DynamicContext(Configuration configuration, Object parameterObject) {
-    // 构建contextMap 参数是parameterObject的metaData
-    // 判断parameterObject是否为空，不为空的话通过configuration取出MetaObject,构建ContextMap赋值给bindings，
-    // 否则直接构建null参数的ContextMap赋值给binds
+    // 对于非Map类型的参数，会创建对应的 MetaObject 对象，并封装成 ContextMap对象
     if (parameterObject != null && !(parameterObject instanceof Map)) {
-      //构建工作交给了configuration
       MetaObject metaObject = configuration.newMetaObject(parameterObject);
       bindings = new ContextMap(metaObject);
     } else {
       bindings = new ContextMap(null);
     }
-    // bindings赋值，_parameter的值为parameterObject， _databaseId的值为configuration.getDatabaseId()
-    // 这里的parameterObject是map类型的，因为上面已经确认了
+    // bindings赋值，_parameter 的值为parameterObject， _databaseId的值为configuration.getDatabaseId()
+    // _parameter 在有的SqlNode实现中直接使用了该字面量
     bindings.put(PARAMETER_OBJECT_KEY, parameterObject);
     bindings.put(DATABASE_ID_KEY, configuration.getDatabaseId());
   }
@@ -70,12 +69,13 @@ public class DynamicContext {
     bindings.put(name, value);
   }
 
+  // 追加 SQL 片段
   public void appendSql(String sql) {
     sqlBuilder.append(sql);
     sqlBuilder.append(" ");
   }
 
-  //获取sql语句，去掉前后空格
+  //获取完整sql语句，去掉前后空格
   public String getSql() {
     return sqlBuilder.toString().trim();
   }
@@ -90,11 +90,13 @@ public class DynamicContext {
     private static final long serialVersionUID = 2977601501966151582L;
 
     // 成员变量的作用，如果contextMap找不到，那么从这个变量里找
+    // 将用户传入的参数封装成MetaObject对象
     private MetaObject parameterMetaObject;
     public ContextMap(MetaObject parameterMetaObject) {
       this.parameterMetaObject = parameterMetaObject;
     }
 
+    // 重写 get()方法
     @Override
     public Object get(Object key) {
       String strKey = (String) key;
@@ -102,7 +104,7 @@ public class DynamicContext {
         return super.get(strKey);
       }
 
-      // 如果没有的，从MetaObject寻找
+      // 从运行时参数中查找对应属性
       if (parameterMetaObject != null) {
         // issue #61 do not modify the context when reading
         return parameterMetaObject.getValue(strKey);

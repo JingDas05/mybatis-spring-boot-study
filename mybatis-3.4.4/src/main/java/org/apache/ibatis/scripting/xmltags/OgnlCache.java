@@ -51,6 +51,7 @@ public final class OgnlCache {
     }
   }
 
+  // 解析过程比较耗时，为了提高效率，使用了缓存
   // 解析表达式缓存，key就是解析表达式
   private static Object parseExpression(String expression) throws OgnlException {
     Object node = expressionCache.get(expression);
