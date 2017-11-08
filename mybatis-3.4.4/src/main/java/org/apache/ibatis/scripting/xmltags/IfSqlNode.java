@@ -19,8 +19,11 @@ package org.apache.ibatis.scripting.xmltags;
  * @author Clinton Begin
  */
 public class IfSqlNode implements SqlNode {
+  // 用于解析 <if>节点的test表达式的值
   private ExpressionEvaluator evaluator;
+  // 记录了<if>节点中的test表达式
   private String test;
+  // 记录了 <if>节点的子节点
   private SqlNode contents;
 
   public IfSqlNode(SqlNode contents, String test) {
@@ -31,10 +34,13 @@ public class IfSqlNode implements SqlNode {
 
   @Override
   public boolean apply(DynamicContext context) {
+    // 根据动态传入的参数，检测test属性中记录的表达式，底层应用的OGNL
     if (evaluator.evaluateBoolean(test, context.getBindings())) {
+      // 如果test为true, 执行子节点的apply()方法
       contents.apply(context);
       return true;
     }
+    // 表示的是 test表达式是否为true
     return false;
   }
 

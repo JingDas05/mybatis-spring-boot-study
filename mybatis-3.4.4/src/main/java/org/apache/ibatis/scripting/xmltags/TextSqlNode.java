@@ -66,6 +66,7 @@ public class TextSqlNode implements SqlNode {
   }
 
   // 内部类，定义绑定token解析器
+  // 根据 DynamicContext.bindings集合中信息解析SQL语句中的${}
   private static class BindingTokenParser implements TokenHandler {
 
     private DynamicContext context;
@@ -80,6 +81,7 @@ public class TextSqlNode implements SqlNode {
     @Override
     public String handleToken(String content) {
       Object parameter = context.getBindings().get("_parameter");
+      // 为了OGNL解析初始化value
       //检查参数类型，赋值
       if (parameter == null) {
         context.getBindings().put("value", null);

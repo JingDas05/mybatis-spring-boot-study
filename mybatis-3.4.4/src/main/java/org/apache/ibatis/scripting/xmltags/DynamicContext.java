@@ -47,6 +47,7 @@ public class DynamicContext {
   private final StringBuilder sqlBuilder = new StringBuilder();
   private int uniqueNumber = 0;
 
+  // parameterObject 运行时用户传入的参数，其中包含了后续用于替换#{}占位符的实参
   public DynamicContext(Configuration configuration, Object parameterObject) {
     // 对于非Map类型的参数，会创建对应的 MetaObject 对象，并封装成 ContextMap对象
     if (parameterObject != null && !(parameterObject instanceof Map)) {
@@ -100,6 +101,7 @@ public class DynamicContext {
     @Override
     public Object get(Object key) {
       String strKey = (String) key;
+      // 如果 ContextMap中包含了该key,则直接返回
       if (super.containsKey(strKey)) {
         return super.get(strKey);
       }

@@ -34,9 +34,11 @@ public class ExpressionEvaluator {
     // 解析布尔值
   public boolean evaluateBoolean(String expression, Object parameterObject) {
     Object value = OgnlCache.getValue(expression, parameterObject);
+    // 处理布尔类型
     if (value instanceof Boolean) {
       return (Boolean) value;
     }
+    // 处理数字类型，不等于0就返回true
     if (value instanceof Number) {
         return !new BigDecimal(String.valueOf(value)).equals(BigDecimal.ZERO);
     }
