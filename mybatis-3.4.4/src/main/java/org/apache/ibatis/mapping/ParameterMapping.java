@@ -31,15 +31,21 @@ public class ParameterMapping {
 
   private Configuration configuration;
 
+  // 传入进来的参数 name
   private String property;
+  // 输入参数还是输出参数
   private ParameterMode mode;
+  // 参数的java类型
   private Class<?> javaType = Object.class;
+  // 参数的jdbc类型
   private JdbcType jdbcType;
-  // 数值刻度
+  // 浮点参数的精度
   private Integer numericScale;
-  // 这个typeHandler是必须的
+  // typeHandler必须，参数对应的 TypeHandler
   private TypeHandler<?> typeHandler;
+  // 参数对应的 ResultMap Id
   private String resultMapId;
+  // 参数的 jdbcTypeName属性
   private String jdbcTypeName;
   private String expression;
 

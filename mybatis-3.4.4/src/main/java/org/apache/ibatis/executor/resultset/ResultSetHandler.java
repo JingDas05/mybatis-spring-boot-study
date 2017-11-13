@@ -27,7 +27,7 @@ import java.util.List;
  */
 public interface ResultSetHandler {
 
-  // 处理除了下面两种情况的结果映射
+  // 处理除了下面两种情况的结果映射,处理结果集，生成相应的结果对象集合
   <E> List<E> handleResultSets(Statement stmt) throws SQLException;
 
   // 处理返回值类型为Cursor<T>

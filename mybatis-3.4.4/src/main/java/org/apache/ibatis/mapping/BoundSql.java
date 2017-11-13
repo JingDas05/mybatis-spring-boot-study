@@ -38,10 +38,15 @@ import org.apache.ibatis.session.Configuration;
  */
 public class BoundSql {
 
+  // 该字段中记录了SQL语句，该语句中可能还有占位符
   private String sql;
+  // SQL中的参数属性集合 ParameterMapping集合
   private List<ParameterMapping> parameterMappings;
+  // 客户端执行SQL时传入的实际参数
   private Object parameterObject;
+  // 空的 HashMap集合，之后会复制 DynamicContext.bindings集合中的内容
   private Map<String, Object> additionalParameters;
+  // additionalParameters 对应的 MetaObject对象
   private MetaObject metaParameters;
 
   public BoundSql(Configuration configuration, String sql, List<ParameterMapping> parameterMappings, Object parameterObject) {

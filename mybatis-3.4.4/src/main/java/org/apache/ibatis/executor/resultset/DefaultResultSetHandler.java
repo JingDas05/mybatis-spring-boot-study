@@ -71,11 +71,13 @@ public class DefaultResultSetHandler implements ResultSetHandler {
 
   private static final Object DEFERED = new Object();
 
+  // 关联的 Executor， Configuration， MappedStatement， RowBounds对象
   private final Executor executor;
   private final Configuration configuration;
   private final MappedStatement mappedStatement;
   private final RowBounds rowBounds;
   private final ParameterHandler parameterHandler;
+  // 用户指定用于处理结果集的 ResultHandler 对象
   private final ResultHandler<?> resultHandler;
   private final BoundSql boundSql;
   private final TypeHandlerRegistry typeHandlerRegistry;
@@ -182,13 +184,17 @@ public class DefaultResultSetHandler implements ResultSetHandler {
   public List<Object> handleResultSets(Statement stmt) throws SQLException {
     ErrorContext.instance().activity("handling results").object(mappedStatement.getId());
 
+    // 该集合用于保存映射结果集得到的结果对象
     final List<Object> multipleResults = new ArrayList<Object>();
 
     int resultSetCount = 0;
+    // 只获取第一个 ResultSet对象，可能存在多个ResultSet
     ResultSetWrapper rsw = getFirstResultSet(stmt);
 
+    // 获取 MappedStatement.resultMaps集合
     List<ResultMap> resultMaps = mappedStatement.getResultMaps();
     int resultMapCount = resultMaps.size();
+    // 如果结果集不为空，则 resultMaps集合不能为空，否则抛出异常
     validateResultMapsCount(rsw, resultMapCount);
     while (rsw != null && resultMapCount > resultSetCount) {
       ResultMap resultMap = resultMaps.get(resultSetCount);
