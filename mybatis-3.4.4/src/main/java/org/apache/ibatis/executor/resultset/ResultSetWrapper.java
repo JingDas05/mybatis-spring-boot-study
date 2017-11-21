@@ -40,13 +40,20 @@ import org.apache.ibatis.type.UnknownTypeHandler;
  */
 public class ResultSetWrapper {
 
+  // 底层封装的ResultSet对象
   private final ResultSet resultSet;
   private final TypeHandlerRegistry typeHandlerRegistry;
+  // 记录了ResultSet中每列的列名
   private final List<String> columnNames = new ArrayList<String>();
+  // 记录了ResultSet中每列对应的java类型
   private final List<String> classNames = new ArrayList<String>();
+  // 记录了ResultSet中每列对应的JdbcType
   private final List<JdbcType> jdbcTypes = new ArrayList<JdbcType>();
+  // 记录了ResultSet中每列对应的TypeHandler对象，key是列名，value是TypeHandler集合
   private final Map<String, Map<Class<?>, TypeHandler<?>>> typeHandlerMap = new HashMap<String, Map<Class<?>, TypeHandler<?>>>();
+  // 记录了被映射的列名，其中key是 ResultMap 对象的id,value是该ResultMap对象映射的列名集合
   private Map<String, List<String>> mappedColumnNamesMap = new HashMap<String, List<String>>();
+  // 记录了未映射的列名，其中key是 ResultMap 对象的id,value是该ResultMap对象映射的列名集合
   private Map<String, List<String>> unMappedColumnNamesMap = new HashMap<String, List<String>>();
 
   public ResultSetWrapper(ResultSet rs, Configuration configuration) throws SQLException {
@@ -55,7 +62,9 @@ public class ResultSetWrapper {
     this.resultSet = rs;
     final ResultSetMetaData metaData = rs.getMetaData();
     final int columnCount = metaData.getColumnCount();
+    // 初始化 columnNames， classNames， jdbcTypes
     for (int i = 1; i <= columnCount; i++) {
+//      记录了ResultSet中每列的列名
       columnNames.add(configuration.isUseColumnLabel() ? metaData.getColumnLabel(i) : metaData.getColumnName(i));
       jdbcTypes.add(JdbcType.forCode(metaData.getColumnType(i)));
       classNames.add(metaData.getColumnClassName(i));
@@ -141,22 +150,30 @@ public class ResultSetWrapper {
     List<String> mappedColumnNames = new ArrayList<String>();
     List<String> unmappedColumnNames = new ArrayList<String>();
     final String upperColumnPrefix = columnPrefix == null ? null : columnPrefix.toUpperCase(Locale.ENGLISH);
+    // 将columnNames中的所有列名加上前缀，之后返回，得到实际映射的列名
+    // 如果columnNames或者 prefix为空的话就原封不动返回columnNames
     final Set<String> mappedColumns = prependPrefixes(resultMap.getMappedColumns(), upperColumnPrefix);
+    // 遍历resultSet中的所有列名
     for (String columnName : columnNames) {
       final String upperColumnName = columnName.toUpperCase(Locale.ENGLISH);
       if (mappedColumns.contains(upperColumnName)) {
+        // 记录映射的列名
         mappedColumnNames.add(upperColumnName);
       } else {
+        // 记录未映射的列名
         unmappedColumnNames.add(columnName);
       }
     }
+    // 将ResultMap的Id和列前缀组成的key,将ResultMap映射的列名以及未映射的列名保存到 mappedColumnNamesMap unMappedColumnNamesMap中
     mappedColumnNamesMap.put(getMapKey(resultMap, columnPrefix), mappedColumnNames);
     unMappedColumnNamesMap.put(getMapKey(resultMap, columnPrefix), unmappedColumnNames);
   }
 
   public List<String> getMappedColumnNames(ResultMap resultMap, String columnPrefix) throws SQLException {
+    // 在mappedColumnNamesMap集合中查找被映射的列名，其中key是ResultMap的id与前缀组成
     List<String> mappedColumnNames = mappedColumnNamesMap.get(getMapKey(resultMap, columnPrefix));
     if (mappedColumnNames == null) {
+      // 如果未找到，则加载后存入到 mappedColumnNamesMap 集合中
       loadMappedAndUnmappedColumnNames(resultMap, columnPrefix);
       mappedColumnNames = mappedColumnNamesMap.get(getMapKey(resultMap, columnPrefix));
     }
@@ -176,6 +193,8 @@ public class ResultSetWrapper {
     return resultMap.getId() + ":" + columnPrefix;
   }
 
+  // 将columnNames中的所有列名加上前缀，之后返回
+  // 如果columnNames或者 prefix为空的话就原封不动返回columnNames
   private Set<String> prependPrefixes(Set<String> columnNames, String prefix) {
     if (columnNames == null || columnNames.isEmpty() || prefix == null || prefix.length() == 0) {
       return columnNames;
