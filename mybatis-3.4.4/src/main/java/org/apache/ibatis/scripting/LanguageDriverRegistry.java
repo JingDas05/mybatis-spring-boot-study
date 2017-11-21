@@ -23,16 +23,20 @@ import java.util.Map;
  */
 public class LanguageDriverRegistry {
 
+  // 存储 LanguageDriver 的 map
   private final Map<Class<?>, LanguageDriver> LANGUAGE_DRIVER_MAP = new HashMap<Class<?>, LanguageDriver>();
 
+  // 默认 LanguageDriver class
   private Class<?> defaultDriverClass;
 
   public void register(Class<?> cls) {
     if (cls == null) {
       throw new IllegalArgumentException("null is not a valid Language Driver");
     }
+    // 不包含才添加
     if (!LANGUAGE_DRIVER_MAP.containsKey(cls)) {
       try {
+        // key为class, value为class的实例
         LANGUAGE_DRIVER_MAP.put(cls, (LanguageDriver) cls.newInstance());
       } catch (Exception ex) {
         throw new ScriptingException("Failed to load language driver for " + cls.getName(), ex);

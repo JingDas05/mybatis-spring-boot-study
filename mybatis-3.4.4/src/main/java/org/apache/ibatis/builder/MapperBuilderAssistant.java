@@ -51,7 +51,7 @@ import org.apache.ibatis.type.TypeHandler;
 
 /**
  * mapperBuilder 辅助类， 一个mapper配置文件对应一个MapperBuilderAssistant
- * 管理缓存
+ * 提供了很多xml----builder时用到的方法，如：管理缓存，获取languageDriver等
  *
  * @author Clinton Begin
  */
@@ -508,6 +508,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
     if (langClass != null) {
       configuration.getLanguageRegistry().register(langClass);
     } else {
+      // 如果没有设置 lang,那么就用默认的 langClass
       langClass = configuration.getLanguageRegistry().getDefaultDriverClass();
     }
     return configuration.getLanguageRegistry().getDriver(langClass);

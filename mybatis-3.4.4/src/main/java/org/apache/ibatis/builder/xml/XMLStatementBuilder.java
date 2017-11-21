@@ -81,6 +81,7 @@ public class XMLStatementBuilder extends BaseBuilder {
 
     String nodeName = context.getNode().getNodeName();
     SqlCommandType sqlCommandType = SqlCommandType.valueOf(nodeName.toUpperCase(Locale.ENGLISH));
+    // 判断是不是 select 节点
     boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
     boolean flushCache = context.getBooleanAttribute("flushCache", !isSelect);
     boolean useCache = context.getBooleanAttribute("useCache", isSelect);
@@ -207,7 +208,7 @@ public class XMLStatementBuilder extends BaseBuilder {
     Class<?> langClass = null;
     if (lang != null) {
       langClass = resolveClass(lang);
-    }
+  }
     return builderAssistant.getLanguageDriver(langClass);
   }
 
