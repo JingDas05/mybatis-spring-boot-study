@@ -105,11 +105,14 @@ public class ResultSetWrapper {
     TypeHandler<?> handler = null;
     Map<Class<?>, TypeHandler<?>> columnHandlers = typeHandlerMap.get(columnName);
     if (columnHandlers == null) {
+      // 如果不存在初始化Map<Class<?>, TypeHandler<?>>
       columnHandlers = new HashMap<Class<?>, TypeHandler<?>>();
       typeHandlerMap.put(columnName, columnHandlers);
     } else {
+      // 如果存在的话，就从columnHandlers中获取
       handler = columnHandlers.get(propertyType);
     }
+    // 如果上面没有获取到handler，进行进一步处理
     if (handler == null) {
       JdbcType jdbcType = getJdbcType(columnName);
       handler = typeHandlerRegistry.getTypeHandler(propertyType, jdbcType);
@@ -118,6 +121,7 @@ public class ResultSetWrapper {
       if (handler == null || handler instanceof UnknownTypeHandler) {
         final int index = columnNames.indexOf(columnName);
         final Class<?> javaType = resolveClass(classNames.get(index));
+        // 根据 javaType jdbcType继续获取
         if (javaType != null && jdbcType != null) {
           handler = typeHandlerRegistry.getTypeHandler(javaType, jdbcType);
         } else if (javaType != null) {
@@ -126,6 +130,7 @@ public class ResultSetWrapper {
           handler = typeHandlerRegistry.getTypeHandler(jdbcType);
         }
       }
+      // 如果还没有获取到，就用 ObjectTypeHandler
       if (handler == null || handler instanceof UnknownTypeHandler) {
         handler = new ObjectTypeHandler();
       }
@@ -180,6 +185,7 @@ public class ResultSetWrapper {
     return mappedColumnNames;
   }
 
+  // 此处逻辑与上面方法类似
   public List<String> getUnmappedColumnNames(ResultMap resultMap, String columnPrefix) throws SQLException {
     List<String> unMappedColumnNames = unMappedColumnNamesMap.get(getMapKey(resultMap, columnPrefix));
     if (unMappedColumnNames == null) {
