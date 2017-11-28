@@ -73,7 +73,7 @@ public class SoftCache implements Cache {
         Object result = null;
         @SuppressWarnings("unchecked")
         // assumed delegate cache is totally managed by this cache
-                // 获取的对象，强转成 SoftReference，这个取的是delegate.putObject()中的 包装对象
+                // 获取的对象，强转成 SoftReference，这个取的是delegate.putObject()中的
                 SoftReference<Object> softReference = (SoftReference<Object>) delegate.getObject(key);
         if (softReference != null) {
             // 获取SoftReference应用的value
@@ -119,6 +119,7 @@ public class SoftCache implements Cache {
         return null;
     }
 
+    // 将已经被GC回收的value对象对应的缓存项清除
     private void removeGarbageCollectedItems() {
         SoftEntry sv;
         while ((sv = (SoftEntry) queueOfGarbageCollectedEntries.poll()) != null) {
@@ -131,6 +132,7 @@ public class SoftCache implements Cache {
     private static class SoftEntry extends SoftReference<Object> {
         private final Object key;
 
+        // 构造函数，缓存的对象作为业务逻辑key
         SoftEntry(Object key, Object value, ReferenceQueue<Object> garbageCollectionQueue) {
             // 指向value的引用是软引用，且关联了引用队列
             super(value, garbageCollectionQueue);

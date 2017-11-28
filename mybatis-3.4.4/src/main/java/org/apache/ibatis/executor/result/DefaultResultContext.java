@@ -24,7 +24,7 @@ public class DefaultResultContext<T> implements ResultContext<T> {
 
   // 暂存映射后的结果对象，之后会将该对象放入 DefaultResultHandler.list集合中
   private T resultObject;
-  // 记录经过DefaultResultContext暂存的对象个数
+  // 记录经过DefaultResultContext暂存的对象个数（行数）
   private int resultCount;
   // 控制是否停止映射
   private boolean stopped;
@@ -50,7 +50,9 @@ public class DefaultResultContext<T> implements ResultContext<T> {
     return stopped;
   }
 
+  // 设置resultObject，并且自增resultCount
   public void nextResultObject(T resultObject) {
+    // 记录暂存的对象个数
     resultCount++;
     this.resultObject = resultObject;
   }

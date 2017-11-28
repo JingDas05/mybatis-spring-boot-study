@@ -30,6 +30,7 @@ public class DefaultResultHandler implements ResultHandler<Object> {
   private final List<Object> list;
 
   public DefaultResultHandler() {
+    // 构造时，初始化
     list = new ArrayList<Object>();
   }
 
@@ -46,5 +47,4 @@ public class DefaultResultHandler implements ResultHandler<Object> {
   public List<Object> getResultList() {
     return list;
   }
-
 }
