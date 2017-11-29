@@ -1,17 +1,17 @@
 /**
- * Copyright 2009-2017 the original author or authors.
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *    Copyright 2009-2017 the original author or authors.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  */
 package org.apache.ibatis.executor.resultset;
 
@@ -650,8 +650,24 @@ public class DefaultResultSetHandler implements ResultSetHandler {
         final Class<?> resultType = resultMap.getType();
         // 获取 resultType 的 MetaClass对象
         final MetaClass metaType = MetaClass.forClass(resultType, reflectorFactory);
+        // 获取resultMapping中的 <constructor>节点的 ResultMapping
+        // eg: <constructor>
+        //   public class User {
+        //...
+        //       public User(Integer id, String username, int age) {
+                    //...
+        //        }
+        //...
+        //    }
+        // 对应resultMap 的构造函数如下：
+        //<constructor>
+        //   <idArg column="id" javaType="int"/>
+        //   <arg column="username" javaType="String"/>
+        //   <arg column="age" javaType="_int"/>
+        //</constructor>
         final List<ResultMapping> constructorMappings = resultMap.getConstructorResultMappings();
         if (hasTypeHandlerForResultObject(rsw, resultType)) {
+            // 创建原始类型结果对象
             return createPrimitiveResultObject(rsw, resultMap, columnPrefix);
         } else if (!constructorMappings.isEmpty()) {
             return createParameterizedResultObject(rsw, resultType, constructorMappings, constructorArgTypes, constructorArgs, columnPrefix);
@@ -1202,9 +1218,11 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     }
 
     private boolean hasTypeHandlerForResultObject(ResultSetWrapper rsw, Class<?> resultType) {
+        // 如果只有一列，根据result javaType和 result jdbcType判断是否有TypeHandler
         if (rsw.getColumnNames().size() == 1) {
             return typeHandlerRegistry.hasTypeHandler(resultType, rsw.getJdbcType(rsw.getColumnNames().get(0)));
         }
+        // 根据result javaType 判断是否有TypeHandler
         return typeHandlerRegistry.hasTypeHandler(resultType);
     }
 
