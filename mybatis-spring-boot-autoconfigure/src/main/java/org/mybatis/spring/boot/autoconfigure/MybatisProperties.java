@@ -1,17 +1,17 @@
 /**
- *    Copyright 2015-2016 the original author or authors.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Copyright 2015-2016 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.mybatis.spring.boot.autoconfigure;
 
@@ -38,149 +38,152 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 @ConfigurationProperties(prefix = MybatisProperties.MYBATIS_PREFIX)
 public class MybatisProperties {
 
-  public static final String MYBATIS_PREFIX = "mybatis";
+    public static final String MYBATIS_PREFIX = "mybatis";
 
-  /**
-   * Config file path.
-   */
-  private String configLocation;
+    /**
+     * Config file path.
+     */
+    private String configLocation;
 
-  /**
-   * Location of mybatis mapper files.
-   */
-  private String[] mapperLocations;
+    /**
+     * Location of mybatis mapper files.
+     */
+    private String[] mapperLocations;
 
-  /**
-   * Package to scan domain objects.
-   */
-  private String typeAliasesPackage;
+    /**
+     * Package to scan domain objects.
+     */
+    private String typeAliasesPackage;
 
-  /**
-   * Package to scan handlers.
-   */
-  private String typeHandlersPackage;
+    /**
+     * Package to scan handlers.
+     */
+    private String typeHandlersPackage;
 
-  /**
-   * Check the config file exists.
-   */
-  private boolean checkConfigLocation = false;
+    /**
+     * Check the config file exists.
+     */
+    private boolean checkConfigLocation = false;
 
-  /**
-   * Execution mode for {@link org.mybatis.spring.SqlSessionTemplate}.
-   */
-  private ExecutorType executorType;
+    /**
+     * Execution mode for {@link org.mybatis.spring.SqlSessionTemplate}.
+     */
+    private ExecutorType executorType;
 
-  /**
-   * Externalized properties for configuration.
-   */
-  private Properties configurationProperties;
+    /**
+     * Externalized properties for configuration.
+     */
+    private Properties configurationProperties;
 
-  /**
-   * A Configuration object for customize default settings. If {@link #configLocation}
-   * is specified, this property is not used.
-   */
-  @NestedConfigurationProperty
-  private Configuration configuration;
+    /**
+     * A Configuration object for customize default settings. If {@link #configLocation}
+     * is specified, this property is not used.
+     */
+    @NestedConfigurationProperty
+    private Configuration configuration;
 
-  /**
-   * @since 1.1.0
-   */
-  public String getConfigLocation() {
-    return this.configLocation;
-  }
-
-  /**
-   * @since 1.1.0
-   */
-  public void setConfigLocation(String configLocation) {
-    this.configLocation = configLocation;
-  }
-
-  @Deprecated
-  public String getConfig() {
-    return this.configLocation;
-  }
-
-  @Deprecated
-  public void setConfig(String config) {
-    this.configLocation = config;
-  }
-
-  public String[] getMapperLocations() {
-    return this.mapperLocations;
-  }
-
-  public void setMapperLocations(String[] mapperLocations) {
-    this.mapperLocations = mapperLocations;
-  }
-
-  public String getTypeHandlersPackage() {
-    return this.typeHandlersPackage;
-  }
-
-  public void setTypeHandlersPackage(String typeHandlersPackage) {
-    this.typeHandlersPackage = typeHandlersPackage;
-  }
-
-  public String getTypeAliasesPackage() {
-    return this.typeAliasesPackage;
-  }
-
-  public void setTypeAliasesPackage(String typeAliasesPackage) {
-    this.typeAliasesPackage = typeAliasesPackage;
-  }
-
-  public boolean isCheckConfigLocation() {
-    return this.checkConfigLocation;
-  }
-
-  public void setCheckConfigLocation(boolean checkConfigLocation) {
-    this.checkConfigLocation = checkConfigLocation;
-  }
-
-  public ExecutorType getExecutorType() {
-    return this.executorType;
-  }
-
-  public void setExecutorType(ExecutorType executorType) {
-    this.executorType = executorType;
-  }
-
-  /**
-   * @since 1.2.0
-   */
-  public Properties getConfigurationProperties() {
-    return configurationProperties;
-  }
-
-  /**
-   * @since 1.2.0
-   */
-  public void setConfigurationProperties(Properties configurationProperties) {
-    this.configurationProperties = configurationProperties;
-  }
-
-  public Configuration getConfiguration() {
-    return configuration;
-  }
-
-  public void setConfiguration(Configuration configuration) {
-    this.configuration = configuration;
-  }
-
-  public Resource[] resolveMapperLocations() {
-    ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
-    List<Resource> resources = new ArrayList<Resource>();
-    if (this.mapperLocations != null) {
-      for (String mapperLocation : this.mapperLocations) {
-        try {
-          Resource[] mappers = resourceResolver.getResources(mapperLocation);
-          resources.addAll(Arrays.asList(mappers));
-        } catch (IOException e) {
-          // ignore
-        }
-      }
+    /**
+     * @since 1.1.0
+     * mybatis-sping-boot-sample-annotation项目中 application.properties中配置的
+     * mybatis.config-location=classpath:mybatis-config.xml
+     * 赋值了如下字段
+     */
+    public String getConfigLocation() {
+        return this.configLocation;
     }
-    return resources.toArray(new Resource[resources.size()]);
-  }
+
+    /**
+     * @since 1.1.0
+     */
+    public void setConfigLocation(String configLocation) {
+        this.configLocation = configLocation;
+    }
+
+    @Deprecated
+    public String getConfig() {
+        return this.configLocation;
+    }
+
+    @Deprecated
+    public void setConfig(String config) {
+        this.configLocation = config;
+    }
+
+    public String[] getMapperLocations() {
+        return this.mapperLocations;
+    }
+
+    public void setMapperLocations(String[] mapperLocations) {
+        this.mapperLocations = mapperLocations;
+    }
+
+    public String getTypeHandlersPackage() {
+        return this.typeHandlersPackage;
+    }
+
+    public void setTypeHandlersPackage(String typeHandlersPackage) {
+        this.typeHandlersPackage = typeHandlersPackage;
+    }
+
+    public String getTypeAliasesPackage() {
+        return this.typeAliasesPackage;
+    }
+
+    public void setTypeAliasesPackage(String typeAliasesPackage) {
+        this.typeAliasesPackage = typeAliasesPackage;
+    }
+
+    public boolean isCheckConfigLocation() {
+        return this.checkConfigLocation;
+    }
+
+    public void setCheckConfigLocation(boolean checkConfigLocation) {
+        this.checkConfigLocation = checkConfigLocation;
+    }
+
+    public ExecutorType getExecutorType() {
+        return this.executorType;
+    }
+
+    public void setExecutorType(ExecutorType executorType) {
+        this.executorType = executorType;
+    }
+
+    /**
+     * @since 1.2.0
+     */
+    public Properties getConfigurationProperties() {
+        return configurationProperties;
+    }
+
+    /**
+     * @since 1.2.0
+     */
+    public void setConfigurationProperties(Properties configurationProperties) {
+        this.configurationProperties = configurationProperties;
+    }
+
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(Configuration configuration) {
+        this.configuration = configuration;
+    }
+
+    public Resource[] resolveMapperLocations() {
+        ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
+        List<Resource> resources = new ArrayList<Resource>();
+        if (this.mapperLocations != null) {
+            for (String mapperLocation : this.mapperLocations) {
+                try {
+                    Resource[] mappers = resourceResolver.getResources(mapperLocation);
+                    resources.addAll(Arrays.asList(mappers));
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+        }
+        return resources.toArray(new Resource[resources.size()]);
+    }
 }
