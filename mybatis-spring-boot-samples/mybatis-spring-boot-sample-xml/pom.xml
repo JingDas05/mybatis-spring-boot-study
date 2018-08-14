@@ -28,9 +28,11 @@
     <packaging>jar</packaging>
     <name>mybatis-spring-boot-sample-xml</name>
     <dependencies>
+        <!--引用自己的源码学习实现-->
         <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
+            <groupId>org.mybatis.study</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>1.2.0</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>

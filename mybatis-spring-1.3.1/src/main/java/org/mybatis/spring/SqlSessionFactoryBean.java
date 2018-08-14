@@ -506,6 +506,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
             }
         }
 
+        // 万事具备，创建 SqlSessionFactory
         return this.sqlSessionFactoryBuilder.build(configuration);
     }
 

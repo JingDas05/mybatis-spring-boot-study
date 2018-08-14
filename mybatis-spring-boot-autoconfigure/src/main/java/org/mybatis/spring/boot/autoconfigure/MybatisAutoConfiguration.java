@@ -60,7 +60,7 @@ import org.springframework.util.StringUtils;
 /**
  * {@link EnableAutoConfiguration Auto-Configuration} for Mybatis. Contributes a
  * {@link SqlSessionFactory} and a {@link SqlSessionTemplate}.
- *
+ * <p>
  * If {@link org.mybatis.spring.annotation.MapperScan} is used, or a
  * configuration file is specified as a property, those will be considered,
  * otherwise this auto-configuration will attempt to register mappers based on
@@ -160,6 +160,8 @@ public class MybatisAutoConfiguration {
     }
 
     /**
+     * 如果没有@MapperScan注解，那么就扫描spring boot 启动入口的包的所有标注有@Mapper注解的类
+     * <p>
      * This will just scan the same base package as Spring Boot does. If you want
      * more power, you can explicitly use
      * {@link org.mybatis.spring.annotation.MapperScan} but this will get typed
@@ -185,6 +187,7 @@ public class MybatisAutoConfiguration {
                     scanner.setResourceLoader(this.resourceLoader);
                 }
 
+                // 获取包路径
                 List<String> packages = AutoConfigurationPackages.get(this.beanFactory);
                 if (logger.isDebugEnabled()) {
                     for (String pkg : packages) {
@@ -212,6 +215,10 @@ public class MybatisAutoConfiguration {
     }
 
     /**
+     * 这个地方写的很不错
+     * 如果标注了@MapperScan 的注解，将会生成 MapperFactoryBean，
+     * 如果没有标注@MapperScan 也就是没有MapperFactoryBean的实例，就走下面的配置
+     * <p>
      * {@link org.mybatis.spring.annotation.MapperScan} ultimately ends up
      * creating instances of {@link MapperFactoryBean}. If
      * {@link org.mybatis.spring.annotation.MapperScan} is used then this
@@ -220,6 +227,7 @@ public class MybatisAutoConfiguration {
      * on the same component-scanning path as Spring Boot itself.
      */
     @Configuration
+    // Import 引入配置，引入的配置在 spring的管理范围内
     @Import({AutoConfiguredMapperScannerRegistrar.class})
     @ConditionalOnMissingBean(MapperFactoryBean.class)
     public static class MapperScannerRegistrarNotFoundConfiguration {
