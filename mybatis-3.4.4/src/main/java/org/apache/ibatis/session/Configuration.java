@@ -521,7 +521,9 @@ public class Configuration {
         return languageRegistry.getDefaultDriver();
     }
 
-    /** @deprecated Use {@link #getDefaultScriptingLanguageInstance()} */
+    /**
+     * @deprecated Use {@link #getDefaultScriptingLanguageInstance()}
+     */
     @Deprecated
     public LanguageDriver getDefaultScriptingLanuageInstance() {
         return getDefaultScriptingLanguageInstance();
@@ -577,7 +579,7 @@ public class Configuration {
             //装饰者模式，生成缓存执行器
             executor = new CachingExecutor(executor);
         }
-        //拦截链，传入当前的执行器
+        //拦截链，传入当前的执行器，执行器拦截点
         executor = (Executor) interceptorChain.pluginAll(executor);
         return executor;
     }

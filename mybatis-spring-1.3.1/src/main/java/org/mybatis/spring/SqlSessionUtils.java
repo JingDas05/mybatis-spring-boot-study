@@ -87,7 +87,7 @@ public final class SqlSessionUtils {
     notNull(sessionFactory, NO_SQL_SESSION_FACTORY_SPECIFIED);
     notNull(executorType, NO_EXECUTOR_TYPE_SPECIFIED);
     SqlSessionHolder holder = (SqlSessionHolder) TransactionSynchronizationManager.getResource(sessionFactory);
-    // 从sqlSessionHolder中取出sqlSession
+    // 从sqlSessionHolder中取出sqlSession，这个地方获取的holder有可能为空，所以下面的session也可能为空，所以如果为空进行下面的处理
     SqlSession session = sessionHolder(executorType, holder);
     // 从事务中读取sqlSession
     if (session != null) {
