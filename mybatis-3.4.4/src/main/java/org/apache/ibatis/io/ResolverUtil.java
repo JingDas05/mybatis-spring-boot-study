@@ -25,7 +25,6 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
 /**
- *
  * <p>ResolverUtil is used to locate classes that are available in the/a class path and meet
  * arbitrary conditions. The two most common conditions are that a class implements/extends
  * another class, or that is it annotated with a specific annotation. However, through the use
@@ -82,7 +81,7 @@ public class ResolverUtil<T> {
 
         @Override
         public boolean matches(Class<?> type) {
-            //这个判断parent是否是type的超类或同类
+            //这个判断parent是否是type的超类或同类,注意前面是父类后面是子类
             return type != null && parent.isAssignableFrom(type);
         }
 
@@ -103,10 +102,12 @@ public class ResolverUtil<T> {
         public AnnotatedWith(Class<? extends Annotation> annotation) {
             this.annotation = annotation;
         }
+
         @Override
         public boolean matches(Class<?> type) {
             return type != null && type.isAnnotationPresent(annotation);
         }
+
         @Override
         public String toString() {
             return "annotated with @" + annotation.getSimpleName();
@@ -132,7 +133,7 @@ public class ResolverUtil<T> {
         this.classloader = classloader;
     }
 
-   //查找package下面的Parent的同类或者实现类
+    //查找package下面的Parent的同类或者实现类
     public ResolverUtil<T> findImplementations(Class<?> parent, String... packageNames) {
         if (packageNames == null) {
             return this;
@@ -157,7 +158,8 @@ public class ResolverUtil<T> {
         return this;
     }
 
-    //传入test函数表达式，传入packageName添加符合的类
+    // 传入test函数表达式，传入packageName添加符合的类
+    // 对于 sample.mybatis 的项目，是sample.mybatis.domain
     public ResolverUtil<T> find(Test test, String packageName) {
         //获取可以查询的path, ClassLoader#getResources(String)要用
         String path = getPackagePath(packageName);
@@ -190,12 +192,12 @@ public class ResolverUtil<T> {
      * 这个地方用了策略模式的设计方法，传入的只是Test接口，不知道具体的实现类，类似于lambda表达式
      *
      * @param test the test used to determine if the class matches
-     * @param fqn the fully qualified name of a class(查询出来的)
+     * @param fqn  the fully qualified name of a class(查询出来的)
      */
     @SuppressWarnings("unchecked")
     protected void addIfMatching(Test test, String fqn) {
         try {
-            // fqn为sample/mybatis/domain/City.class去掉class，并且"/"变成"."，通过这个名字取得到Class类型
+            // fqn为sample/mybatis/domain/City.class去掉class，并且"/"变成"."，通过这个名字取得到Class名字
             String externalName = fqn.substring(0, fqn.indexOf('.')).replace('/', '.');
             ClassLoader loader = getClassLoader();
             if (log.isDebugEnabled()) {

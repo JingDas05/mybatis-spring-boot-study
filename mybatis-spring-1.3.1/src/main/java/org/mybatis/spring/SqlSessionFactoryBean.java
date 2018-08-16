@@ -357,7 +357,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
         //这样就不会执行if (this.configLocation != null)这个判断
         if (this.configuration != null) {
             configuration = this.configuration;
-            //configurationProperties 放到 configuration.variables 变量里
+            // 将配置文件中 mybatis.开头的属性，添加到 configuration中
             if (configuration.getVariables() == null) {
                 configuration.setVariables(this.configurationProperties);
             } else if (this.configurationProperties != null) {
@@ -366,13 +366,13 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
         } else if (this.configLocation != null) {
             //如果配置了configLocation那么就用xmlConfigBuilder去解析configuration
             xmlConfigBuilder = new XMLConfigBuilder(this.configLocation.getInputStream(), null, this.configurationProperties);
-            //这个地方只是基本的configuration，并没有调用XMLConfigBuilder parse()方法进行解析
+            //这个地方只是新创建的configuration容器，还没有属性值，并没有调用XMLConfigBuilder parse()方法进行解析
             configuration = xmlConfigBuilder.getConfiguration();
         } else {
+            // this.configuration为空，configLocation也没有配置，那么就使用默认配置
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
             }
-            //使用默认配置
             configuration = new Configuration();
             if (this.configurationProperties != null) {
                 configuration.setVariables(this.configurationProperties);

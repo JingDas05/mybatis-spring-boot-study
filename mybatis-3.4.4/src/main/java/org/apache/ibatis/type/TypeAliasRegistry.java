@@ -33,8 +33,7 @@ import org.apache.ibatis.io.ResolverUtil;
 import org.apache.ibatis.io.Resources;
 
 /**
- * 类型别名注册器，别名不仅包含基本类型，还包含TypeHandler
- * 见BaseBuilder.java resolveTypeHandler()
+ * 类型别名注册器，别名不仅包含基本类型，还包含自己定义的Bean
  *
  * @author Clinton Begin
  */
@@ -44,7 +43,7 @@ public class TypeAliasRegistry {
     private final Map<String, Class<?>> TYPE_ALIASES = new HashMap<String, Class<?>>();
 
     public TypeAliasRegistry() {
-        //初始化别名，包括了java基本类型
+        //初始化别名，包括了java基本类型 包装类型
         registerAlias("string", String.class);
 
         registerAlias("byte", Byte.class);
@@ -66,7 +65,7 @@ public class TypeAliasRegistry {
         registerAlias("float[]", Float[].class);
         registerAlias("boolean[]", Boolean[].class);
 
-        //初始化别名，包括了java基本类型数组，非包装类型，名字前面加下划线
+        //初始化别名，包括了java基本类型，非包装类型，名字前面加下划线
         registerAlias("_byte", byte.class);
         registerAlias("_long", long.class);
         registerAlias("_short", short.class);
@@ -104,7 +103,6 @@ public class TypeAliasRegistry {
         registerAlias("collection", Collection.class);
         registerAlias("iterator", Iterator.class);
 
-        //这个感觉会出问题
         registerAlias("ResultSet", ResultSet.class);
     }
 

@@ -60,6 +60,7 @@ final class ExecutorInterceptor implements Interceptor {
     @Override
     public Object plugin(Object target) {
         // 创建target代理，如果执行了target中要拦截的方法，执行之前 走上面的 intercept()方法
+        // 用拦截器包装target，先执行拦截器的方法，再执行
         return Plugin.wrap(target, this);
     }
 

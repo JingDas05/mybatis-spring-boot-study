@@ -367,7 +367,7 @@ public final class TypeHandlerRegistry {
       //此处写的好，前面保证map一定存在，这一步无论前面怎样都要注册到map中
       map.put(jdbcType, handler);
     }
-    //如果javaType为空，就添加到 ALL_TYPE_HANDLERS_MAP 集合中，key为handlerClass, value为TypeHandler
+    //将所有的类型处理器放到ALL_TYPE_HANDLERS_MAP中，key 为 handlerClass, value 为 TypeHandler
     ALL_TYPE_HANDLERS_MAP.put(handler.getClass(), handler);
   }
 

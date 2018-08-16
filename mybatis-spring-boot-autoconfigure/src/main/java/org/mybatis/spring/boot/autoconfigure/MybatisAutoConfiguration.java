@@ -122,6 +122,7 @@ public class MybatisAutoConfiguration {
         factory.setVfs(SpringBootVFS.class);
         //设置springBoot解析的配置,可以设置configLocation,也可以设置configuration,只能设置其一
         if (StringUtils.hasText(this.properties.getConfigLocation())) {
+            // 通过资源加载器，加载配置文件
             factory.setConfigLocation(this.resourceLoader.getResource(this.properties.getConfigLocation()));
         }
         factory.setConfiguration(properties.getConfiguration());

@@ -26,6 +26,7 @@ import org.apache.ibatis.session.Configuration;
 /**
  * 所有TypeHandler 的抽象类，封装了抽象方法，处理了异常以及通用逻辑，子类实现以下方法即可
  * 既处理准备查询语句，又处理 结果封装
+ * <p>
  * setNonNullParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType)
  * getNullableResult(ResultSet rs, String columnName)
  * getNullableResult(ResultSet rs, int columnIndex)
