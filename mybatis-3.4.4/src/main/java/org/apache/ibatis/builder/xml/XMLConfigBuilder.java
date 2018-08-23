@@ -55,6 +55,7 @@ public class XMLConfigBuilder extends BaseBuilder {
     // 表示是否已经解析过 mybatis-config.xml
     private boolean parsed;
     // 用于解析配置文件的XPathParser对象
+    // 用java自带的解析器开始解析
     private XPathParser parser;
     // 标识<environment>配置的名称，默认读取<environment>标签的default属性
     private String environment;
@@ -448,12 +449,14 @@ public class XMLConfigBuilder extends BaseBuilder {
                     // 扫描指定的包，并向 MapperRegistry注册Mapper接口
                     configuration.addMappers(mapperPackage);
                 } else {
+                    // 这个读取的是总配置文件的mapper节点的属性（注意不是各个具体的mapper.xml文件读取配置）
                     // 获取<mapper>节点的 resource url mapperClass 属性，这三个属性互斥
                     String resource = child.getStringAttribute("resource");
                     String url = child.getStringAttribute("url");
                     String mapperClass = child.getStringAttribute("class");
                     if (resource != null && url == null && mapperClass == null) {
                         ErrorContext.instance().resource(resource);
+                        // resource的值是 sample/mybatis/mapper/CityMapper.xml
                         InputStream inputStream = Resources.getResourceAsStream(resource);
                         XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, resource, configuration.getSqlFragments());
                         mapperParser.parse();

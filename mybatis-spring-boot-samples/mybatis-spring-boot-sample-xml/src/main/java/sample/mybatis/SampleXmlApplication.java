@@ -45,5 +45,4 @@ public class SampleXmlApplication implements CommandLineRunner {
         System.out.println(this.cityDao.selectCityById(1));
         System.out.println(this.hotelMapper.selectByCityId(1));
     }
-
 }

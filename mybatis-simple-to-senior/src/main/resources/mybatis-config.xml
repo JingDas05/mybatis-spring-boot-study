@@ -3,31 +3,31 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-	<settings>
-	    <setting name="logImpl" value="LOG4J"/>
+    <settings>
+        <setting name="logImpl" value="LOG4J"/>
         <!--开启二级缓存-->
-	    <setting name="cacheEnabled" value="true"/>
+        <setting name="cacheEnabled" value="true"/>
         <!--下划线转驼峰-->
-	    <setting name="mapUnderscoreToCamelCase" value="true"/>
-	    <setting name="aggressiveLazyLoading" value="false"/>
-	</settings>
-    
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="aggressiveLazyLoading" value="false"/>
+    </settings>
+
     <typeAliases>
         <package name="tk.mybatis.simple.model"/>
     </typeAliases>
-    
-	<typeHandlers>
-		<typeHandler 
-			javaType="tk.mybatis.simple.type.Enabled" 
-			handler="tk.mybatis.simple.type.EnabledTypeHandler"/>
-	</typeHandlers>
-	
-	<plugins>
-		<plugin interceptor="tk.mybatis.simple.plugin.PageInterceptor">
-			<property name="dialect" value="tk.mybatis.simple.plugin.MySqlDialect"/>
-		</plugin>
-		<!-- <plugin interceptor="tk.mybatis.simple.plugin.CameHumpInterceptor"/> -->
-	</plugins>
+
+    <typeHandlers>
+        <typeHandler
+                javaType="tk.mybatis.simple.type.Enabled"
+                handler="tk.mybatis.simple.type.EnabledTypeHandler"/>
+    </typeHandlers>
+
+    <plugins>
+        <plugin interceptor="tk.mybatis.simple.plugin.PageInterceptor">
+            <property name="dialect" value="tk.mybatis.simple.plugin.MySqlDialect"/>
+        </plugin>
+        <!-- <plugin interceptor="tk.mybatis.simple.plugin.CameHumpInterceptor"/> -->
+    </plugins>
 
     <environments default="development">
         <environment id="development">
@@ -43,6 +43,7 @@
         </environment>
     </environments>
 
+    <!--由于mapper接口和 mapper.xml的文件路径一样，所以不用单独配置 mapper的接口的路径-->
     <mappers>
         <package name="tk.mybatis.simple.mapper"/>
     </mappers>

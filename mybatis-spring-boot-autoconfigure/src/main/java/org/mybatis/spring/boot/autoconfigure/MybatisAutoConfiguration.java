@@ -171,33 +171,31 @@ public class MybatisAutoConfiguration {
      */
     public static class AutoConfiguredMapperScannerRegistrar
             implements BeanFactoryAware, ImportBeanDefinitionRegistrar, ResourceLoaderAware {
-
         private BeanFactory beanFactory;
-
         private ResourceLoader resourceLoader;
 
+        // 传入进来的 importingClassMetadata 是引入 AutoConfiguredMapperScannerRegistrar 类的注解的类的元信息
         @Override
         public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-
             logger.debug("Searching for mappers annotated with @Mapper");
-
+            // 根据注册服务，初始化路径Mapper扫描器
             ClassPathMapperScanner scanner = new ClassPathMapperScanner(registry);
-
             try {
                 if (this.resourceLoader != null) {
                     scanner.setResourceLoader(this.resourceLoader);
                 }
-
-                // 获取包路径
+                // 获取要扫描的路径
                 List<String> packages = AutoConfigurationPackages.get(this.beanFactory);
                 if (logger.isDebugEnabled()) {
                     for (String pkg : packages) {
                         logger.debug("Using auto-configuration base package '{}'", pkg);
                     }
                 }
-
+                // 设置要扫描的类，此处扫描的是标注了@Mapper的类,就是日常使用的mapper接口
                 scanner.setAnnotationClass(Mapper.class);
+                // 注册过滤器
                 scanner.registerFilters();
+                // 开始扫描，并且注册bean
                 scanner.doScan(StringUtils.toStringArray(packages));
             } catch (IllegalStateException ex) {
                 logger.debug("Could not determine auto-configuration package, automatic mapper scanning disabled.", ex);

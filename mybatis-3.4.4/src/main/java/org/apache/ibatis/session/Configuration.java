@@ -666,6 +666,7 @@ public class Configuration {
         return parameterMaps.containsKey(id);
     }
 
+    // eg: id为 sample.mybatis.mapper.CityMapper.selectCityById
     public void addMappedStatement(MappedStatement ms) {
         mappedStatements.put(ms.getId(), ms);
     }
