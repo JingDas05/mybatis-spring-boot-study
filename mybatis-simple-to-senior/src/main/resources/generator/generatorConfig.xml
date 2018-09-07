@@ -4,8 +4,8 @@
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 
 <generatorConfiguration>
-	<!-- <classPathEntry location="F:\.m2\repository\mysql\mysql-connector-java\5.1.38\mysql-connector-java-5.1.38.jar"/> -->
-	
+    <!-- <classPathEntry location="F:\.m2\repository\mysql\mysql-connector-java\5.1.38\mysql-connector-java-5.1.38.jar"/> -->
+
     <context id="MySqlContext" targetRuntime="MyBatis3" defaultModelType="flat">
         <!--指定数据库的分隔符-->
         <property name="beginningDelimiter" value="`"/>
@@ -22,27 +22,45 @@
             <property name="addRemarkComments" value="true"/>
         </commentGenerator>
 
+        <!--<jdbcConnection driverClass="com.mysql.jdbc.Driver"-->
+        <!--connectionURL="jdbc:mysql://localhost:3306/mybatis"-->
+        <!--userId="root"-->
+        <!--password="123456">-->
+        <!--</jdbcConnection>-->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
                         connectionURL="jdbc:mysql://localhost:3306/mybatis"
                         userId="root"
-                        password="123456">
+                        password="0109QWe">
         </jdbcConnection>
 
-        <javaModelGenerator targetPackage="test.model" targetProject="src\main\java">
-            <property name="trimStrings" value="true" />
+
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+
+        <javaModelGenerator targetPackage="tk.mybatis.mbg.model" targetProject="src\main\java">
+            <property name="trimStrings" value="true"/>
             <!--设置所有实体类的基类-->
-            <property name="rootClass" value="tk.mybatis.simple.model.BaseEntity" />
+            <property name="rootClass" value="tk.mybatis.simple.model.BaseEntity"/>
+            <property name="enableSubPackages" value="true"/>
         </javaModelGenerator>
 
         <!--指定了，MBG将生成XML的SQL映射文件和实体类-->
-        <sqlMapGenerator targetPackage="test.xml"  targetProject="src\main\resources"/>
+        <sqlMapGenerator targetPackage="tk.mybatis.mbg.mapper" targetProject="src\main\resources"/>
 
-        <!--配置Mapper接口的属性-->
-        <javaClientGenerator type="XMLMAPPER" targetPackage="test.dao"  targetProject="src\main\java"/>
+        <!--生成Mapper接口 配置项-->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="tk.mybatis.mbg.mapper" targetProject="src\main\java">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
 
-        <!--这里配置的表才能经过上述配置生成最终的代码-->
+        <!--这里配置的表才能经过上述配置生成最终的代码，配置所有的表-->
         <table tableName="%">
             <generatedKey column="id" sqlStatement="MySql"/>
         </table>
+        <!--各个表的配置-->
+        <!--<table tableName="sys_role" domainObjectName="SysRole">-->
+        <!--<generatedKey column="id" sqlStatement="MYSQL" identity="true" type="post"/>-->
+        <!--</table>-->
+
     </context>
 </generatorConfiguration>

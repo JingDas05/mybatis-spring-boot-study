@@ -91,6 +91,7 @@
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
+            <!--MBG插件 生成mapper以及各种配置文件-->
             <plugin>
                 <groupId>org.mybatis.generator</groupId>
                 <artifactId>mybatis-generator-maven-plugin</artifactId>
@@ -106,11 +107,11 @@
                         <artifactId>mysql-connector-java</artifactId>
                         <version>5.1.38</version>
                     </dependency>
-                    <dependency>
-                        <groupId>org.mybatis.spring.boot</groupId>
-                        <artifactId>mybatis-simple-to-senior</artifactId>
-                        <version>1.2.0</version>
-                    </dependency>
+                    <!--<dependency>-->
+                        <!--<groupId>org.mybatis.study</groupId>-->
+                        <!--<artifactId>mybatis-simple-to-senior</artifactId>-->
+                        <!--<version>1.2.0</version>-->
+                    <!--</dependency>-->
                 </dependencies>
             </plugin>
         </plugins>
