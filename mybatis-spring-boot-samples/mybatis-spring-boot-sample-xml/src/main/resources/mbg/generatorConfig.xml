@@ -66,7 +66,7 @@
         <!--</table>-->
 
         <table tableName="t_city" domainObjectName="City">
-            <generatedKey column="id" sqlStatement="MYSQL" identity="true" type="post"/>
+            <!--<generatedKey column="id" sqlStatement="MYSQL" identity="true" type="post"/>-->
         </table>
 
         <table tableName="t_hotel" domainObjectName="Hotel">

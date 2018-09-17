@@ -1,6 +1,6 @@
 
 CREATE TABLE `t_city_0` (
- `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+ `id` int unsigned NOT NULL COMMENT '主键Id',
  `sub_id` int unsigned NOT NULL COMMENT '子Id',
  `name` varchar(128) DEFAULT NULL COMMENT '名字',
  `state` varchar(128) DEFAULT NULL COMMENT '州',
@@ -9,7 +9,7 @@ CREATE TABLE `t_city_0` (
  )ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='城市表';
 
  CREATE TABLE `t_city_1` (
- `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+ `id` int unsigned NOT NULL COMMENT '主键Id',
  `sub_id` int unsigned NOT NULL COMMENT '子Id',
  `name` varchar(128) DEFAULT NULL COMMENT '名字',
  `state` varchar(128) DEFAULT NULL COMMENT '州',
@@ -28,7 +28,7 @@ CREATE TABLE `t_hotel` (
 
 --  mbg生成所需表
  CREATE TABLE `t_city` (
- `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+ `id` int unsigned NOT NULL COMMENT '主键Id',
  `sub_id` int unsigned NOT NULL COMMENT '子Id',
  `name` varchar(128) DEFAULT NULL COMMENT '名字',
  `state` varchar(128) DEFAULT NULL COMMENT '州',
