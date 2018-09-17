@@ -25,7 +25,8 @@
         <package name="sample.mybatis.domain"/>
     </typeAliases>
     <mappers>
-        <mapper resource="sample/mybatis/mapper/CityMapper.xml"/>
-        <mapper resource="sample/mybatis/mapper/HotelMapper.xml"/>
+        <!--<mapper resource="sample/mybatis/mapper/CityMapper.xml"/>-->
+        <!--<mapper resource="sample/mybatis/mapper/HotelMapper.xml"/>-->
+        <package name="sample.mybatis.mapper"/>
     </mappers>
 </configuration>

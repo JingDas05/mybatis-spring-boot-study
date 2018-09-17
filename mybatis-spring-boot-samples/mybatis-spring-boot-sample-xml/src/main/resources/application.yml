@@ -1,0 +1,48 @@
+spring:
+  datasource:
+    mybatis0:
+      driver-class-name: com.mysql.jdbc.Driver
+      max-wait: 5000
+      max-active: 100
+      test-on-borrow: true
+      jmx-enabled: true
+      validation-query: SELECT 1
+      test-while-idle: true
+      url: jdbc:mysql://localhost:3306/mybatis1?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+      username: root
+      password: 0109QWe
+    mybatis1:
+      driver-class-name: com.mysql.jdbc.Driver
+      max-wait: 5000
+      max-active: 100
+      test-on-borrow: true
+      jmx-enabled: true
+      validation-query: SELECT 1
+      test-while-idle: true
+      url: jdbc:mysql://localhost:3306/mybatis2?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+      username: root
+      password: 0109QWe
+    mybatis2:
+      driver-class-name: com.mysql.jdbc.Driver
+      max-wait: 5000
+      max-active: 100
+      test-on-borrow: true
+      jmx-enabled: true
+      validation-query: SELECT 1
+      test-while-idle: true
+      url: jdbc:mysql://localhost:3306/mybatis3?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+      username: root
+      password: 0109QWe
+    #schema: classpath:import.sql
+
+# 这个路径是通过 ResourceLoader加载的
+# this.resourceLoader.getResource(this.properties.getConfigLocation())
+mybatis:
+  config-location: classpath:mybatis-config.xml
+logging:
+  level:
+    root: INFO
+    sample:
+      mybatis:
+        mapper: TRACE
+

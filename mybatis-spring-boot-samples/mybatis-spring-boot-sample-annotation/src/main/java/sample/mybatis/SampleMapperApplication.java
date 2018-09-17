@@ -19,7 +19,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import sample.mybatis.mapper.CityMapper;
+import sample.mybatis.annotation.mapper.CityMapper;
 
 @SpringBootApplication
 public class SampleMapperApplication implements CommandLineRunner {

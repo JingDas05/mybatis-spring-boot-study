@@ -36,6 +36,20 @@
                 <artifactId>javassist</artifactId>
                 <version>3.20.0-GA</version>
             </dependency>
+
+            <!--sharding-sphere 分库分表-->
+            <dependency>
+                <groupId>io.shardingsphere</groupId>
+                <artifactId>sharding-jdbc</artifactId>
+                <version>3.0.0.M1</version>
+            </dependency>
+            <!--mysql数据库支持-->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>5.1.38</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 </project>

@@ -34,10 +34,23 @@
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <version>1.2.0</version>
         </dependency>
+        <!--内存数据库，如果不用的话，注释掉，这个地方的配置想是 spring.datasource.schema=classpath:import.sql-->
+        <!--<dependency>-->
+        <!--<groupId>com.h2database</groupId>-->
+        <!--<artifactId>h2</artifactId>-->
+        <!--<scope>runtime</scope>-->
+        <!--</dependency>-->
+
+        <!--使用mysql数据库-->
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>runtime</scope>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <!--sharding-sphere 分库分表-->
+        <dependency>
+            <groupId>io.shardingsphere</groupId>
+            <artifactId>sharding-jdbc</artifactId>
+            <version>3.0.0.M1</version>
         </dependency>
 
         <!-- test dependencies -->
@@ -65,6 +78,29 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.mybatis.generator</groupId>
+                <artifactId>mybatis-generator-maven-plugin</artifactId>
+                <version>1.3.3</version>
+                <configuration>
+                    <!--配置要读取的配置路径-->
+                    <configurationFile>${basedir}/src/main/resources/mbg/generatorConfig.xml</configurationFile>
+                    <overwrite>true</overwrite>
+                    <verbose>true</verbose>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>mysql</groupId>
+                        <artifactId>mysql-connector-java</artifactId>
+                        <version>5.1.38</version>
+                    </dependency>
+                    <!--<dependency>-->
+                    <!--<groupId>org.mybatis.study</groupId>-->
+                    <!--<artifactId>mybatis-simple-to-senior</artifactId>-->
+                    <!--<version>1.2.0</version>-->
+                    <!--</dependency>-->
+                </dependencies>
             </plugin>
         </plugins>
     </build>
