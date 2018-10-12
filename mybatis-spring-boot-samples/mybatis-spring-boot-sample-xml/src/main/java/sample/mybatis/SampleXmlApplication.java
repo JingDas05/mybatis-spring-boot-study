@@ -42,15 +42,15 @@ public class SampleXmlApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        for (int i = 0; i < 50; i++) {
-            City city = new City();
-            city.setId(i);
-            city.setSubId(i);
-            city.setName("城市" + i);
-            city.setCountry("中国");
-            city.setState("省份" + i);
-            cityMapper.insert(city);
-        }
+//        for (int i = 0; i < 50; i++) {
+//            City city = new City();
+//            city.setId(i);
+//            city.setSubId(i);
+//            city.setName("城市" + i);
+//            city.setCountry("中国");
+//            city.setState("省份" + i);
+//            cityMapper.insert(city);
+//        }
         System.out.println(this.cityMapper.selectByPrimaryKey(1));
         System.out.println(this.hotelMapper.selectByExample(new HotelExample()));
     }

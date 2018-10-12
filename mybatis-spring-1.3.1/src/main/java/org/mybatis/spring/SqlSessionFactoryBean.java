@@ -363,7 +363,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
                 configuration.getVariables().putAll(this.configurationProperties);
             }
         } else if (this.configLocation != null) {
-            //如果配置了configLocation那么就用xmlConfigBuilder去解析configuration
+            //这个地方解析的mybatis配置文件，不是mapper.xml文件
             xmlConfigBuilder = new XMLConfigBuilder(this.configLocation.getInputStream(), null, this.configurationProperties);
             //这个地方只是新创建的configuration容器，还没有属性值，并没有调用XMLConfigBuilder parse()方法进行解析
             configuration = xmlConfigBuilder.getConfiguration();

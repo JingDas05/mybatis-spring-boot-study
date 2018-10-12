@@ -79,6 +79,7 @@ public class MapperRegistry {
                 // mapper parser. If the type is already known, it won't try.
 
                 // 此方法的作用是处理接口级别的Mapper上面的注解，每一个接口级别的Mapper 都有各自的 MapperAnnotationBuilder
+                // 在MapperAnnotationBuilder中会解析接口同路径下的的xml
                 MapperAnnotationBuilder parser = new MapperAnnotationBuilder(config, type);
                 parser.parse();
                 //如果上面的parse()失败了，那么loadCompleted不会置位，在finally中就会从knownMappers中移除掉class为type的mapper

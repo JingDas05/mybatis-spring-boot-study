@@ -1,0 +1,19 @@
+spring:
+  datasource:
+      driver-class-name: com.mysql.jdbc.Driver
+      jmx-enabled: true
+      url: jdbc:mysql://localhost:3306/mybatis1?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+      username: root
+      password: 0109QWe
+
+# 这个路径是通过 ResourceLoader加载的
+# this.resourceLoader.getResource(this.properties.getConfigLocation())
+mybatis:
+  config-location: classpath:mybatis-config.xml
+logging:
+  level:
+    root: DEBUG
+#    sample:
+#      mybatis:
+#        mapper: TRACE
+

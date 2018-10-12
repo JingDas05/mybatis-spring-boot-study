@@ -298,10 +298,11 @@ public abstract class BaseExecutor implements Executor {
 
     /**
      * Apply a transaction timeout.
+     *
      * @param statement a current statement
      * @throws SQLException if a database access error occurs, this method is called on a closed <code>Statement</code>
-     * @since 3.4.0
      * @see StatementUtil#applyTransactionTimeout(Statement, Integer, Integer)
+     * @since 3.4.0
      */
     protected void applyTransactionTimeout(Statement statement) throws SQLException {
         StatementUtil.applyTransactionTimeout(statement, statement.getQueryTimeout(), transaction.getTimeout());
@@ -341,6 +342,7 @@ public abstract class BaseExecutor implements Executor {
 
     // 只限定子类使用
     protected Connection getConnection(Log statementLog) throws SQLException {
+        // 这个地方事务的实例实际是 springManagedTransaction
         Connection connection = transaction.getConnection();
         if (statementLog.isDebugEnabled()) {
             // 返回连接代理，可以输出日志

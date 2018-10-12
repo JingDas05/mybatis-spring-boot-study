@@ -1,17 +1,17 @@
 /**
- *    Copyright 2010-2016 the original author or authors.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Copyright 2010-2016 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.mybatis.spring.transaction;
 
@@ -34,6 +34,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  * It retrieves a connection from Spring's transaction manager and returns it back to it
  * when it is no longer needed.
  * <p>
+ * 如果依赖的事务是 spring 的事务，事务操作由spring控制
  * If Spring's transaction handling is active it will no-op（无操作） all commit/rollback/close calls
  * assuming that the Spring transaction manager will do the job.
  * <p>
@@ -44,85 +45,85 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  */
 public class SpringManagedTransaction implements Transaction {
 
-  private static final Log LOGGER = LogFactory.getLog(SpringManagedTransaction.class);
+    private static final Log LOGGER = LogFactory.getLog(SpringManagedTransaction.class);
 
-  private final DataSource dataSource;
+    private final DataSource dataSource;
 
-  private Connection connection;
+    private Connection connection;
 
-  private boolean isConnectionTransactional;
+    private boolean isConnectionTransactional;
 
-  private boolean autoCommit;
+    private boolean autoCommit;
 
-  public SpringManagedTransaction(DataSource dataSource) {
-    notNull(dataSource, "No DataSource specified");
-    this.dataSource = dataSource;
-  }
-
-  @Override
-  public Connection getConnection() throws SQLException {
-    if (this.connection == null) {
-      openConnection();
+    public SpringManagedTransaction(DataSource dataSource) {
+        notNull(dataSource, "No DataSource specified");
+        this.dataSource = dataSource;
     }
-    return this.connection;
-  }
 
-  /**
-   * Gets a connection from Spring transaction manager and discovers if this
-   * {@code Transaction} should manage connection or let it to Spring.
-   * <p>
-   * It also reads autocommit setting because when using Spring Transaction MyBatis
-   * thinks that autocommit is always false and will always call commit/rollback
-   * so we need to no-op that calls.
-   */
-  private void openConnection() throws SQLException {
-    this.connection = DataSourceUtils.getConnection(this.dataSource);
-    this.autoCommit = this.connection.getAutoCommit();
-    this.isConnectionTransactional = DataSourceUtils.isConnectionTransactional(this.connection, this.dataSource);
-
-    if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug(
-          "JDBC Connection ["
-              + this.connection
-              + "] will"
-              + (this.isConnectionTransactional ? " " : " not ")
-              + "be managed by Spring");
+    @Override
+    public Connection getConnection() throws SQLException {
+        if (this.connection == null) {
+            openConnection();
+        }
+        return this.connection;
     }
-  }
 
-  @Override
-  public void commit() throws SQLException {
-    // connection不为空， 连接不是事务操作，不是自动提交的的话
-    if (this.connection != null && !this.isConnectionTransactional && !this.autoCommit) {
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Committing JDBC Connection [" + this.connection + "]");
-      }
-      this.connection.commit();
+    /**
+     * Gets a connection from Spring transaction manager and discovers if this
+     * {@code Transaction} should manage connection or let it to Spring.
+     * <p>
+     * It also reads autocommit setting because when using Spring Transaction MyBatis
+     * thinks that autocommit is always false and will always call commit/rollback
+     * so we need to no-op that calls.
+     */
+    private void openConnection() throws SQLException {
+        this.connection = DataSourceUtils.getConnection(this.dataSource);
+        this.autoCommit = this.connection.getAutoCommit();
+        this.isConnectionTransactional = DataSourceUtils.isConnectionTransactional(this.connection, this.dataSource);
+
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(
+                    "JDBC Connection ["
+                            + this.connection
+                            + "] will"
+                            + (this.isConnectionTransactional ? " " : " not ")
+                            + "be managed by Spring");
+        }
     }
-  }
 
-  @Override
-  public void rollback() throws SQLException {
-    // connection不为空， 连接不是事务操作，不是自动提交的的话
-    if (this.connection != null && !this.isConnectionTransactional && !this.autoCommit) {
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Rolling back JDBC Connection [" + this.connection + "]");
-      }
-      this.connection.rollback();
+    @Override
+    public void commit() throws SQLException {
+        // connection不为空， 连接不是事务操作，不是自动提交的的话
+        if (this.connection != null && !this.isConnectionTransactional && !this.autoCommit) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Committing JDBC Connection [" + this.connection + "]");
+            }
+            this.connection.commit();
+        }
     }
-  }
 
-  @Override
-  public void close() throws SQLException {
-    DataSourceUtils.releaseConnection(this.connection, this.dataSource);
-  }
+    @Override
+    public void rollback() throws SQLException {
+        // connection不为空， 连接不是事务操作，不是自动提交的的话
+        if (this.connection != null && !this.isConnectionTransactional && !this.autoCommit) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Rolling back JDBC Connection [" + this.connection + "]");
+            }
+            this.connection.rollback();
+        }
+    }
 
-  @Override
-  public Integer getTimeout() throws SQLException {
-    ConnectionHolder holder = (ConnectionHolder) TransactionSynchronizationManager.getResource(dataSource);
-    if (holder != null && holder.hasTimeout()) {
-      return holder.getTimeToLiveInSeconds();
-    } 
-    return null;
-  }
+    @Override
+    public void close() throws SQLException {
+        DataSourceUtils.releaseConnection(this.connection, this.dataSource);
+    }
+
+    @Override
+    public Integer getTimeout() throws SQLException {
+        ConnectionHolder holder = (ConnectionHolder) TransactionSynchronizationManager.getResource(dataSource);
+        if (holder != null && holder.hasTimeout()) {
+            return holder.getTimeToLiveInSeconds();
+        }
+        return null;
+    }
 }
