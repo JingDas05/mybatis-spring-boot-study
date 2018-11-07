@@ -91,6 +91,7 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
     private SqlSession openSessionFromDataSource(ExecutorType execType, TransactionIsolationLevel level, boolean autoCommit) {
         Transaction tx = null;
         try {
+            // 每打开一次查询，是从环境中获取数据源的，所以查询时要用不同的数据源，就设置下数据源
             final Environment environment = configuration.getEnvironment();
             // 环境包含策略工厂和数据源
             final TransactionFactory transactionFactory = getTransactionFactoryFromEnvironment(environment);

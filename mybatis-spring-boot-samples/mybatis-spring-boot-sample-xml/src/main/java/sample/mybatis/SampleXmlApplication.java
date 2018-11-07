@@ -15,16 +15,21 @@
  */
 package sample.mybatis;
 
+import org.apache.ibatis.mapping.Environment;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import sample.mybatis.domain.City;
+import sample.mybatis.domain.CityExample;
 import sample.mybatis.domain.HotelExample;
 import sample.mybatis.mapper.CityMapper;
 import sample.mybatis.mapper.HotelMapper;
 
 import javax.annotation.Resource;
+import javax.sql.DataSource;
 
 @SpringBootApplication
 @MapperScan("sample.mybatis.mapper")
@@ -39,6 +44,8 @@ public class SampleXmlApplication implements CommandLineRunner {
 
     @Resource
     private HotelMapper hotelMapper;
+    @Resource
+    private SqlSessionFactory sqlSessionFactory;
 
     @Override
     public void run(String... args) throws Exception {
@@ -51,7 +58,22 @@ public class SampleXmlApplication implements CommandLineRunner {
 //            city.setState("省份" + i);
 //            cityMapper.insert(city);
 //        }
-        System.out.println(this.cityMapper.selectByPrimaryKey(1));
-        System.out.println(this.hotelMapper.selectByExample(new HotelExample()));
+//        System.out.println(this.cityMapper.selectByPrimaryKey(1));
+//        System.out.println(this.hotelMapper.selectByExample(new HotelExample()));
+        System.out.println(this.cityMapper.selectByExample(new CityExample()).size());
+
+        Environment environment = sqlSessionFactory.getConfiguration().getEnvironment();
+
+        // 更换数据源进行查询
+        DataSource dataSource1 = DataSourceBuilder.create()
+                .driverClassName("com.mysql.jdbc.Driver")
+                .username("root")
+                .password("0109QWe")
+                .url("jdbc:mysql://localhost:3306/mybatis2?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull")
+                .build();
+        Environment nextEnvironment = new Environment(environment.getId(), environment.getTransactionFactory(), dataSource1);
+        sqlSessionFactory.getConfiguration().setEnvironment(nextEnvironment);
+        System.out.println(this.cityMapper.selectByExample(new CityExample()).size());
+
     }
 }

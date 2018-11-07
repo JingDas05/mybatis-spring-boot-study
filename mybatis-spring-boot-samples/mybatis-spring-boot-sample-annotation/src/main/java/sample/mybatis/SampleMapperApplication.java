@@ -41,6 +41,7 @@ public class SampleMapperApplication implements CommandLineRunner {
         CityExample cityExample = new CityExample();
         CityExample.Criteria criteria = cityExample.createCriteria();
         criteria.andStateEqualTo("CA");
+        criteria.andCountryEqualTo("china");
         System.out.println(this.cityMapper.selectByExample(cityExample));
     }
 

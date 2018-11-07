@@ -58,6 +58,7 @@ public class DefaultParameterHandler implements ParameterHandler {
     return parameterObject;
   }
 
+  // 向 PreparedStatement中设置参数，参数从boundSql中获取
   @Override
   public void setParameters(PreparedStatement ps) {
     ErrorContext.instance().activity("setting parameters").object(mappedStatement.getParameterMap().getId());
@@ -84,6 +85,7 @@ public class DefaultParameterHandler implements ParameterHandler {
             jdbcType = configuration.getJdbcTypeForNull();
           }
           try {
+            // 类型处理器设置查询参数，也可以封装查询结果参数
             typeHandler.setParameter(ps, i + 1, value, jdbcType);
           } catch (TypeException e) {
             throw new TypeException("Could not set parameters for mapping: " + parameterMapping + ". Cause: " + e, e);

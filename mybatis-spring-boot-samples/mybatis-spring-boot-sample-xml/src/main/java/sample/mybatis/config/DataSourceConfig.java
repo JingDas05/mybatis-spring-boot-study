@@ -44,18 +44,38 @@ public class DataSourceConfig implements ResourceLoaderAware, EnvironmentAware {
     private static final String DS_2 = "ds2";
 
     // 配置mybatis sqlSessionFactory
+//    @Bean
+//    @Primary
+//    @Qualifier("shardDataSource")
+//    public SqlSessionFactory sqlSessionFactory() throws Exception {
+//        // 项目启动的时候初始化 SqlSessionFactoryBean，设置成员变量，这个成员变量是从yml等配置文件读来的，也就是spring boot
+//        SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
+//        factory.setDataSource(shardingDataSourceInit());
+//        factory.setVfs(SpringBootVFS.class);
+//        factory.setConfigLocation(this.resourceLoader.getResource(environment.getProperty("mybatis.config-location")));
+//        // springBoot配置完成后解析config.xml
+//        return factory.getObject();
+//    }
+
     @Bean
     @Primary
     @Qualifier("shardDataSource")
     public SqlSessionFactory sqlSessionFactory() throws Exception {
+        DataSource dataSource0 = DataSourceBuilder.create()
+                .driverClassName("com.mysql.jdbc.Driver")
+                .username("root")
+                .password("0109QWe")
+                .url("jdbc:mysql://localhost:3306/mybatis1?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull")
+                .build();
         // 项目启动的时候初始化 SqlSessionFactoryBean，设置成员变量，这个成员变量是从yml等配置文件读来的，也就是spring boot
         SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
-        factory.setDataSource(shardingDataSourceInit());
+        factory.setDataSource(dataSource0);
         factory.setVfs(SpringBootVFS.class);
         factory.setConfigLocation(this.resourceLoader.getResource(environment.getProperty("mybatis.config-location")));
         // springBoot配置完成后解析config.xml
         return factory.getObject();
     }
+
 
     @Bean("shardDataSource")
     @Primary
@@ -68,6 +88,7 @@ public class DataSourceConfig implements ResourceLoaderAware, EnvironmentAware {
                 .url("jdbc:mysql://localhost:3306/mybatis3?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull")
                 .build();
         dataSourceMap.put(DS_2, dataSource2);
+
         DataSource dataSource1 = DataSourceBuilder.create()
                 .driverClassName("com.mysql.jdbc.Driver")
                 .username("root")

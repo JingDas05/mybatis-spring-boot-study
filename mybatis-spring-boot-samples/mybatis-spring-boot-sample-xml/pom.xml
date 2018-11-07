@@ -47,12 +47,12 @@
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
         <!--sharding-sphere 分库分表-->
+        <!--sharding-sphere 分库分表-->
         <dependency>
             <groupId>io.shardingsphere</groupId>
             <artifactId>sharding-jdbc</artifactId>
-            <version>3.0.0.M1</version>
+            <version>3.0.0.M3</version>
         </dependency>
-
         <!-- test dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

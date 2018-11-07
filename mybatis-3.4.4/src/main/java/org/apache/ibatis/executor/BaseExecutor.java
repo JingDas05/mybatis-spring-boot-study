@@ -286,6 +286,7 @@ public abstract class BaseExecutor implements Executor {
     protected abstract <E> Cursor<E> doQueryCursor(MappedStatement ms, Object parameter, RowBounds rowBounds, BoundSql boundSql)
             throws SQLException;
 
+    // 查询完关闭 statement，包括
     protected void closeStatement(Statement statement) {
         if (statement != null) {
             try {

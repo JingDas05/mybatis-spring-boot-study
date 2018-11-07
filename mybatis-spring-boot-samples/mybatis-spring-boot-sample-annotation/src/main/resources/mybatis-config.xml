@@ -20,6 +20,14 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
+
+    <!--和 where 元素等价的自定义 trim 元素为-->
+    <!--<trim prefix="WHERE" prefixOverrides="AND |OR ">-->
+        <!--...-->
+    <!--</trim>-->
+    <!--prefixOverrides 属性会忽略通过管道分隔的文本序列（注意此例中的空格也是必要的）。它的作用是移除所有指定在 prefixOverrides 属性中的内容，
+    并且插入 prefix 属性中指定的内容。-->
+
     <!--bean别名-->
     <typeAliases>
         <package name="sample.mybatis.annotation.domain"/>
@@ -27,6 +35,8 @@
     <mappers>
 
         <!--两种方法，一个是在这个地方定义 要解析的xml文件，另一种方法是保证mapper接口和xml文件在相同的包路径下-->
+        <!--如果mapper接口和xml文件在相同的包路径下，通过 configuration addMapper()中的MapperAnnotationBuilder中去扫描和mapper接口-->
+        <!--相同路径下的mapper xml-->
         <!--<mapper resource="sample/mybatis/mapper/CityMapper.xml"/>-->
         <!--<mapper resource="sample/mybatis/mapper/HotelMapper.xml"/>-->
 

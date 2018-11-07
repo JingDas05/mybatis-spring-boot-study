@@ -205,6 +205,7 @@ public class CityExample {
         }
 
         public Criteria andIdEqualTo(Integer value) {
+            // property属性只是为了异常警告时使用
             addCriterion("id =", value, "id");
             return (Criteria) this;
         }
