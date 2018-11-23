@@ -54,7 +54,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     try {
-      // 如果目标方法继承自Object,则直接调用方法
+      // 如果目标方法是Object,则直接调用方法
       if (Object.class.equals(method.getDeclaringClass())) {
         return method.invoke(this, args);
       } else if (isDefaultMethod(method)) {
@@ -64,6 +64,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
       throw ExceptionUtil.unwrapThrowable(t);
     }
     // 从缓存中获取MapperMethod对象，如果缓存中没有，则创建新的MapperMethod并添加到缓存中
+    // 这个地方才是真正的重点，查询数据库，args是mapper方法里面的入参
     final MapperMethod mapperMethod = cachedMapperMethod(method);
     return mapperMethod.execute(sqlSession, args);
   }

@@ -47,7 +47,7 @@ public class Plugin implements InvocationHandler {
   public static Object wrap(Object target, Interceptor interceptor) {
     // 这个方法获取 拦截器注解上的所有拦截配置，返回封装参数Map
     // key为拦截的接口Executor, ParameterHandler, ResultSetHandler, StatementHandler
-    // value 为拦截的方法
+    // value 为拦截的方法s
     Map<Class<?>, Set<Method>> signatureMap = getSignatureMap(interceptor);
     Class<?> type = target.getClass();
     // 获取父接口

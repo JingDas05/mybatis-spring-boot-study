@@ -148,7 +148,7 @@ public class MybatisAutoConfiguration {
         return factory.getObject();
     }
 
-    // 初始化 sqlSessionTemplate,自动注入sqlSessionFactory
+    // 初始化 sqlSessionTemplate 自动注入sqlSessionFactory
     @Bean
     @ConditionalOnMissingBean
     public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {

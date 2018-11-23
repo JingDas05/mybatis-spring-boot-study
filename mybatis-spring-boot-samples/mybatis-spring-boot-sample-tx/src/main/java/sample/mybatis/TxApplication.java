@@ -21,17 +21,18 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import sample.mybatis.annotation.domain.CityExample;
-import sample.mybatis.annotation.mapper.CityMapper;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import sample.mybatis.tx.domain.CityExample;
+import sample.mybatis.tx.mapper.CityMapper;
 
 import javax.annotation.Resource;
 
-@SpringBootApplication
-@MapperScan("sample.mybatis.annotation.mapper")
-public class SampleMapperApplication implements CommandLineRunner {
+@MapperScan("sample.mybatis.tx.mapper")
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+public class TxApplication implements CommandLineRunner {
 
     public static void main(String[] args) {
-        SpringApplication.run(SampleMapperApplication.class, args);
+        SpringApplication.run(TxApplication.class, args);
     }
 
     @Resource

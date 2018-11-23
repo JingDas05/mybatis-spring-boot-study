@@ -418,6 +418,7 @@ public class SqlSessionTemplate implements SqlSession, DisposableBean {
     }
 
     /**
+     * **********************************************************************************************************
      * 创建代理，来路由mybatis的方法到合适的 SqlSession，SqlSession是从spring 事务管理器中获取的
      * <p>
      * Proxy needed to route MyBatis method calls to the proper SqlSession got
@@ -429,6 +430,7 @@ public class SqlSessionTemplate implements SqlSession, DisposableBean {
     private class SqlSessionInterceptor implements InvocationHandler {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            // 这个地方获取的 SqlSession autoCommit 默认是 false
             SqlSession sqlSession = getSqlSession(
                     SqlSessionTemplate.this.sqlSessionFactory,
                     SqlSessionTemplate.this.executorType,

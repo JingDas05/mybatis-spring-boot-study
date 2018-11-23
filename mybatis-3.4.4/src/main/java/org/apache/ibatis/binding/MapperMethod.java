@@ -152,6 +152,7 @@ public class MapperMethod {
             RowBounds rowBounds = method.extractRowBounds(args);
             result = sqlSession.<E>selectList(command.getName(), param, rowBounds);
         } else {
+            // command 对应着每个接口里面的方法
             result = sqlSession.<E>selectList(command.getName(), param);
         }
         // issue #510 Collections & arrays support

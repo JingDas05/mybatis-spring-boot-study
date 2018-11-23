@@ -24,9 +24,9 @@
         <artifactId>mybatis-spring-boot-samples</artifactId>
         <version>1.2.0</version>
     </parent>
-    <artifactId>mybatis-spring-boot-sample-annotation</artifactId>
+    <artifactId>mybatis-spring-boot-sample-tx</artifactId>
     <packaging>jar</packaging>
-    <name>mybatis-spring-boot-sample-annotation</name>
+    <name>mybatis-spring-boot-sample-tx</name>
     <dependencies>
         <!-- https://mvnrepository.com/artifact/com.github.pagehelper/pagehelper -->
         <dependency>
