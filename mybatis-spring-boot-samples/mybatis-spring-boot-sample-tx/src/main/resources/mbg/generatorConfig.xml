@@ -69,8 +69,8 @@
             <!--<generatedKey column="id" sqlStatement="MYSQL" identity="true" type="post"/>-->
         </table>
 
-        <!--<table tableName="t_hotel" domainObjectName="Hotel">-->
-        <!--</table>-->
+        <table tableName="t_hotel" domainObjectName="Hotel">
+        </table>
 
     </context>
 </generatorConfiguration>
