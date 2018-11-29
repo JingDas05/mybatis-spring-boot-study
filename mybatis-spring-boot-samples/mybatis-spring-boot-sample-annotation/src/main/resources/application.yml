@@ -2,9 +2,12 @@ spring:
   datasource:
       driver-class-name: com.mysql.jdbc.Driver
       jmx-enabled: true
-      url: jdbc:mysql://localhost:3306/mybatis1?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
-      username: root
-      password: 0109QWe
+#      url: jdbc:mysql://localhost:3306/mybatis1?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+#      username: root
+#      password: 0109QWe
+      url: jdbc:mysql://rm-bp188fb70hknd9gi2o.mysql.rds.aliyuncs.com:3306/rider_rightsdb?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+      username: devuser
+      password: Devuser123
 
 # 这个路径是通过 ResourceLoader加载的
 # this.resourceLoader.getResource(this.properties.getConfigLocation())

@@ -39,7 +39,8 @@ public class SampleMapperApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        PageHelper.startPage(0, 10);
+//        PageHelper.startPage(1, 10);
+        PageHelper.offsetPage(1, 10);
         CityExample cityExample = new CityExample();
         CityExample.Criteria criteria = cityExample.createCriteria();
         criteria.andCountryEqualTo("中国");
