@@ -15,6 +15,7 @@
  */
 package sample.mybatis;
 
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.CommandLineRunner;
@@ -40,11 +41,10 @@ public class SampleMapperApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 //        PageHelper.startPage(1, 10);
-        PageHelper.offsetPage(1, 10);
+        Page<Object> objects = PageHelper.offsetPage(1, 10, false);
         CityExample cityExample = new CityExample();
         CityExample.Criteria criteria = cityExample.createCriteria();
         criteria.andCountryEqualTo("中国");
         System.out.println(this.cityMapper.selectByExample(cityExample));
     }
-
 }

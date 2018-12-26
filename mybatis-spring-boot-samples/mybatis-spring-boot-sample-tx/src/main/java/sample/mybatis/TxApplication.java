@@ -15,15 +15,13 @@
  */
 package sample.mybatis;
 
-import com.github.pagehelper.PageHelper;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import sample.mybatis.tx.domain.CityExample;
-import sample.mybatis.tx.mapper.CityMapper;
+import sample.mybatis.tx.service.TxService;
 
 import javax.annotation.Resource;
 
@@ -36,15 +34,17 @@ public class TxApplication implements CommandLineRunner {
     }
 
     @Resource
-    private CityMapper cityMapper;
+    private TxService txService;
 
     @Override
     public void run(String... args) throws Exception {
-        PageHelper.startPage(0, 10);
-        CityExample cityExample = new CityExample();
-        CityExample.Criteria criteria = cityExample.createCriteria();
-        criteria.andCountryEqualTo("中国");
-        System.out.println(this.cityMapper.selectByExample(cityExample));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+//                txService.txWithCode();
+//        txService.txWithAnnotation();
+            }
+        }).start();
     }
 
 }
